@@ -7,10 +7,10 @@ C Standard Library.
 
 ## Installation using [```git-install```](https://github.com/ychnlgy/GitInstaller)
 ```bash
-git-install.py ychnlgy/Standard
+git-install.py ychnlgy/StandardC
 ```
 
 ## Uninstall using [```git-install```](https://github.com/ychnlgy/GitInstaller)
 ```bash
-git-install.py --uninstall ychnlgy/Standard
+git-install.py --uninstall ychnlgy/StandardC
 ```
