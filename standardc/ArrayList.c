@@ -99,7 +99,8 @@ void setitem_ArrayList(ArrayList* this, int j, void* entry) {
     assert(j < this->len);
     char* data = (char*) entry;
     int start = j*this->typesize;
-    for (int i=0; i<this->typesize; i++)
+    int i;
+    for (i=0; i<this->typesize; i++)
         this->data[start+i] = data[i];
 }
 
