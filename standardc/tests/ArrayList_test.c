@@ -47,32 +47,46 @@ int main() {
     // Test resize
     int TEST_N = 10000;
     
-    for (int i=0; i<TEST_N; i++) {
-        int j = encrypt(i);
-        push_ArrayList(a1, &j);
+    {
+        int i;
+        for (i=0; i<TEST_N; i++) {
+            int j = encrypt(i);
+            push_ArrayList(a1, &j);
+        }
     }
     
     int is[] = {0, TEST_N >> 1, TEST_N-1};
-    for (int i=0; i<len(is); i++) {
-        int j = encrypt(is[i]);
-        int* k = getitem_ArrayList(a1, is[i]);
-        assert(*k == j);
-        k = at_ArrayList(a1, is[i]);
-        assert(*k == j);
+    
+    {
+        int i;
+        for (i=0; i<len(is); i++) {
+            int j = encrypt(is[i]);
+            int* k = getitem_ArrayList(a1, is[i]);
+            assert(*k == j);
+            k = at_ArrayList(a1, is[i]);
+            assert(*k == j);
+        }
     }
     
     int is2[] = {TEST_N, TEST_N+1, 2*TEST_N};
-    for (int i=0; i<len(is2); i++) {
-        int* k = at_ArrayList(a1, is2[i]);
-        assert(k == NULL);
+    
+    {
+        int i;
+        for (i=0; i<len(is2); i++) {
+            int* k = at_ArrayList(a1, is2[i]);
+            assert(k == NULL);
+        }
     }
     
-    for (int i=0; i<TEST_N; i++) {
-        int p = TEST_N-i-1;
-        int j = encrypt(p);
-        int* k = pop_ArrayList(a1);
-        assert(len_ArrayList(a1) == p);
-        assert(j == *k);
+    {
+        int i;
+        for (i=0; i<TEST_N; i++) {
+            int p = TEST_N-i-1;
+            int j = encrypt(p);
+            int* k = pop_ArrayList(a1);
+            assert(len_ArrayList(a1) == p);
+            assert(j == *k);
+        }
     }
     
     // Test setitem
@@ -89,15 +103,20 @@ int main() {
     // Test initall
     int is3[] = {1, 4, 7, 8};
     int is4[] = {0, 4, 200, 1000};
-    for (int k=0; k<len(is4); k++) {
-        int p = is4[k];
-        ArrayList* a2 = make_Memory(mem, &new_ArrayList);
-        initall_ArrayList(a2, sizeof(int), p, is3);
-        assert(len_ArrayList(a2) == p);
-        for (int i=0; i<p; i++)
-            assert(*((int*) at_ArrayList(a2, i)) == is3[0]);
-        assert(at_ArrayList(a2, p) == NULL);
-        assert(at_ArrayList(a2, p+1) == NULL);
+    
+    {
+        int k;
+        for (k=0; k<len(is4); k++) {
+            int p = is4[k];
+            ArrayList* a2 = make_Memory(mem, &new_ArrayList);
+            initall_ArrayList(a2, sizeof(int), p, is3);
+            assert(len_ArrayList(a2) == p);
+            int i;
+            for (i=0; i<p; i++)
+                assert(*((int*) at_ArrayList(a2, i)) == is3[0]);
+            assert(at_ArrayList(a2, p) == NULL);
+            assert(at_ArrayList(a2, p+1) == NULL);
+        }
     }
     
     // Test initarray
@@ -108,16 +127,24 @@ int main() {
 
     int size = 5000;
     int is5[size];
-    for (int i=0; i<size; i++)
-        is5[i] = 123;
-    is5[size-1] = 122;
-    is5[size >> 2] = 13;
+    
+    {
+        int i;
+        for (i=0; i<size; i++)
+            is5[i] = 123;
+        is5[size-1] = 122;
+        is5[size >> 2] = 13;
+    }
     
     ArrayList* a4 = make_Memory(mem, &new_ArrayList);
     initarray_ArrayList(a4, sizeof(int), size, is5);
-    for (int i=0; i<size; i++)
-        assert(*((int*) at_ArrayList(a4, i)) == is5[i]);
-    assert(at_ArrayList(a4, size) == NULL);
+    
+    {
+        int i;
+        for (i=0; i<size; i++)
+            assert(*((int*) at_ArrayList(a4, i)) == is5[i]);
+        assert(at_ArrayList(a4, size) == NULL);
+    }
     
     // Test foreach
     ArrayList* a5 = make_Memory(mem, &new_ArrayList);

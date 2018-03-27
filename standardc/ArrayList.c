@@ -29,7 +29,8 @@ void del_ArrayList(void* this) {
 void resize_ArrayList(ArrayList* this, int n) {
     char* data = malloc(n*this->typesize);
     int len = min(this->len, n);
-    for (int i=0; i<len*this->typesize; i++)
+    int i;
+    for (i=0; i<len*this->typesize; i++)
         data[i] = this->data[i];
     free(this->data);
     this->len = len;
@@ -57,15 +58,19 @@ void init_ArrayList(ArrayList* this, int typesize) {
 void initall_ArrayList(ArrayList* this, int typesize, int len, void* value) {
     setup_ArrayList(this, typesize, len);
     char* data = (char*) value;
-    for (int j=0; j<len; j++)
-        for (int i=0; i<typesize; i++)
+    int j;
+    for (j=0; j<len; j++) {
+        int i;
+        for (i=0; i<typesize; i++)
             this->data[j*typesize+i] = data[i];
+    }
 }
 
 void initarray_ArrayList(ArrayList* this, int typesize, int len, void* arr) {
     setup_ArrayList(this, typesize, len);
     char* data = (char*) arr;
-    for (int i=0; i<typesize*len; i++)
+    int i;
+    for (i=0; i<typesize*len; i++)
         this->data[i] = data[i];
 }
 
@@ -90,10 +95,10 @@ void* getitem_ArrayList(ArrayList* this, int i) {
     return this->data+i*this->typesize;
 }
 
-void setitem_ArrayList(ArrayList* this, int i, void* entry) {
-    assert(i < this->len);
+void setitem_ArrayList(ArrayList* this, int j, void* entry) {
+    assert(j < this->len);
     char* data = (char*) entry;
-    int start = i*this->typesize;
+    int start = j*this->typesize;
     for (int i=0; i<this->typesize; i++)
         this->data[start+i] = data[i];
 }
@@ -106,7 +111,8 @@ void* at_ArrayList(ArrayList* this, int i) {
 }
 
 void foreach_ArrayList(ArrayList* this, void(*fn)(void*)) {
-    for (int i=0; i<this->len; i++)
+    int i;
+    for (i=0; i<this->len; i++)
         fn(getitem_ArrayList(this, i));
 }
 
