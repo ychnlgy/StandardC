@@ -1,0 +1,18 @@
+language: python
+
+python:
+ - "3.6"
+
+install:
+ - sudo apt install valgrind
+ - pip3 install cakebaker
+ - pip3 install cpp-coveralls
+
+script:
+ - bakecake.py --test --valgrind -r
+
+after_success:
+ - coveralls --exclude-pattern .*/tests/.*_test.c
+
+notifications:
+ email: false
