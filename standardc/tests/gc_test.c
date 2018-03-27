@@ -31,4 +31,5 @@ int main() {
     del(c);
     
     printf("OK (but you should use Valgrind to check for memory leaks)\n");
+    return 0;
 }

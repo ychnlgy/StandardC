@@ -6,4 +6,5 @@ int main() {
     printBold("BOLD ");
     printBlue("BLUE ");
     printPurple("PURPLE");
+    return 0;
 }

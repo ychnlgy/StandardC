@@ -13,4 +13,5 @@ int main() {
     assert(len(is) == 5);
     
     printf("OK\n");
+    return 0;
 }

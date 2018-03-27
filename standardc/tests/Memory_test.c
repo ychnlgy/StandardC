@@ -37,4 +37,5 @@ int main() {
     free_Memory(memory);
     
     printf("OK\n");
+    return 0;
 }

@@ -153,4 +153,5 @@ int main() {
     
     free_Memory(mem);
     printf("OK\n");
+    return 0;
 }

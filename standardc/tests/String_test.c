@@ -24,4 +24,5 @@ int main() {
     decref(s3);
     
     printf("OK\n");
+    return 0;
 }
