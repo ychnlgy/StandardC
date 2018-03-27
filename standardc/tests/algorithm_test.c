@@ -1,17 +1,17 @@
 #include "../algorithm.h"
+#include "../unittest.h"
 
-#include <stdio.h>
-#include <assert.h>
+SETUP{}
+TEARDOWN{}
 
-int main() {
-    printf("Running %s...", __FILE__);
+RUN
+    CASE("min-max")
+        ASSERT(max(2, 3) == 3);
+        ASSERT(min(9, 20) == 9);
+    END
     
-    assert(max(2, 3) == 3);
-    assert(min(9, 20) == 9);
-    
-    int is[] = {1, 2, 5, 6, 7};
-    assert(len(is) == 5);
-    
-    printf("OK\n");
-    return 0;
-}
+    CASE("len")
+        int is[] = {1, 2, 5, 6, 7};
+        ASSERT(len(is) == 5);
+    END
+STOP

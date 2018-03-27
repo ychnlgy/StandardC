@@ -4,7 +4,7 @@
 // malloc, free
 
 #include <string.h>
-// strlen, strncpy
+// strlen, strncpy, strcmp
 
 #include "gc.h"
 
