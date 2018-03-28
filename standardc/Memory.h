@@ -1,5 +1,5 @@
-#ifndef STANDARD_MEMORY
-#define STANDARD_MEMORY
+#ifndef STANDARDC_MEMORY
+#define STANDARDC_MEMORY
 
 #include "gc.h"
 

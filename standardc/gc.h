@@ -1,5 +1,5 @@
-#ifndef STANDARD_GC
-#define STANDARD_GC
+#ifndef STANDARDC_GC
+#define STANDARDC_GC
 
 #include <stddef.h> 
 // size_t

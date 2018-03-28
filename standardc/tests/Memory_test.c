@@ -24,9 +24,9 @@ RUN
         *b = 6;
         *c = 10;
         
-        decref(a);
-        decref(b);
-        decref(c);
+        decref(&a);
+        decref(&b);
+        decref(&c);
     
     END
     
@@ -45,7 +45,7 @@ RUN
         *b = 6;
         *c = 10;
         
-        del(memory);
+        del(&memory);
     
     END
 

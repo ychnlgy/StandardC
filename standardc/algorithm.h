@@ -1,5 +1,5 @@
-#ifndef STANDARD_ALGORITHM
-#define STANDARD_ALGORITHM
+#ifndef STANDARDC_ALGORITHM
+#define STANDARDC_ALGORITHM
 
 #define max(a,b) \
     a > b? a : b

@@ -14,8 +14,8 @@ SETUP {
 }
 
 TEARDOWN {
-    del(s1);
-    del(s2);
+    del(&s1);
+    del(&s2);
 }
 
 RUN
@@ -33,7 +33,7 @@ RUN
         String* s3 = new_String();
         s3->init(s3, "Half");
         ASSERT(s1->equals(s1, s3));
-        del(s3);
+        del(&s3);
     END
     
     CASE("copy")
@@ -49,6 +49,6 @@ RUN
         ASSERT(!(s2->equals(s2, s3)));
         ASSERT(!(s2->equals(s2, s1)));
         
-        del(s3);
+        del(&s3);
     END
 STOP

@@ -69,7 +69,7 @@ String* copy_String(String* this) {
     return copy;
 }
 
-int equals_String(String* this, String* other) {
+bool equals_String(String* this, String* other) {
     return strcmp(this->fields->cstr, other->fields->cstr) == 0;
 }
 

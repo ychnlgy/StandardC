@@ -1,5 +1,5 @@
-#ifndef STANDARD_PRINT
-#define STANDARD_PRINT
+#ifndef STANDARDC_PRINT
+#define STANDARDC_PRINT
 
 typedef const char* CStr;
 

@@ -1,4 +1,4 @@
-#include "../ArrayList.h"
+#include "../List.h"
 #include "../gc.h"
 #include "../unittest.h"
 
@@ -14,24 +14,24 @@ void storeBuf(void* i) {
     BUF[COUNTER++] = *((int*) i)-1;
 }
 
-ArrayList* arr;
+List* arr;
 
 SETUP {
-    arr = new_ArrayList();
+    arr = new_List();
     
-    // Init the ArrayList to store type int.
+    // Init the List to store type int.
     arr->init(arr, sizeof(int));
 }
 
 TEARDOWN {
-    del(arr);
+    del(&arr);
 }
 
 RUN
 
     CASE("immediate-free")
-        ArrayList* arr2 = new_ArrayList();
-        del(arr2);
+        List* arr2 = new_List();
+        del(&arr2);
     END
 
     CASE("push-pop")
@@ -118,7 +118,7 @@ RUN
         arr->push(arr, i+1);
         
         // replace the pushed items
-        arr->setitem(arr, 1, i+2);
+        arr->set(arr, 1, i+2);
         ASSERT(arr->len(arr) == 2);
         ASSERT(*((int*) arr->getitem(arr, 0)) == i[0]);
         ASSERT(*((int*) arr->getitem(arr, 1)) == i[2]);
@@ -128,6 +128,32 @@ RUN
         ASSERT(*((int*) arr->getitem(arr, 0)) == i[3]);
         ASSERT(*((int*) arr->getitem(arr, 1)) == i[2]);
     END
+    
+    CASE("set out-of-bounds")
+        int size = 40;
+        int i = 5;
+        arr->initall(arr, sizeof(int), size, &i); // 40 5's
+        
+        int j[] = {40, 50, 60};
+        
+        ASSERT(arr->set(arr, size-1, j));
+        ASSERT(*((int*) arr->getitem(arr, size-1)) == j[0]);
+        ASSERT(*((int*) arr->getitem(arr, size-2)) == i);
+        ASSERT(*((int*) arr->getitem(arr, size-3)) == i);
+        ASSERT(*((int*) arr->getitem(arr, 0)) == i);
+        ASSERT(*((int*) arr->getitem(arr, size >> 1)) == i);
+        
+        int d[] = {0, 1, 100};
+        int k;
+        for (k=0; k<3; k++) {
+            ASSERT(!arr->set(arr, size+d[k], j + k));
+            ASSERT(*((int*) arr->getitem(arr, size-1)) == j[0]);
+            ASSERT(*((int*) arr->getitem(arr, size-2)) == i);
+            ASSERT(*((int*) arr->getitem(arr, size-3)) == i);
+            ASSERT(*((int*) arr->getitem(arr, 0)) == i);
+            ASSERT(*((int*) arr->getitem(arr, size >> 1)) == i);
+        }
+    END
 
     CASE("initall")
         int i = 20;
@@ -136,7 +162,7 @@ RUN
         for (k=0; k<4; k++) {
             int p = j[k];
             
-            ArrayList* arr2 = new_ArrayList();
+            List* arr2 = new_List();
             
             arr2->initall(arr2, sizeof(int), p, &i);
             ASSERT(arr2->len(arr2) == p);
@@ -150,7 +176,7 @@ RUN
             ASSERT(arr2->at(arr2, p) == NULL);
             ASSERT(arr2->at(arr2, p+1) == NULL);
             
-            del(arr2);
+            del(&arr2);
         }
         
     END
@@ -172,7 +198,7 @@ RUN
         is[size-1] = 122;
         is[size >> 2] = 13;
         
-        ArrayList* arr2 = new_ArrayList();
+        List* arr2 = new_List();
         
         // Large array init - test resize.
         arr->initarray(arr, sizeof(int), size, is);
@@ -186,7 +212,7 @@ RUN
         ASSERT(arr->at(arr, size) == NULL);
         ASSERT(arr2->at(arr2, size) == NULL);
         
-        del(arr2);
+        del(&arr2);
     END
     
     CASE("foreach")

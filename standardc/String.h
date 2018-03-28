@@ -1,5 +1,7 @@
-#ifndef STANDARD_STRING
-#define STANDARD_STRING
+#ifndef STANDARDC_STRING
+#define STANDARDC_STRING
+
+#include "bool.h"
 
 typedef const char* CStr;
 
@@ -13,7 +15,7 @@ struct String {
     
     void        (*init)     (String*, CStr);
     String*     (*copy)     (String*);
-    int         (*equals)   (String*, String*);
+    bool        (*equals)   (String*, String*);
     int         (*len)      (String*);
 };
 

@@ -14,22 +14,24 @@ void* new(size_t bytes, Destructor destructor) {
     return ++intPtr;
 }
 
-void incref(void* ptr) {
-    ++(*(((int*) ptr)-1));
+void incref(void* ptrptr) {
+    ++(*((*((int**) ptrptr))-1));
 }
 
-void decref(void* ptr) {
-    int ref = --(*(((int*) ptr)-1));
+void decref(void* ptrptr) {
+    int ref = --(*((*((int**) ptrptr))-1));
     assert(ref >= 0);
     if (ref == 0) {
-        del(ptr);
+        del(ptrptr);
     }
 }
 
-void del(void* ptr) {
-    int* intPtr = (int*) ptr;
+void del(void* ptrptr) {
+    void** vptrptr = (void**) ptrptr;
+    int* intPtr = *vptrptr;
     Destructor* dstPtr = (Destructor*) --intPtr;
     Destructor destructor = *(--dstPtr);
-    destructor(ptr);
+    destructor(*vptrptr);
     free(dstPtr);
+    *vptrptr = NULL;
 }

@@ -1,5 +1,5 @@
 #include "Memory.h"
-#include "ArrayList.h"
+#include "List.h"
 
 #include <stdlib.h> 
 // malloc
@@ -10,27 +10,27 @@ void* make_Memory(Memory* this, void*(*maker)());
 
 // === PRIVATE METHODS ===
 
-void free_ptr(void* ptr) {
-    decref(*((void**) ptr));
+void free_ptr(void* ptrptr) {
+    decref(ptrptr);
 }
 
 // === PUBLIC METHODS ===
 
 struct MemoryFields {
-    ArrayList* arr;
+    List* arr;
 };
 
 void del_Memory(void* ptr) {
     Memory* this = ptr;
     this->fields->arr->foreach(this->fields->arr, &free_ptr);
-    del(this->fields->arr);
+    del(&this->fields->arr);
     free(this->fields);
 }
 
 void* new_Memory() {
     Memory* this = new(sizeof(Memory), &del_Memory);
     this->fields = malloc(sizeof(MemoryFields));
-    this->fields->arr = new_ArrayList();
+    this->fields->arr = new_List();
     this->fields->arr->init(this->fields->arr, sizeof(void*));
     
     this->track = &track_Memory;

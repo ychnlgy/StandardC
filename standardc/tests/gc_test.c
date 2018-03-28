@@ -16,22 +16,29 @@ RUN
         
         ASSERT(*a + *b == 9);
         
-        incref(b);
-        incref(b);
+        incref(&b);
+        incref(&b);
         ASSERT(*a + *b == 9);
         
-        decref(b);
+        decref(&b);
         ASSERT(*a + *b == 9);
         
-        decref(b);
+        decref(&b);
         ASSERT(*a + *b == 9);
         
-        decref(b);
-        decref(a);
+        ASSERT(b != NULL);
+        decref(&b);
+        ASSERT(b == NULL);
+        
+        ASSERT(a != NULL);
+        decref(&a);
+        ASSERT(a == NULL);
         
         int* c = new(sizeof(int), &destroy_nothing);
-        del(c);
-    
+        
+        ASSERT(c != NULL);
+        del(&c);
+        ASSERT(c == NULL);
     END
 
 STOP
