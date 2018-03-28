@@ -43,7 +43,11 @@ RUN
         ASSERT(**((int**) list->getitem(list, 0)) == *i2);
         ASSERT(**((int**) list->getitem(list, 1)) == *i2);
         
-        list->set(list, 1, &i1);
+        ASSERT(list->set(list, 1, &i1));
+        ASSERT(**((int**) list->getitem(list, 0)) == *i2);
+        ASSERT(**((int**) list->getitem(list, 1)) == *i1);
+        
+        ASSERT(!list->set(list, 2, &i1));
         ASSERT(**((int**) list->getitem(list, 0)) == *i2);
         ASSERT(**((int**) list->getitem(list, 1)) == *i1);
         
