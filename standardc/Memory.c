@@ -4,6 +4,10 @@
 #include <stdlib.h> 
 // malloc
 
+void track_Memory(Memory* this, void* ptr);
+void* alloc_Memory(Memory* this, int typesize, Destructor destructor);
+void* make_Memory(Memory* this, void*(*maker)());
+
 // === PRIVATE METHODS ===
 
 void free_ptr(void* ptr) {
@@ -12,25 +16,31 @@ void free_ptr(void* ptr) {
 
 // === PUBLIC METHODS ===
 
-struct Memory {
+struct MemoryFields {
     ArrayList* arr;
 };
 
-Memory* new_Memory() {
-    Memory* this = malloc(sizeof(Memory));
-    this->arr = new_ArrayList();
-    init_ArrayList(this->arr, sizeof(void*));
+void del_Memory(void* ptr) {
+    Memory* this = ptr;
+    this->fields->arr->foreach(this->fields->arr, &free_ptr);
+    del(this->fields->arr);
+    free(this->fields);
+}
+
+void* new_Memory() {
+    Memory* this = new(sizeof(Memory), &del_Memory);
+    this->fields = malloc(sizeof(MemoryFields));
+    this->fields->arr = new_ArrayList();
+    this->fields->arr->init(this->fields->arr, sizeof(void*));
+    
+    this->track = &track_Memory;
+    this->alloc = &alloc_Memory;
+    this->make  = &make_Memory;
     return this;
 }
 
-void free_Memory(Memory* this) {
-    foreach_ArrayList(this->arr, &free_ptr);
-    del(this->arr);
-    free(this);
-}
-
 void track_Memory(Memory* this, void* ptr) {
-    push_ArrayList(this->arr, ptr);
+    this->fields->arr->push(this->fields->arr, ptr);
 }
 
 void* alloc_Memory(Memory* this, int typesize, Destructor destructor) {

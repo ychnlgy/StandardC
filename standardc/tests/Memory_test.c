@@ -1,41 +1,52 @@
 #include "../Memory.h"
-
-#include <stdio.h>
-// printf
+#include "../unittest.h"
 
 void* new_int() {
     return new(sizeof(int), &destroy_nothing);
 }
 
-int main() {
-    printf("Running %s...", __FILE__);
+int* a;
+int* b;
+int* c;
+
+SETUP{}
+TEARDOWN{}
+
+RUN
     
-    // Old method
-    Memory* memory = new_Memory();
+    CASE("old-method")
+
+        a = new(sizeof(int), &destroy_nothing);
+        b = new(sizeof(int), &destroy_nothing);
+        c = new_int();
+        
+        *a = 4;
+        *b = 6;
+        *c = 10;
+        
+        decref(a);
+        decref(b);
+        decref(c);
     
-    int* a = new(sizeof(int), &destroy_nothing);
-    int* b = new(sizeof(int), &destroy_nothing);
+    END
     
-    *a = 4;
-    *b = 6;
+    CASE("new-method")
     
-    decref(a);
-    decref(b);
+        Memory* memory = new_Memory();
+        
+        a = new(sizeof(int), &destroy_nothing);
+        memory->track(memory, &a);
+        
+        b = memory->alloc(memory, sizeof(int), &destroy_nothing);
+        
+        c = memory->make(memory, &new_int);
+        
+        *a = 4;
+        *b = 6;
+        *c = 10;
+        
+        del(memory);
     
-    free_Memory(memory);
-    
-    // New ways
-    memory = new_Memory();
-    
-    a = new(sizeof(int), &destroy_nothing);
-    track_Memory(memory, &a);
-    b = alloc_Memory(memory, sizeof(int), &destroy_nothing);
-    int* c = make_Memory(memory, &new_int);
-    *c = 10;
-    
-    
-    free_Memory(memory);
-    
-    printf("OK\n");
-    return 0;
-}
+    END
+
+STOP

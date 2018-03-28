@@ -4,13 +4,16 @@
 #include "gc.h"
 
 typedef struct Memory Memory;
+typedef struct MemoryFields MemoryFields;
 
-Memory* new_Memory();
-void free_Memory(Memory* this);
+void* new_Memory();
 
-// methods
-void track_Memory(Memory* this, void* ptr);
-void* alloc_Memory(Memory* this, int typesize, Destructor destructor);
-void* make_Memory(Memory* this, void*(*maker)());
+struct Memory {
+    MemoryFields* fields;
+    
+    void    (*track)    (Memory*, void*);
+    void*   (*alloc)    (Memory*, int, Destructor);
+    void*   (*make)     (Memory*, void*(*)());
+};
 
 #endif

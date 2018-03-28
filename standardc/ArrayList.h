@@ -1,32 +1,36 @@
 #ifndef STANDARD_ARRAYLIST
 #define STANDARD_ARRAYLIST
 
-typedef struct ArrayList ArrayList;
-
 void* new_ArrayList();
 
-// Init
-void init_ArrayList(ArrayList* this, int typesize);
-void initall_ArrayList(ArrayList* this, int typesize, int len, void* value);
-void initarray_ArrayList(ArrayList* this, int typesize, int len, void* array);
+typedef struct ArrayListFields ArrayListFields;
+typedef struct ArrayList ArrayList;
 
-// Getters
-int len_ArrayList(ArrayList* this);
-
-// Modifiers
-void push_ArrayList(ArrayList* this, void* item);
-void* pop_ArrayList(ArrayList* this);
-
-// Fast but unsafe operations (does not check range).
-void* getitem_ArrayList(ArrayList* this, int i);
-void setitem_ArrayList(ArrayList* this, int i, void* item);
-
-// Slow but safe operations.(checks range).
-void* at_ArrayList(ArrayList* this, int i);
-void set_ArrayList(ArrayList* this, int i, void* item);
-
-// Iteration
-void foreach_ArrayList(ArrayList* this, void(*fn)(void*));
-//ArrayList* map_ArrayList(ArrayList*
+struct ArrayList {
+    ArrayListFields* fields;
+    
+    // Init
+    void    (*init)         (ArrayList*, int);
+    void    (*initall)      (ArrayList*, int, int, void*);
+    void    (*initarray)    (ArrayList*, int, int, void*);
+    
+    // Getters
+    int     (*len)          (ArrayList*);
+    
+    // Modifiers
+    void    (*push)         (ArrayList*, void*);
+    void*   (*pop)          (ArrayList*);
+    
+    // Fast but unsafe accessors (does not check range)
+    void*   (*getitem)      (ArrayList*, int);
+    void    (*setitem)      (ArrayList*, int, void*);
+    
+    // Slow but safe accessors (checks for range)
+    void*   (*at)           (ArrayList*, int);
+    
+    // Iteration
+    void    (*foreach)      (ArrayList*, void(*)(void*));
+    
+};
 
 #endif

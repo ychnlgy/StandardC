@@ -39,6 +39,13 @@ RUN
         ASSERT(5 + 5 ==10);
     END
     
+    CASE("Multiple suppression")
+        int i;
+        for (i=0; i<10; i++)
+            ASSERT(1 == 2);
+        ASSERT(2 == 2);
+    END
+    
     CASE("Check Foo init")
         ASSERT(foo.i == a - 20);
         ASSERT(foo.c == 'w');

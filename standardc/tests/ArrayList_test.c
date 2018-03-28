@@ -1,157 +1,205 @@
 #include "../ArrayList.h"
 #include "../gc.h"
-#include "../algorithm.h"
-#include "../Memory.h"
-
-#include <stdio.h>
-#include <assert.h>
+#include "../unittest.h"
 
 int encrypt(int i) {
     return (i+20)*7;
 }
 
-void do_nothing(void* ptr) {}
+#define BUFSIZE 5
+int BUF[BUFSIZE];
+int COUNTER = 0;
 
-int main() {
-    printf("Running %s...", __FILE__);
-    Memory* mem = new_Memory();
+void storeBuf(void* i) {
+    BUF[COUNTER++] = *((int*) i)-1;
+}
+
+ArrayList* arr;
+
+SETUP {
+    arr = new_ArrayList();
     
-    ArrayList* a1 = make_Memory(mem, &new_ArrayList);
-    init_ArrayList(a1, sizeof(int));
+    // Init the ArrayList to store type int.
+    arr->init(arr, sizeof(int));
+}
+
+TEARDOWN {
+    del(arr);
+}
+
+RUN
+
+    CASE("immediate-free")
+        ArrayList* arr2 = new_ArrayList();
+        del(arr2);
+    END
+
+    CASE("push-pop")
+        
+        ASSERT(arr->len(arr) == 0);
+        
+        int i[] = {40, 1231};
+        arr->push(arr, i);
+        arr->push(arr, i+1);
+        ASSERT(*((int*) arr->getitem(arr, 0)) == i[0]);
+        ASSERT(*((int*) arr->getitem(arr, 1)) == i[1]);
+        ASSERT(arr->len(arr) == 2);
+        
+        int* p;
+        
+        p = arr->pop(arr);
+        ASSERT(arr->len(arr) == 1);
+        ASSERT(*p == i[1]);
+        
+        p = arr->pop(arr);
+        ASSERT(arr->len(arr) == 0);
+        ASSERT(*p == i[0]);
+        
+        p = arr->pop(arr);
+        ASSERT(arr->len(arr) == 0);
+        ASSERT(p == NULL);
+        
+        p = arr->pop(arr);
+        ASSERT(arr->len(arr) == 0);
+        ASSERT(p == NULL);
+        
+    END
     
-    // Test general properties.
-    assert(len_ArrayList(a1) == 0);
+    CASE("resize")
     
-    int i1 = 40;
-    int i2 = 1231;
-    push_ArrayList(a1, &i1);
-    push_ArrayList(a1, &i2);
-    assert(*((int*) getitem_ArrayList(a1, 0)) == i1);
-    assert(*((int*) getitem_ArrayList(a1, 1)) == i2);
-    assert(len_ArrayList(a1) == 2);
-    
-    int* i3 = pop_ArrayList(a1);
-    assert(len_ArrayList(a1) == 1);
-    int* i4 = pop_ArrayList(a1);
-    assert(len_ArrayList(a1) == 0);
-    int* i5 = pop_ArrayList(a1);
-    assert(len_ArrayList(a1) == 0);
-    int* i6 = pop_ArrayList(a1);
-    assert(len_ArrayList(a1) == 0);
-    
-    assert(*i3 == i2); // stack reverse
-    assert(*i4 == i1);
-    assert(i5 == NULL);
-    assert(i6 == NULL);
-    
-    // Test resize
-    int TEST_N = 10000;
-    
-    {
+        int TEST_N = 10000;
+        
         int i;
+        
+        // Fill the array with many encrypted ints to induce resize.
         for (i=0; i<TEST_N; i++) {
             int j = encrypt(i);
-            push_ArrayList(a1, &j);
+            arr->push(arr, &j);
         }
-    }
-    
-    int is[] = {0, TEST_N >> 1, TEST_N-1};
-    
-    {
-        int i;
-        for (i=0; i<len(is); i++) {
-            int j = encrypt(is[i]);
-            int* k = getitem_ArrayList(a1, is[i]);
-            assert(*k == j);
-            k = at_ArrayList(a1, is[i]);
-            assert(*k == j);
+        
+        // Test the indices within the resized array.
+        int is[] = {0, TEST_N >> 1, TEST_N-1};
+        for (i=0; i<3; i++) {
+            int p = is[i];
+            int j = encrypt(p);
+            int* k;
+            
+            k = arr->getitem(arr, p);
+            ASSERT(*k == j);
+            
+            // Test if at does the same as getitem.
+            k = arr->at(arr, p);
+            ASSERT(*k == j);
         }
-    }
-    
-    int is2[] = {TEST_N, TEST_N+1, 2*TEST_N};
-    
-    {
-        int i;
-        for (i=0; i<len(is2); i++) {
-            int* k = at_ArrayList(a1, is2[i]);
-            assert(k == NULL);
+        
+        // Test the indices outside the resized array.
+        int is2[] = {-100, -1, TEST_N, TEST_N+1, 2*TEST_N};
+        for (i=0; i<5; i++) {
+            int* k = arr->at(arr, is2[i]);
+            ASSERT(k == NULL);
         }
-    }
-    
-    {
-        int i;
+        
+        // Test pop order
         for (i=0; i<TEST_N; i++) {
             int p = TEST_N-i-1;
             int j = encrypt(p);
-            int* k = pop_ArrayList(a1);
-            assert(len_ArrayList(a1) == p);
-            assert(j == *k);
+            int* k = arr->pop(arr);
+            ASSERT(arr->len(arr) == p);
+            ASSERT(j == *k);
         }
-    }
+        
+    END
     
-    // Test setitem
-    assert(len_ArrayList(a1) == 0);
-    push_ArrayList(a1, &i1);
-    push_ArrayList(a1, &i2);
-    
-    int p = 100;
-    setitem_ArrayList(a1, 1, &p);
-    assert(len_ArrayList(a1) == 2);
-    assert(*((int*) getitem_ArrayList(a1, 0)) == i1);
-    assert(*((int*) getitem_ArrayList(a1, 1)) == p);
-    
-    // Test initall
-    int is3[] = {1, 4, 7, 8};
-    int is4[] = {0, 4, 200, 1000};
-    
-    {
-        int k;
-        for (k=0; k<len(is4); k++) {
-            int p = is4[k];
-            ArrayList* a2 = make_Memory(mem, &new_ArrayList);
-            initall_ArrayList(a2, sizeof(int), p, is3);
-            assert(len_ArrayList(a2) == p);
-            int i;
-            for (i=0; i<p; i++)
-                assert(*((int*) at_ArrayList(a2, i)) == is3[0]);
-            assert(at_ArrayList(a2, p) == NULL);
-            assert(at_ArrayList(a2, p+1) == NULL);
-        }
-    }
-    
-    // Test initarray
-    ArrayList* a3 = make_Memory(mem, &new_ArrayList);
-    initarray_ArrayList(a3, sizeof(int), 0, NULL);
-    assert(len_ArrayList(a3) == 0);
-    assert(at_ArrayList(a3, 0) == NULL);
+    CASE("setitem")
+        ASSERT(arr->len(arr) == 0);
+        
+        int i[] = {1, 2, 3, 4};
+        arr->push(arr, i);
+        arr->push(arr, i+1);
+        
+        // replace the pushed items
+        arr->setitem(arr, 1, i+2);
+        ASSERT(arr->len(arr) == 2);
+        ASSERT(*((int*) arr->getitem(arr, 0)) == i[0]);
+        ASSERT(*((int*) arr->getitem(arr, 1)) == i[2]);
+        
+        arr->setitem(arr, 0, i+3);
+        ASSERT(arr->len(arr) == 2);
+        ASSERT(*((int*) arr->getitem(arr, 0)) == i[3]);
+        ASSERT(*((int*) arr->getitem(arr, 1)) == i[2]);
+    END
 
-    int size = 5000;
-    int is5[size];
+    CASE("initall")
+        int i = 20;
+        int j[] = {0, 4, 200, 1000};
+        int k;
+        for (k=0; k<4; k++) {
+            int p = j[k];
+            
+            ArrayList* arr2 = new_ArrayList();
+            
+            arr2->initall(arr2, sizeof(int), p, &i);
+            ASSERT(arr2->len(arr2) == p);
+            
+            // See contents are all same value
+            int w;
+            for (w=0; w<p; w++)
+                ASSERT(*((int*) arr2->at(arr2, w)) == i);
+            
+            ASSERT(arr2->at(arr2, -1) == NULL);
+            ASSERT(arr2->at(arr2, p) == NULL);
+            ASSERT(arr2->at(arr2, p+1) == NULL);
+            
+            del(arr2);
+        }
+        
+    END
     
-    {
+    CASE("initarray")
+    
+        // Test re-init (expect no memory leak)
+        // then extend with empty array
+        arr->initarray(arr, sizeof(int), 0, NULL);
+        ASSERT(arr->len(arr) == 0);
+        ASSERT(arr->at(arr, 0) == NULL);
+        
+        // Init a large random array
+        int size = 5000;
+        int is[size];
         int i;
         for (i=0; i<size; i++)
-            is5[i] = 123;
-        is5[size-1] = 122;
-        is5[size >> 2] = 13;
-    }
+            is[i] = 123;
+        is[size-1] = 122;
+        is[size >> 2] = 13;
+        
+        ArrayList* arr2 = new_ArrayList();
+        
+        // Large array init - test resize.
+        arr->initarray(arr, sizeof(int), size, is);
+        arr2->initarray(arr2, sizeof(int), size, is);
+        
+        for (i=0; i<size; i++) {
+            ASSERT(*((int*) arr->at(arr, i)) == is[i]);
+            ASSERT(*((int*) arr2->at(arr2, i)) == is[i]);
+        }
+        
+        ASSERT(arr->at(arr, size) == NULL);
+        ASSERT(arr2->at(arr2, size) == NULL);
+        
+        del(arr2);
+    END
     
-    ArrayList* a4 = make_Memory(mem, &new_ArrayList);
-    initarray_ArrayList(a4, sizeof(int), size, is5);
-    
-    {
+    CASE("foreach")
+        int is[] = {1, 2, 3, 4, 5};
+        arr->initarray(arr, sizeof(int), 5, is);
+        arr->foreach(arr, &storeBuf);
         int i;
-        for (i=0; i<size; i++)
-            assert(*((int*) at_ArrayList(a4, i)) == is5[i]);
-        assert(at_ArrayList(a4, size) == NULL);
-    }
-    
-    // Test foreach
-    ArrayList* a5 = make_Memory(mem, &new_ArrayList);
-    initarray_ArrayList(a5, sizeof(int), len(is3), is3);
-    foreach_ArrayList(a5, &do_nothing);
-    
-    free_Memory(mem);
-    printf("OK\n");
-    return 0;
-}
+        for (i=0; i<BUFSIZE; i++) {
+            int p = *((int*) arr->at(arr, i));
+            ASSERT(p == is[i]);
+            ASSERT(is[i]-1 == BUF[i]);
+            ASSERT(p == BUF[i]+1);
+        }
+    END
+
+STOP

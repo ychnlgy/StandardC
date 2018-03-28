@@ -7,10 +7,15 @@
 #include <stdlib.h>
 // malloc
 
+#include <assert.h>
+
 struct _TestSuite {
     int failedExitCode;
     int failed;
     int total;
+    
+    int maxlines;
+    char* linesCovered;
 };
 
 struct _TestCase {
@@ -60,12 +65,25 @@ void reportGoodCase(_TestCase* testcase) {
     );
 }
 
-void reportFailAssert(CStr expr, int line) {
-    printRed(
-        "\n\t\tLine %d: %s",
-        line,
-        expr
-    );
+int lineAlreadyCovered(_TestCase* testcase, int line) {
+    assert(line < testcase->suite->maxlines);
+    return testcase->suite->linesCovered[line];
+}
+
+void markCoveredLine(_TestCase* testcase, int line) {
+    assert(line < testcase->suite->maxlines);
+    testcase->suite->linesCovered[line] = 1;
+}
+
+void reportFailAssert(_TestCase* testcase, CStr expr, int line) {
+    if (!lineAlreadyCovered(testcase, line)) {
+        printRed(
+            "\n\t\tLine %d: %s",
+            line,
+            expr
+        );
+        markCoveredLine(testcase, line);
+    }
 }
 
 void updateTotal(_TestCase* testcase) {
@@ -78,14 +96,25 @@ void updateFail(_TestCase* testcase) {
     testcase->suite->failed++;
 }
 
+void initLinesCovered(_TestSuite* suite) {
+    int i;
+    for (i=0; i<suite->maxlines; i++)
+        suite->linesCovered[i] = 0;
+}
+
 // === PUBLIC ===
 
-_TestSuite* _initTestSuite(CStr fname, int failedExitCode) {
+_TestSuite* _initTestSuite(CStr fname, int failedExitCode, int maxlines) {
     reportFile(fname);
     _TestSuite* out = malloc(sizeof(_TestSuite));
     out->failed = 0;
     out->total = 0;
     out->failedExitCode = failedExitCode;
+    
+    out->maxlines = maxlines;
+    out->linesCovered = malloc(sizeof(char)*maxlines);
+    initLinesCovered(out);
+    
     return out;
 }
 
@@ -98,6 +127,7 @@ int _free_testSuite(_TestSuite* suite) {
         reportGoodSuite(suite);
         exitcode = 0;
     }
+    free(suite->linesCovered);
     free(suite);
     return exitcode;
 }
@@ -123,7 +153,7 @@ void _free_testCase(_TestCase* testcase) {
 void _expect(_TestCase* testcase, int boolean, CStr expr, int line) {
     updateTotal(testcase);
     if (!boolean) {
-        reportFailAssert(expr, line);
+        reportFailAssert(testcase, expr, line);
         updateFail(testcase);
     }
 }

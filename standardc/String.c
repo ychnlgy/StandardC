@@ -8,41 +8,72 @@
 
 #include "gc.h"
 
-struct String {
-    size_t len;
+// === SIGNATURES ===
+
+String* copy_String(String*);
+int equals_String(String*, String*);
+int len_String(String*);
+void init_String(String*, CStr);
+
+struct StringFields {
+    int inited;
+    int len;
     char* cstr;
 };
 
-char* copy_Cstr(const char* src, size_t len) {
+// === CONCRETE ===
+
+void del_String(void* ptr) {
+    String* this = ptr;
+    if (this->fields->inited)
+        free(this->fields->cstr);
+    free(this->fields);
+}
+
+void* new_String() {
+    String* this = new(sizeof(String), &del_String);
+    this->fields = malloc(sizeof(StringFields));
+    this->fields->inited = 0;
+    
+    this->init      = &init_String;
+    this->copy      = &copy_String;
+    this->equals    = &equals_String;
+    this->len       = &len_String;
+    return this;
+}
+
+void checkInited(String* this) {
+    if (this->fields->inited)
+        free(this->fields->cstr);
+    this->fields->inited = 1;
+}
+
+char* copy_Cstr(const char* src, int len) {
     char* cstrPtr = malloc(sizeof(char)*(len+1));
     strncpy(cstrPtr, src, len);
     cstrPtr[len] = '\0';
     return cstrPtr;
 }
 
-void del_String(void* ptr) {
-    free(((String*) ptr)->cstr);
+void init_String(String* this, CStr cstr) {
+    checkInited(this);
+    this->fields->len = strlen(cstr);
+    this->fields->cstr = copy_Cstr(cstr, this->fields->len);
 }
 
-String* new_String(CStr cstr) {
-    String* s = new(sizeof(String), &del_String);
-    s->len = strlen(cstr);
-    s->cstr = copy_Cstr(cstr, s->len);
-    return s;
-}
-
-String* copy_String(String* s) {
-    String* copy = new(sizeof(String), &del_String);
-    copy->len = s->len;
-    copy->cstr = copy_Cstr(s->cstr, s->len);
+String* copy_String(String* this) {
+    String* copy = new_String();
+    copy->fields->inited = 1;
+    copy->fields->len = this->fields->len;
+    copy->fields->cstr = copy_Cstr(this->fields->cstr, this->fields->len);
     return copy;
 }
 
-int equals_String(String* s1, String* s2) {
-    return strcmp(s1->cstr, s2->cstr) == 0;
+int equals_String(String* this, String* other) {
+    return strcmp(this->fields->cstr, other->fields->cstr) == 0;
 }
 
-size_t len_String(String* s) {
-    return s->len;
+int len_String(String* this) {
+    return this->fields->len;
 }
 
