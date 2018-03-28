@@ -4,19 +4,21 @@
 #include "bool.h"
 
 typedef const char* CStr;
+typedef struct StringFields StringFields;
+typedef struct StringVtable StringVtable;
 
 typedef struct String String;
-typedef struct StringFields StringFields;
 
 void* new_String();
 
 struct String {
     StringFields* fields;
+    StringVtable* vtable;
     
-    void        (*init)     (String*, CStr);
-    String*     (*copy)     (String*);
-    bool        (*equals)   (String*, String*);
-    int         (*len)      (String*);
+    void        (*init)     (void*, CStr);
+    String*     (*copy)     (void*);
+    bool        (*equals)   (void*, void*);
+    int         (*len)      (void*);
 };
 
 #endif

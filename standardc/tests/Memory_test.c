@@ -1,5 +1,6 @@
 #include "../Memory.h"
 #include "../unittest.h"
+#include "../gc.h"
 
 void* new_int() {
     return new(sizeof(int), &destroy_nothing);
@@ -9,8 +10,15 @@ int* a;
 int* b;
 int* c;
 
-SETUP{}
-TEARDOWN{}
+Memory* memory;
+
+SETUP{
+    memory = new_Memory();
+}
+
+TEARDOWN{
+    del(&memory);
+}
 
 RUN
     
@@ -31,21 +39,30 @@ RUN
     END
     
     CASE("new-method")
-    
-        Memory* memory = new_Memory();
         
         a = new(sizeof(int), &destroy_nothing);
         memory->track(memory, &a);
         
-        b = memory->alloc(memory, sizeof(int), &destroy_nothing);
+        b = memory->alloc(memory, sizeof(int));
         
         c = memory->make(memory, &new_int);
         
         *a = 4;
         *b = 6;
         *c = 10;
-        
-        del(&memory);
+    
+    END
+    
+    CASE("track NULL")
+    
+        a = memory->alloc(memory, sizeof(int));
+        b = memory->alloc(memory, sizeof(int));
+        c = new_int();
+        int* d = new_int();
+        memory->track(memory, &c);
+        memory->track(memory, &d);
+        memory->track(memory, NULL);
+        memory->track(memory, NULL);
     
     END
 

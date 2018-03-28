@@ -1,28 +1,16 @@
 #include "Memory.h"
-#include "List.h"
+#include "Memory_protected.h"
+
+#include "gc.h"
 
 #include <stdlib.h> 
 // malloc
 
-void track_Memory(Memory* this, void* ptr);
-void* alloc_Memory(Memory* this, int typesize, Destructor destructor);
-void* make_Memory(Memory* this, void*(*maker)());
-
-// === PRIVATE METHODS ===
-
-void free_ptr(void* ptrptr) {
-    decref(ptrptr);
-}
-
 // === PUBLIC METHODS ===
-
-struct MemoryFields {
-    List* arr;
-};
 
 void del_Memory(void* ptr) {
     Memory* this = ptr;
-    this->fields->arr->foreach(this->fields->arr, &free_ptr);
+    this->fields->arr->foreach(this->fields->arr, &decref);
     del(&this->fields->arr);
     free(this->fields);
 }
@@ -39,17 +27,20 @@ void* new_Memory() {
     return this;
 }
 
-void track_Memory(Memory* this, void* ptr) {
-    this->fields->arr->push(this->fields->arr, ptr);
+void track_Memory(void* _this, void* ptr) {
+    if (ptr != NULL) {
+        Memory* this = _this;
+        this->fields->arr->push(this->fields->arr, ptr);
+    }
 }
 
-void* alloc_Memory(Memory* this, int typesize, Destructor destructor) {
-    void* out = new(typesize, destructor);
+void* alloc_Memory(void* this, int typesize) {
+    void* out = new(typesize, &destroy_nothing);
     track_Memory(this, &out);
     return out;
 }
 
-void* make_Memory(Memory* this, void*(*maker)()) {
+void* make_Memory(void* this, void*(*maker)()) {
     void* out = maker();
     track_Memory(this, &out);
     return out;

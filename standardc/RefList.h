@@ -5,29 +5,28 @@
 
 void* new_RefList();
 
-typedef struct RefList RefList;
-
-struct RefList {
+typedef struct RefList {
     ListFields* fields;
+    ListVtable* vtable;
     
     // Getters
-    int     (*len)          (RefList*);
+    int     (*len)          (void*);
     
     // Modifiers
-    void    (*push)         (RefList*, void*);
-    void*   (*pop)          (RefList*);
+    void    (*push)         (void*, void*);
+    void*   (*pop)          (void*);
     
     // Fast but unsafe accessors (does not check range)
-    void*   (*getitem)      (RefList*, int);
-    void    (*setitem)      (RefList*, int, void*);
+    void*   (*getitem)      (void*, int);
+    void    (*setitem)      (void*, int, void*);
     
     // Slow but safe accessors (checks for range)
-    void*   (*at)           (RefList*, int);
-    bool    (*set)          (RefList*, int, void*);
+    void*   (*at)           (void*, int);
+    bool    (*set)          (void*, int, void*);
     
     // Iteration
-    void    (*foreach)      (RefList*, void(*)(void*));
+    void    (*foreach)      (void*, void(*)(void*));
     
-};
+} RefList;
 
 #endif

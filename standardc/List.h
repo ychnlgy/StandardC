@@ -6,34 +6,35 @@
 void* new_List();
 
 typedef struct ListFields ListFields;
-typedef struct List List;
+typedef struct ListVtable ListVtable;
 
-struct List {
+typedef struct List {
     ListFields* fields;
+    ListVtable* vtable;
     
     // Init
-    void    (*init)         (List*, int);
-    void    (*initall)      (List*, int, int, void*);
-    void    (*initarray)    (List*, int, int, void*);
+    void    (*init)         (void*, int);
+    void    (*initall)      (void*, int, int, void*);
+    void    (*initarray)    (void*, int, int, void*);
     
     // Getters
-    int     (*len)          (List*);
+    int     (*len)          (void*);
     
     // Modifiers
-    void    (*push)         (List*, void*);
-    void*   (*pop)          (List*);
+    void    (*push)         (void*, void*);
+    void*   (*pop)          (void*);
     
     // Fast but unsafe accessors (does not check range)
-    void*   (*getitem)      (List*, int);
-    void    (*setitem)      (List*, int, void*);
+    void*   (*getitem)      (void*, int);
+    void    (*setitem)      (void*, int, void*);
     
     // Slow but safe accessors (checks for range)
-    void*   (*at)           (List*, int);
-    bool    (*set)          (List*, int, void*);
+    void*   (*at)           (void*, int);
+    bool    (*set)          (void*, int, void*);
     
     // Iteration
-    void    (*foreach)      (List*, void(*)(void*));
+    void    (*foreach)      (void*, void(*)(void*));
     
-};
+} List;
 
 #endif

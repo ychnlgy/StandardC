@@ -1,19 +1,18 @@
 #ifndef STANDARDC_MEMORY
 #define STANDARDC_MEMORY
 
-#include "gc.h"
-
-typedef struct Memory Memory;
 typedef struct MemoryFields MemoryFields;
+typedef struct MemoryVtable MemoryVtable;
 
 void* new_Memory();
 
-struct Memory {
+typedef struct Memory {
     MemoryFields* fields;
+    MemoryVtable* vtable;
     
-    void    (*track)    (Memory*, void*);
-    void*   (*alloc)    (Memory*, int, Destructor);
-    void*   (*make)     (Memory*, void*(*)());
-};
+    void    (*track)    (void*, void*);
+    void*   (*alloc)    (void*, int);
+    void*   (*make)     (void*, void*(*)());
+} Memory;
 
 #endif
