@@ -3,7 +3,7 @@
 #include "../Memory.h"
 #include "../gc.h"
 
-RefList* list;
+List* list;
 Memory* mem;
 
 int* i1;

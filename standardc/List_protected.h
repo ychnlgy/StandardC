@@ -10,10 +10,9 @@ struct ListFields {
     char* data;
 };
 
-struct ListVtable {};
 
 void del_List(void* ptr);
-void* malloc_ListFields();
+void build_List(List* this);
 
 // Init
 void init_List(void* this, int typesize);

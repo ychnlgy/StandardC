@@ -47,6 +47,7 @@ void del_List(void* ptr) {
     List* this = ptr;
     free(this->fields->data);
     free(this->fields);
+    free(this->constructors);
 }
 
 void* malloc_ListFields() {
@@ -55,13 +56,10 @@ void* malloc_ListFields() {
     return fields;
 }
 
-void* new_List() {
-    List* this = new(sizeof(List), &del_List);
+void build_List(List* this) {
     this->fields = malloc_ListFields();
+    this->constructors = NULL;
     
-    this->init      = &init_List;
-    this->initall   = &initall_List;
-    this->initarray = &initarray_List;
     this->len       = &len_List;
     this->push      = &push_List;
     this->pop       = &pop_List;
@@ -70,7 +68,16 @@ void* new_List() {
     this->at        = &at_List;
     this->set       = &set_List;
     this->foreach   = &foreach_List;
+}
+
+void* new_List() {
+    List* this = new(sizeof(List), &del_List);
+    build_List(this);
     
+    this->constructors = malloc(sizeof(ListConstructors));
+    this->constructors->init      = &init_List;
+    this->constructors->initall   = &initall_List;
+    this->constructors->initarray = &initarray_List;
     return this;
 }
 

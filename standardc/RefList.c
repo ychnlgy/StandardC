@@ -16,19 +16,12 @@ void del_RefList(void* ptr) {
 
 void* new_RefList() {
     RefList* this = new(sizeof(RefList), &del_RefList);
-    this->fields = malloc_ListFields();
+    build_List((List*) this);
     
-    // super methods
-    this->len       = &len_List;
-    this->pop       = &pop_List;
-    this->getitem   = &getitem_List;
-    this->at        = &at_List;
-    this->foreach   = &foreach_List;
-    
-    // derived methods
-    this->push      = &push_RefList;
-    this->setitem   = &setitem_RefList;
-    this->set       = &set_RefList;
+    // override methods
+    this->super.push      = &push_RefList;
+    this->super.setitem   = &setitem_RefList;
+    this->super.set       = &set_RefList;
     
     init_List(this, PTR_SIZE);
     return this;

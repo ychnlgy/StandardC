@@ -20,7 +20,7 @@ SETUP {
     arr = new_List();
     
     // Init the List to store type int.
-    arr->init(arr, sizeof(int));
+    arr->constructors->init(arr, sizeof(int));
 }
 
 TEARDOWN {
@@ -132,7 +132,7 @@ RUN
     CASE("set out-of-bounds")
         int size = 40;
         int i = 5;
-        arr->initall(arr, sizeof(int), size, &i); // 40 5's
+        arr->constructors->initall(arr, sizeof(int), size, &i); // 40 5's
         
         int j[] = {40, 50, 60};
         
@@ -164,7 +164,7 @@ RUN
             
             List* arr2 = new_List();
             
-            arr2->initall(arr2, sizeof(int), p, &i);
+            arr2->constructors->initall(arr2, sizeof(int), p, &i);
             ASSERT(arr2->len(arr2) == p);
             
             // See contents are all same value
@@ -185,7 +185,7 @@ RUN
     
         // Test re-init (expect no memory leak)
         // then extend with empty array
-        arr->initarray(arr, sizeof(int), 0, NULL);
+        arr->constructors->initarray(arr, sizeof(int), 0, NULL);
         ASSERT(arr->len(arr) == 0);
         ASSERT(arr->at(arr, 0) == NULL);
         
@@ -201,8 +201,8 @@ RUN
         List* arr2 = new_List();
         
         // Large array init - test resize.
-        arr->initarray(arr, sizeof(int), size, is);
-        arr2->initarray(arr2, sizeof(int), size, is);
+        arr->constructors->initarray(arr, sizeof(int), size, is);
+        arr2->constructors->initarray(arr2, sizeof(int), size, is);
         
         for (i=0; i<size; i++) {
             ASSERT(*((int*) arr->at(arr, i)) == is[i]);
@@ -217,7 +217,7 @@ RUN
     
     CASE("foreach")
         int is[] = {1, 2, 3, 4, 5};
-        arr->initarray(arr, sizeof(int), 5, is);
+        arr->constructors->initarray(arr, sizeof(int), 5, is);
         arr->foreach(arr, &storeBuf);
         int i;
         for (i=0; i<BUFSIZE; i++) {

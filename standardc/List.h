@@ -6,16 +6,16 @@
 void* new_List();
 
 typedef struct ListFields ListFields;
-typedef struct ListVtable ListVtable;
 
-typedef struct List {
-    ListFields* fields;
-    ListVtable* vtable;
-    
-    // Init
+typedef struct ListConstructors {
     void    (*init)         (void*, int);
     void    (*initall)      (void*, int, int, void*);
     void    (*initarray)    (void*, int, int, void*);
+} ListConstructors;
+
+typedef struct List {
+    ListFields* fields;
+    ListConstructors* constructors;
     
     // Getters
     int     (*len)          (void*);

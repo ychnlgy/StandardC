@@ -13,6 +13,4 @@ struct StringFields {
     char* cstr;
 };
 
-struct StringVtable {};
-
 #endif

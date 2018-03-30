@@ -19,7 +19,7 @@ void* new_Memory() {
     Memory* this = new(sizeof(Memory), &del_Memory);
     this->fields = malloc(sizeof(MemoryFields));
     this->fields->arr = new_List();
-    this->fields->arr->init(this->fields->arr, sizeof(void*));
+    this->fields->arr->constructors->init(this->fields->arr, sizeof(void*));
     
     this->track = &track_Memory;
     this->alloc = &alloc_Memory;
