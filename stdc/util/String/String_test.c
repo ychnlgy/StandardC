@@ -1,20 +1,22 @@
 #include "stdc/lib.h"
 #include "stdc/unittest.h"
 
+#include <string.h>
+
 String* s1;
 String* s2;
 
 SETUP {
-    s1 = new_String();
-    s1->set(s1, "Hello world!");
-    
-    s2 = new_String();
-    s2->set(s2, "Evil bunny");
+	s1 = new_String();
+	s1->set(s1, "Hello world!");
+
+	s2 = new_String();
+	s2->set(s2, "Evil bunny");
 }
 
 TEARDOWN {
-    decref(s1);
-    decref(s2);
+	decref(s1);
+	decref(s2);
 }
 
 RUN
@@ -60,6 +62,12 @@ RUN
 		
 		decref(s3);
 		decref(s4);
+	END
+	
+	CASE("get-cstr")
+		ASSERT(strcmp(s2->cstr(s2), s1->cstr(s1)) != 0);
+		s2->set(s2, "Hello world!");
+		ASSERT(strcmp(s2->cstr(s2), s1->cstr(s1)) == 0);
 	END
 
 STOP

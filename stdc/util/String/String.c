@@ -33,6 +33,7 @@ void init_String(String* this) {
 	this->copy		= &copy_String;
 	this->equals	= &equals_String;
 	this->size		= &size_String;
+	this->cstr		= &cstr_String;
 }
 
 void set_String(String* this, CStr cstr) {
