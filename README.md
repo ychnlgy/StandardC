@@ -35,4 +35,4 @@ int main() {
 | Feature                          | Description                                                  |
 |----------------------------------|--------------------------------------------------------------|
 | [Garbage collection](doc/gc.md)  | Memory management to reduce the use of free.                 |
-| [List.c](doc/List.md)            | Dynamically resizing array-list.                             |
+| [List](doc/List.md)              | Dynamically resizing array-list.                             |
