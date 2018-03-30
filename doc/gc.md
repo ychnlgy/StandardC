@@ -14,7 +14,7 @@ A few functions for reference counting.
  ```
 Allocates a block of memory with size of **typesize** plus enough additional memory to store the reference count and destruction function pointer. Reference count is set to 1. 
 
-See [types](types.md) for ```Ptr``` and ```Destructor``` declarations.
+See [types](../stdc/util/types.h) for ```Ptr``` and ```Destructor``` declarations.
 
 **Note: you should not use this function often as [Memory](Memory.md) is a much better option for dynamically allocating objects on heap memory.** This function is typically used in class instantiation code rather than program coding.
 ```c
