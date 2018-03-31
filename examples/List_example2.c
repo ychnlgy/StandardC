@@ -28,37 +28,8 @@ List* createReverseRange(int n) {
     incref(list); // always incref the objects
                   // you plan to return or else
                   // decref(mem) will free them.
-    
-    // NOTE: You can ignore the following comments
-    // if you are only interested in how to use the functions.
-    
-    // If you would like to have a deeper understanding
-    // of why no memory leak or invalid memory reads are
-    // made, then read on.
-    
-    // Notice how the memory of the elements
-    // in list were allocated by Memory.
-    
-    // When they are pushed onto the list,
-    // List automatically increfs them.
-    
-    // decref(mem) results in a refcount of 0,
-    // so the Memory will be deleted, causing decref of the
-    // list it allocated at the beginning of this function.
-    
-    // Deletion of the list causes decref of all elements
-    // within the list, resulting in the deallocation
-    // of all memory allocated in this Memory scope.
-    
-    // But since the refcount of the list is 2, 
-    // after decref it will become 1 and not deleted.
-    // Therefore decref(mem) does not free
-    // the elements of the list and we are free to
-    // access them later.
     decref(mem);
-    return list; // the elements of list are not free'd
-                 // which is good because we need to 
-                 // access them later.
+    return list;
 }
 
 int sumList(List* list) {
@@ -75,9 +46,6 @@ int sumList(List* list) {
 }
 
 void incList(List* list) {
-    // returns a original list with each
-    // element of the input list 
-    // incremented by 1.
     int i;
     for (i=0; i<list->size(list); i++) {
         int* j = list->getitem(list, i);
