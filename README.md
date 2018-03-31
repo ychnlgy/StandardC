@@ -45,12 +45,12 @@ Compile with [CakeBaker](https://github.com/ychnlgy/CakeBaker):
 bakecake.py main.c app.exe
 ```
 ## Examples
-| File                                | Description                                                  |
-|-------------------------------------|--------------------------------------------------------------|
-| [Memory.c](examples/Memory.c)       | How to use Memory to track, allocate and make memory blocks. |
-| [List.c](examples/List.c)           | A demonstration of List methods.                             |
-| [String.c](examples/String.c)       | A demonstration of String methods.                           |
-| [Unittest.c](stdc/unittest/unittest_fail11of17_test.c) | How to write a unittest using StdC framework.  |
+| Feature | Description |
+|---------|--------------------------------------------------------------|
+| Memory  | [How to use Memory to track, allocate and make memory blocks.](examples/Memory_example.c) |
+| List    | [Basic](examples/List_example1.c) and [advanced](examples/List_example2.c) demonstrations of List methods. |
+| String  | A demonstration of String methods. |
+| Unittest | [How to write a unittest using StdC framework.](stdc/unittest/unittest_fail11of17_test.c) |
 
 ## Documentation
 | Feature                          | Description                                                  |
