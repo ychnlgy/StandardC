@@ -37,7 +37,7 @@ COMPILER           = gcc
 COMPILE_ARGS       = -Wall -iquote ./ -coverage
 DEFAULT_OUTPUTFILE = 
 DEFAULT_SOURCEFILE = 
-TEST_INCLUDE       = *tests/*_test.cpp *tests/test_*.cpp
+TEST_INCLUDE       = *_test.c
 TEST_OMIT          = cake .git
 ```
 Compile with [CakeBaker](https://github.com/ychnlgy/CakeBaker):
