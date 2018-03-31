@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/ychnlgy/StandardC.png)](https://travis-ci.org/ychnlgy/StandardC)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-C Standard Library.
+C Standard Library. Synergizes with [CakeBaker](https://github.com/ychnlgy/CakeBaker).
 
 ## Installation using [```git-install```](https://github.com/ychnlgy/GitInstaller)
 ```bash
@@ -16,6 +16,8 @@ git-install.py --uninstall ychnlgy/StdC
 ```
 
 ## Quickstart
+
+Write ```main.c```:
 ```cpp
 // include all headers in stdc:
 #include "stdc/lib.h"
@@ -24,7 +26,24 @@ int main() {
   return 0;
 }
 ```
-
+Setup project with [CakeBaker](https://github.com/ychnlgy/CakeBaker):
+```bash
+bakecake.py --init
+```
+Change ```cake.ini```:
+```ini
+BUILD_ARGS         = -coverage
+COMPILER           = gcc
+COMPILE_ARGS       = -Wall -iquote ./ -coverage
+DEFAULT_OUTPUTFILE = 
+DEFAULT_SOURCEFILE = 
+TEST_INCLUDE       = *tests/*_test.cpp *tests/test_*.cpp
+TEST_OMIT          = cake .git
+```
+Compile with [CakeBaker](https://github.com/ychnlgy/CakeBaker):
+```bash
+bakecake.py main.c app.exe
+```
 ## Examples
 | File                                | Description                                                  |
 |-------------------------------------|--------------------------------------------------------------|
