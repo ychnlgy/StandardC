@@ -17,40 +17,40 @@ All elements of the list are pointers to the original data.
 int main() {
   Memory* mem = new_Memory();
   
-  List* list = mem->make(mem, &new_List);
+  List* list = mem->_->make(mem, &new_List);
   
-  int* i1 = mem->alloc(mem, sizeof(int));
-  int* i2 = mem->alloc(mem, sizeof(int));
+  int* i1 = mem->_->alloc(mem, sizeof(int));
+  int* i2 = mem->_->alloc(mem, sizeof(int));
   *i1 = 20;
   *i2 = 40;
   
-  list->push(list, i1);
-  list->push(list, i2);
+  list->_->push(list, i1);
+  list->_->push(list, i2);
   // list is now [20, 40]
   
-  list->set(list, 0, i2);
+  list->_->set(list, 0, i2);
   // list is now [40, 40]
   
-  list->set(list, -1, i1);
+  list->_->set(list, -1, i1);
   // list is now [40, 20]
   
   *i1 = 60;
   // list is now [40, 60]
   
-  int* j1 = list->at(list, -1);
+  int* j1 = list->_->at(list, -1);
   // *j1 == *i1 == 60
   
-  int n = list->size(list);
+  int n = list->_->size(list);
   // n == 2
   
-  int* k1 = list->pop(list);
-  mem->track(mem, k1); // IMPORTANT:
+  int* k1 = list->_->pop(list);
+  mem->_->track(mem, k1); // IMPORTANT:
                        // List.pop does not decref popped items.
                        // Since the block of memory pointed to
                        // by k1 is no longer referenced by the list,
                        // it needs to be tracked by the memory scope.
 
-  int m = list->size(list);
+  int m = list->_->size(list);
   // m == 1
   
   decref(mem); // all memory is free'd - no leaks!
@@ -82,14 +82,14 @@ void fn(char* c) {
 int main() {
   Memory* mem = new_Memory();
   
-  List* list = mem->make(mem, &new_List);
+  List* list = mem->_->make(mem, &new_List);
   
-  char* c1 = mem->alloc(mem, sizeof(char));
-  char* c2 = mem->alloc(mem, sizeof(char));
+  char* c1 = mem->_->alloc(mem, sizeof(char));
+  char* c2 = mem->_->alloc(mem, sizeof(char));
   
   int i;
-  for (i=0; i<list->size(list); i++)
-    fn(list->getitem(list, i));
+  for (i=0; i<list->_->size(list); i++)
+    fn(list->_->getitem(list, i));
   
   decref(mem);
 }
@@ -170,12 +170,12 @@ If it decrefs every element it pops, then it will return the pointer to free'd m
 List* foo() {
   Memory* mem = new_Memory();
   
-  List* list = mem->make(mem, &new_List);
+  List* list = mem->_->make(mem, &new_List);
   
-  int* i = mem->alloc(mem, sizeof(int));
+  int* i = mem->_->alloc(mem, sizeof(int));
   // i has refcount 1
   
-  list->push(list, i);
+  list->_->push(list, i);
   // i now has refcount 2
   
   incref(list);
@@ -192,11 +192,11 @@ int main() {
   Memory* mem = new_Memory();
   
   List* list = foo();
-  mem->track(mem, list);
+  mem->_->track(mem, list);
   
-  int* j = list->pop(list);  // if List.pop were to decref the pointers
+  int* j = list->_->pop(list);  // if List.pop were to decref the pointers
                              // it pops, j will point to free'd memory,
-  mem->track(mem, j);
+  mem->_->track(mem, j);
   
   decref(mem); // all blocks of memory in this scope are free'd
   return 0;

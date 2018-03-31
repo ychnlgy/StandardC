@@ -41,9 +41,9 @@ and will be decref'd when this memory scope is destroyed.
 void bar() {
   Memory* mem = new_Memory();
   
-  int* i1 = mem->alloc(mem, sizeof(int));
-  int* i2 = mem->alloc(mem, sizeof(int));
-  int* i3 = mem->alloc(mem, sizeof(int));
+  int* i1 = mem->_->alloc(mem, sizeof(int));
+  int* i2 = mem->_->alloc(mem, sizeof(int));
+  int* i3 = mem->_->alloc(mem, sizeof(int));
   
   incref(i3); // allow i3 to survive beyond the memory scope.
   decref(mem); // i1 and i2 will be free'd here.
@@ -65,9 +65,9 @@ and will be decref'd when this memory scope is destroyed.
 void hen() {
   Memory* mem = new_Memory();
   
-  List* i1 = mem->make(mem, &new_List);
-  List* i2 = mem->make(mem, &new_List);
-  List* i3 = mem->make(mem, &new_List);
+  List* i1 = mem->_->make(mem, &new_List);
+  List* i2 = mem->_->make(mem, &new_List);
+  List* i3 = mem->_->make(mem, &new_List);
   
   incref(i3); // allow i3 to survive beyond the memory scope.
   decref(mem); // i1 and i2 will be free'd here.
@@ -89,13 +89,13 @@ and will be decref'd when this memory scope is destroyed.
 List* createRange(int n) {
   Memory* mem = new_Memory();
   
-  List* list = mem->make(mem, &new_List);
+  List* list = mem->_->make(mem, &new_List);
   
   int i;
   for (i=0; i<=n; i++) {
-    int* ni = mem->alloc(mem, sizeof(int));
+    int* ni = mem->_->alloc(mem, sizeof(int));
     *ni = i;
-    list->push(list, ni);
+    list->_->push(list, ni);
   }
   
   incref(list); // return heap-allocated memory
@@ -107,14 +107,14 @@ int sumRange(int n) {
   Memory* mem = new_Memory();
   
   List* range = createRange(n);
-  mem->track(mem, range); // since range is heap-allocated memory
+  mem->_->track(mem, range); // since range is heap-allocated memory
                           // it will need to be tracked by the
                           // current memory scope.
   
   int out = 0;
   int i;
-  for (i=0; i<range->size(range); i++)
-    out += *((int*) range->getitem(range, i));
+  for (i=0; i<range->_->size(range); i++)
+    out += *((int*) range->_->getitem(range, i));
   
   decref(mem); // range is free'd
   return out;

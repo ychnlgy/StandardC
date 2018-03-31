@@ -17,22 +17,22 @@ String class for the ease of string manipulation.
 int main() {
     Memory* mem = new_Memory();
     
-    String* s1 = mem->make(mem, &new_String);
-    s1->set(s1, "Hello world!");
+    String* s1 = mem->_->make(mem, &new_String);
+    s1->_->set(s1, "Hello world!");
     
-    String* s2 = mem->make(mem, &new_String);
-    s2->set(s2, "Carrot");
+    String* s2 = mem->_->make(mem, &new_String);
+    s2->_->set(s2, "Carrot");
     
-    String* s3 = s1->copy(s1);
-    mem->track(mem, s3); // don't forget to let stack know
+    String* s3 = s1->_->copy(s1);
+    mem->_->track(mem, s3); // don't forget to let stack know
                          // about this new block of memory.
     
     // s1 is equal to s3 but not s2.
-    assert(s1->equals(s1, s3));
-    assert(!s1->equals(s1, s2));
-    assert(!s2->equals(s2, s3));
+    assert(s1->_->equals(s1, s3));
+    assert(!s1->_->equals(s1, s2));
+    assert(!s2->_->equals(s2, s3));
     
-    printf("The length of \"%s\" is: %d\n", s1->cstr(s1), s1->size(s1));
+    printf("The length of \"%s\" is: %d\n", s1->_->cstr(s1), s1->_->size(s1));
     
     decref(mem);
     return 0;
@@ -60,9 +60,9 @@ Allocates a copy of this string on heap memory and returns the pointer to it.
 int main() {
   Memory* mem = new_Memory();
   
-  String* s1 = mem->make(mem, &new_String);
-  String* s2 = s1->copy(s1);
-  mem->track(mem, s2); // if you forget this, memory leak of s2 will occur.
+  String* s1 = mem->_->make(mem, &new_String);
+  String* s2 = s1->_->copy(s1);
+  mem->_->track(mem, s2); // if you forget this, memory leak of s2 will occur.
   
   decref(mem); // no memory leaks.
 }
