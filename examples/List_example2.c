@@ -4,8 +4,10 @@
 
 /* 
  * An example demonstrating List usage:
- *  - getitem: appends an element to the back of the list.
- *  - setitem : removes and returns the element at the back of the list.
+ *  - getitem: returns the element at the specified index.
+ *  - setitem : replaces the element at the specified index with the new element.
+ *  - Both methods do not check boundaries,
+ *    so only use them within loops to be safe.
  *  - Pay attention to returning lists from functions.
  */
 

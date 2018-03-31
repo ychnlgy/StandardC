@@ -3,8 +3,8 @@
 
 /* 
  * An example demonstrating basic List usage:
- *  - push: appends an element to the back of the list.
- *  - pop : removes and returns the element at the back of the list.
+ *  - push: appends a pointer to an element to the back of the list.
+ *  - pop : removes and returns the pointer of the element at the back of the list.
  *  - at  : safely access the list.
  *  - set : replaces the element at the index with a new element.
  *
@@ -87,7 +87,8 @@ int main() {
     assert(j9 == NULL);
     assert(list->size(list) == 0);
 
-    // notice we don't have to free or decref anything.
+    // notice we don't have to free or decref
+    // anything other than the Memory scope.
     decref(mem); 
     return 0;
 }
