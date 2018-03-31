@@ -1,6 +1,18 @@
 #include "stdc/lib.h"
 #include "stdc/unittest/print.h" // for color printing.
 
+/*
+ * An example demonstrating Memory usage:
+ *  - track: let Memory know that it is responsible for a particular pointer.
+ *  - alloc: allocate a number of bytes from this Memory scope.
+ *  - make : construct objects that this Memory scope knows about.
+ *
+ * The purpose of Memory is to reduce free/decref calls by the coder.
+ * Simply make a new Memory scope with new_Memory() at the beginning
+ * of the scope and call decref on the memory object to call decref on
+ * all the memory blocks it is responsible for.
+ */
+
 typedef struct SuperExpensiveStruct {
 	int result;
 	// assume to contain a huge number of fields.
