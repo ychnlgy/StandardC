@@ -63,3 +63,41 @@ The [CStr](../stdc/util/types.h) name of the test case.
 
 ## END
 Signals the end of the test case.
+
+## Additional macros that are usually not useful
+
+### SYSTEM_EXIT
+Define this to be 0 if you would not like the program to terminate with code 1 in the case of any error.
+
+**Define this prior to including ```stdc/unittest.h```.**
+```c
+#define SYSTEM_EXIT 0
+#include "stdc/unittest.h"
+
+SETUP{}
+TEARDOWN{}
+
+RUN
+  CASE("always fail")
+    ASSERT(false); // will no longer cause the program to exit with code 1.
+  END
+STOP
+```
+
+### MAX_LINES
+Define this to be a larger number if your unittest file is over 1000 lines.
+
+**Define this prior to including ```stdc/unittest.h```.**
+```c
+#define MAX_LINES 2000
+#include "stdc/unittest.h"
+
+SETUP{}
+TEARDOWN{}
+
+RUN
+  CASE("I should consider breaking this file into smaller files")
+    // Insert 1500 lines here (not recommended).
+  END
+STOP
+```
