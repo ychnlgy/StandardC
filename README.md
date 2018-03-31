@@ -26,13 +26,20 @@ int main() {
 ```
 
 ## Examples
-| File                          | Description                                                  |
-|-------------------------------|--------------------------------------------------------------|
-| [Memory.c](examples/Memory.c) | How to use Memory to track, allocate and make memory blocks. |
-| [List.c](examples/List.c)     | A demonstration of List methods.                             |
+| File                                | Description                                                  |
+|-------------------------------------|--------------------------------------------------------------|
+| [Memory.c](examples/Memory.c)       | How to use Memory to track, allocate and make memory blocks. |
+| [List.c](examples/List.c)           | A demonstration of List methods.                             |
+| [String.c](examples/String.c)       | A demonstration of String methods.                           |
+| [Unittest.c](stdc/util/util_test.c) | How to write a unittest using StdC framework.                |
 
 ## Documentation
 | Feature                          | Description                                                  |
 |----------------------------------|--------------------------------------------------------------|
-| [Garbage collection](doc/gc.md)  | Memory management to reduce the use of free.                 |
+| [Garbage Collection](doc/gc.md)  | Reference-counting for dynamically allocated objects.        |
+| [Memory](doc/Memory.md)          | Acts like a memory stack to reduce use of free and decref.   |
 | [List](doc/List.md)              | Dynamically resizing array-list.                             |
+| [String](doc/String.md)          | String class for easy and safe string manipulation.          |
+| [Utility](doc/util.md)           | Collection of useful functions for dealing with C.           |
+| [Types](doc/types.md)            | Several predefined types wrapped in typedef for ease of use. |
+| [Unittest](doc/unittest.md)      | Small set of functions for nice looking unittests.           |
