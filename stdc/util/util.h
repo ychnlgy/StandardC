@@ -1,5 +1,5 @@
-#ifndef STDC_UTIL_ALGORITHM
-#define STDC_UTIL_ALGORITHM
+#ifndef STDC_UTIL_UTIL
+#define STDC_UTIL_UTIL
 
 #define MAX(a, b) \
     (a > b? a : b)
