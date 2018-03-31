@@ -49,7 +49,7 @@ bakecake.py main.c app.exe
 | [List](doc/List.md)              | Dynamically resizing array-list.                             |
 | [String](doc/String.md)          | String class for easy and safe string manipulation.          |
 | [Utility](doc/util.md)           | Collection of useful functions for dealing with C.           |
-| [Types](doc/types.md)            | Several predefined types wrapped in typedef for ease of use. |
+| [Types](stdc/util/types.h)       | Several predefined types wrapped in typedef for ease of use. |
 | [Unittest](doc/unittest.md)      | Small set of functions for nice looking unittests.           |
 
 ## Examples
