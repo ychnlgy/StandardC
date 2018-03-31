@@ -26,11 +26,7 @@ int main() {
   return 0;
 }
 ```
-Setup project with [CakeBaker](https://github.com/ychnlgy/CakeBaker):
-```bash
-bakecake.py --init
-```
-Change ```cake.ini```:
+Write the file ```cake.ini``` (copy-paste the following):
 ```ini
 BUILD_ARGS         = -coverage
 COMPILER           = gcc
@@ -44,13 +40,6 @@ Compile with [CakeBaker](https://github.com/ychnlgy/CakeBaker):
 ```bash
 bakecake.py main.c app.exe
 ```
-## Examples
-| Feature | Description |
-|---------|--------------------------------------------------------------|
-| Memory  | [How to use Memory to track, allocate and make memory blocks.](examples/Memory_example.c) |
-| List    | [Basic](examples/List_example1.c) and [advanced](examples/List_example2.c) demonstrations of List methods. |
-| String  | [A demonstration of String methods.](examples/String_example.c) |
-| Unittest | [How to write a unittest using StdC framework.](stdc/unittest/unittest_fail11of17_test.c) |
 
 ## Documentation
 | Feature                          | Description                                                  |
@@ -62,3 +51,11 @@ bakecake.py main.c app.exe
 | [Utility](doc/util.md)           | Collection of useful functions for dealing with C.           |
 | [Types](doc/types.md)            | Several predefined types wrapped in typedef for ease of use. |
 | [Unittest](doc/unittest.md)      | Small set of functions for nice looking unittests.           |
+
+## Examples
+| Feature | Description |
+|---------|--------------------------------------------------------------|
+| Memory  | [How to use Memory to track, allocate and make memory blocks.](examples/Memory_example.c) |
+| List    | [Basic](examples/List_example1.c) and [advanced](examples/List_example2.c) demonstrations of List methods. |
+| String  | [A demonstration of String methods.](examples/String_example.c) |
+| Unittest | [How to write a unittest using StdC framework.](stdc/unittest/unittest_fail11of17_test.c) |
