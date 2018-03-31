@@ -9,18 +9,18 @@ Ptr new_String();
 
 struct String {
 
-	// === FIELDS ===
-	long _size;
-	char* _cstr;
+    // === FIELDS ===
+    long _size;
+    char* _cstr;
 
-	// === METHODS ===
-	void		(*set)		(String*, CStr);
-	String*		(*copy)		(String*);
-	bool		(*equals)	(String*, String*);
-	
-	// Getters
-	long		(*size)		(String*);
-	CStr		(*cstr)		(String*);
+    // === METHODS ===
+    void        (*set)      (String*, CStr);
+    String*     (*copy)     (String*);
+    bool        (*equals)   (String*, String*);
+
+    // Getters
+    long        (*size)     (String*);
+    CStr        (*cstr)     (String*);
 };
 
 #endif

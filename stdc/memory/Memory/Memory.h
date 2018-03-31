@@ -8,11 +8,11 @@ typedef struct Memory Memory;
 Ptr new_Memory();
 
 struct Memory {
-	List super;
+    List super;
 
-	void	(*track)	(Memory*, Ptr);
-	Ptr		(*alloc)	(Memory*, size_t);
-	Ptr		(*make)		(Memory*, Maker);
+    void    (*track)    (Memory*, Ptr);
+    Ptr     (*alloc)    (Memory*, size_t);
+    Ptr     (*make)     (Memory*, Maker);
 };
 
 #endif

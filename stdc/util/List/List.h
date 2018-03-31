@@ -9,35 +9,35 @@ Ptr new_List();
 
 struct List {
 
-	// === FIELDS ===
-	long _size;
-	long _capacity;
-	Ptr* _data;
-	
-	// === METHODS ===
+    // === FIELDS ===
+    long _size;
+    long _capacity;
+    Ptr* _data;
 
-	long	(*size)		(List*);
-	void	(*push)		(List*, Ptr);
-	Ptr		(*pop)		(List*);
+    // === METHODS ===
 
-	/* NOTE: Accessors take long position rather than
-	 * the unsigned size_t because there may be times
-	 * where accidents happen and wierd things happen.
-	 */
+    long    (*size)     (List*);
+    void    (*push)     (List*, Ptr);
+    Ptr     (*pop)      (List*);
 
-	// Fast but unsafe accessors (does not check range)
-	Ptr		(*getitem)	(List*, long);
-	void	(*setitem)	(List*, long, Ptr);
+    /* NOTE: Accessors take long position rather than
+     * the unsigned size_t because there may be times
+     * where accidents happen and wierd things happen.
+     */
 
-	// Slow but safe accessors (checks for range)
-	Ptr		(*at)		(List*, long);
-	bool	(*set)		(List*, long, Ptr);
+    // Fast but unsafe accessors (does not check range)
+    Ptr     (*getitem)  (List*, long);
+    void    (*setitem)  (List*, long, Ptr);
 
-	// Iteration
-	// TODO: implement them!
-	// iter
-	// reverse
-	// etc.
+    // Slow but safe accessors (checks for range)
+    Ptr     (*at)       (List*, long);
+    bool    (*set)      (List*, long, Ptr);
+
+    // Iteration
+    // TODO: implement them!
+    // iter
+    // reverse
+    // etc.
 //	List*	(*map)		(List*, MapFunc);
 //	List*	(*filter)	(List*, FilterFunc);
 //	List*	(*reduce)	(List*, ReduceFunc);

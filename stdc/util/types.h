@@ -9,7 +9,7 @@ typedef int bool;
 #define false 0
 
 // Function types
-typedef void	(*Destructor)	(Ptr);
-typedef Ptr		(*Maker)		();
+typedef void    (*Destructor)   (Ptr);
+typedef Ptr     (*Maker)        ();
 
 #endif

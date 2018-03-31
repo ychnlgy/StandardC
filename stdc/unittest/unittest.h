@@ -13,31 +13,31 @@
 // === INTERFACE ===
 
 #define ASSERT(expr) \
-	_expect(_testCase, expr, #expr, __LINE__);
+    _expect(_testCase, expr, #expr, __LINE__);
 
 #define SETUP \
-	void _SETUP()
+    void _SETUP()
 
 #define TEARDOWN \
-	void _TEARDOWN()
+    void _TEARDOWN()
 
 #define RUN \
-	int main() { \
-		_TestSuite* _testSuite = _initTestSuite(__FILE__, SYSTEM_EXIT, MAX_LINES);
+    int main() { \
+        _TestSuite* _testSuite = _initTestSuite(__FILE__, SYSTEM_EXIT, MAX_LINES);
 
 #define STOP \
-		return _free_testSuite(_testSuite); \
-	}
+        return _free_testSuite(_testSuite); \
+    }
 
 #define CASE(casename) \
-	{ \
-		_SETUP(); \
-		_TestCase* _testCase = _initTestCase(_testSuite, casename);
+    { \
+        _SETUP(); \
+        _TestCase* _testCase = _initTestCase(_testSuite, casename);
 
 #define END \
-		_free_testCase(_testCase); \
-		_TEARDOWN(); \
-	}
+        _free_testCase(_testCase); \
+        _TEARDOWN(); \
+    }
 
 // === PRIVATE ===
 

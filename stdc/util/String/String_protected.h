@@ -3,12 +3,12 @@
 
 #include "stdc/lib.h"
 
-void		del_String		(Ptr);
-void		init_String		(String*);
-void		set_String		(String*, CStr);
-String*		copy_String		(String*);
-bool		equals_String	(String*, String*);
-long		size_String		(String*);
-CStr		cstr_String		(String*);
+void        del_String      (Ptr);
+void        init_String     (String*);
+void        set_String      (String*, CStr);
+String*     copy_String     (String*);
+bool        equals_String   (String*, String*);
+long        size_String     (String*);
+CStr        cstr_String     (String*);
 
 #endif

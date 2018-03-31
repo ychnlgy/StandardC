@@ -7,57 +7,57 @@
 // === HELPERS ===
 
 char* _copy_CStr(CStr src, int len) {
-	char* cstrPtr = malloc(sizeof(char)*(len+1));
-	strncpy(cstrPtr, src, len);
-	cstrPtr[len] = '\0';
-	return cstrPtr;
+    char* cstrPtr = malloc(sizeof(char)*(len+1));
+    strncpy(cstrPtr, src, len);
+    cstrPtr[len] = '\0';
+    return cstrPtr;
 }
 
 // === METHODS ===
 
 void del_String(Ptr this) {
-	free(((String*) this)->_cstr);
+    free(((String*) this)->_cstr);
 }
 
 Ptr new_String() {
-	String* this = new(sizeof(String), &del_String);
-	init_String(this);
-	return this;
+    String* this = new(sizeof(String), &del_String);
+    init_String(this);
+    return this;
 }
 
 void init_String(String* this) {
-	this->_size = 0;
-	this->_cstr = NULL;
-	
-	this->set		= &set_String;
-	this->copy		= &copy_String;
-	this->equals	= &equals_String;
-	this->size		= &size_String;
-	this->cstr		= &cstr_String;
+    this->_size = 0;
+    this->_cstr = NULL;
+
+    this->set       = &set_String;
+    this->copy      = &copy_String;
+    this->equals    = &equals_String;
+    this->size      = &size_String;
+    this->cstr      = &cstr_String;
 }
 
 void set_String(String* this, CStr cstr) {
-	free(this->_cstr);
-	this->_size = strlen(cstr);
-	this->_cstr = _copy_CStr(cstr, this->_size);
+    free(this->_cstr);
+    this->_size = strlen(cstr);
+    this->_cstr = _copy_CStr(cstr, this->_size);
 }
 
 String* copy_String(String* this) {
-	String* copy = new_String();
-	copy->_size = this->_size;
-	copy->_cstr = _copy_CStr(this->_cstr, this->_size);
-	return copy;
+    String* copy = new_String();
+    copy->_size = this->_size;
+    copy->_cstr = _copy_CStr(this->_cstr, this->_size);
+    return copy;
 }
 
 bool equals_String(String* this, String* other) {
-	return strcmp(this->_cstr, other->_cstr) == 0;
+    return strcmp(this->_cstr, other->_cstr) == 0;
 }
 
 long size_String(String* this) {
-	return this->_size;
+    return this->_size;
 }
 
 CStr cstr_String(String* this) {
-	return this->_cstr;
+    return this->_cstr;
 }
 
