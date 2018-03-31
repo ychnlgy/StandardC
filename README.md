@@ -41,6 +41,11 @@ TEST_OMIT          = cake .git
 bakecake.py main.c app.exe
 ```
 
+## Note on class methods
+The methods of a class are stored in the field ```_``` of the class object.
+
+In the documentation that follow, ```Class.method()``` represents ```Class->_->method()``` in C code.
+
 ## Documentation
 | Feature                          | Description                                                  |
 |----------------------------------|--------------------------------------------------------------|
