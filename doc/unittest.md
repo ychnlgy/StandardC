@@ -78,7 +78,7 @@ SETUP{}
 TEARDOWN{}
 
 RUN
-  CASE
+  CASE("always fail")
     ASSERT(false); // will no longer cause the program to exit with code 1.
   END
 STOP
@@ -96,7 +96,7 @@ SETUP{}
 TEARDOWN{}
 
 RUN
-  CASE
+  CASE("I should consider breaking this file into smaller files")
     // Insert 1500 lines here (not recommended).
   END
 STOP
