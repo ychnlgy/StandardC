@@ -8,6 +8,37 @@ A few functions for reference counting.
 
 [stdc/memory/gc/gc.c](../stdc/memory/gc/gc.c)
 
+[stdc/memory/gc/gc_test.c](../stdc/memory/gc/gc_test.c)
+
+## incref(_ptr_)
+```c
+int incref(Ptr ptr);
+```
+Increases the reference count of **ptr** by 1 and returns the new reference count. The input **ptr** must have been allocated by ```new```. This function is typically used when returning a dynamically allocated object at the end of a function:
+```c
+// continuing from the Foo example...
+
+Foo* fooify() {
+  Memory* mem = new_Memory();
+  
+  Foo* foo = mem->make(mem, &new_Foo);
+  *foo->i = 34;
+  
+  incref(foo); // increase its reference count to prevent
+               // its destruction with the memory.
+  decref(mem);
+  return foo; // if you forgot the previous incref, 
+              // foo would be freed memory here - dangerous!
+}
+```
+You can see how ```incref``` is used in [List.c](../stdc/util/List/List.c) (ctrl-f to find its usage).
+
+## decref(_ptr_)
+```c
+int decref(Ptr ptr);
+```
+Decreases the reference count of **ptr** by 1 and returns the new reference count. The input **ptr** must have been allocated by ```new```. This function is typically used to attempt to free its memory - which is successfully freed when its reference count is decreased to 0.
+
 ## new(_typesize_, _destructor_)
  ```c
  Ptr new(size_t typesize, Destructor destructor);
@@ -104,31 +135,3 @@ int main() {
   return 0;
 }
 ```
-## incref(_ptr_)
-```c
-int incref(Ptr ptr);
-```
-Increases the reference count of **ptr** by 1 and returns the new reference count. The input **ptr** must have been allocated by ```new```. This function is typically used when returning a dynamically allocated object at the end of a function:
-```c
-// continuing from the Foo example...
-
-Foo* fooify() {
-  Memory* mem = new_Memory();
-  
-  Foo* foo = mem->make(mem, &new_Foo);
-  *foo->i = 34;
-  
-  incref(foo); // increase its reference count to prevent
-               // its destruction with the memory.
-  decref(mem);
-  return foo; // if you forgot the previous incref, 
-              // foo would be freed memory here - dangerous!
-}
-```
-You can see how ```incref``` is used in [List.c](../stdc/util/List/List.c) (ctrl-f to find its usage).
-
-## decref(_ptr_)
-```c
-int decref(Ptr ptr);
-```
-Decreases the reference count of **ptr** by 1 and returns the new reference count. The input **ptr** must have been allocated by ```new```. This function is typically used to attempt to free its memory - which is successfully freed when its reference count is decreased to 0.
