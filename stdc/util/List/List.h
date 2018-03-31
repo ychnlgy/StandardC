@@ -3,19 +3,10 @@
 
 #include "stdc/lib.h"
 
+Ptr new_List();
 typedef struct List List;
 
-Ptr new_List();
-
-struct List {
-
-    // === FIELDS ===
-    long _size;
-    long _capacity;
-    Ptr* _data;
-
-    // === METHODS ===
-
+typedef struct {
     long    (*size)     (List*);
     void    (*push)     (List*, Ptr);
     Ptr     (*pop)      (List*);
@@ -41,6 +32,13 @@ struct List {
 //	List*	(*map)		(List*, MapFunc);
 //	List*	(*filter)	(List*, FilterFunc);
 //	List*	(*reduce)	(List*, ReduceFunc);
+} ListVtable;
+
+struct List {
+    ListVtable* _;
+    long        _size;
+    long        _capacity;
+    Ptr*        _data;
 };
 
 #endif

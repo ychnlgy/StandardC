@@ -21,4 +21,14 @@ void    setitem_List    (List*, long, Ptr);
 Ptr     at_List         (List*, long);
 bool    set_List        (List*, long, Ptr);
 
+static ListVtable LIST_VTABLE = {
+    .size       = &size_List,
+    .push       = &push_List,
+    .pop        = &pop_List,
+    .getitem    = &getitem_List,
+    .setitem    = &setitem_List,
+    .at         = &at_List,
+    .set        = &set_List
+};
+
 #endif

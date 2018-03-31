@@ -4,19 +4,16 @@
 // === PUBLIC METHODS ===
 
 void del_Memory(Ptr this) {
-    List* scope = ((Memory*) this)->scope;
+    List* _scope = ((Memory*) this)->_scope;
     long i;
-    for (i=0; i<scope->size(scope); i++)
-        decref(scope->getitem(scope, i));
-    decref(scope);
+    for (i=0; i<_scope->_->size(_scope); i++)
+        decref(_scope->_->getitem(_scope, i));
+    decref(_scope);
 }
 
 void init_Memory(Memory* this) {
-    this->scope = new_List();
-
-    this->track     = &track_Memory;
-    this->alloc     = &alloc_Memory;
-    this->make      = &make_Memory;
+    this->_      = &MEMORY_VTABLE;
+    this->_scope = new_List();
 }
 
 void* new_Memory() {
@@ -27,7 +24,7 @@ void* new_Memory() {
 
 void track_Memory(Memory* this, Ptr ptr) {
     if (ptr != NULL)
-        this->scope->push(this->scope, ptr);
+        this->_scope->_->push(this->_scope, ptr);
 }
 
 Ptr alloc_Memory(Memory* this, size_t typesize) {

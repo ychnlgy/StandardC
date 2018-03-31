@@ -9,4 +9,10 @@ void    track_Memory    (Memory*, Ptr);
 Ptr     alloc_Memory    (Memory*, size_t);
 Ptr     make_Memory     (Memory*, Maker);
 
+static MemoryVtable MEMORY_VTABLE = {
+    .track = &track_Memory,
+    .alloc = &alloc_Memory,
+    .make  = &make_Memory
+};
+
 #endif

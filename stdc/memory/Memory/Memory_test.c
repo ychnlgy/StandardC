@@ -39,10 +39,10 @@ RUN
     CASE("new-method")
 
         a = new(sizeof(int), NULL);
-        memory->track(memory, a);
+        memory->_->track(memory, a);
 
-        b = memory->alloc(memory, sizeof(int));
-        c = memory->make(memory, &new_int);
+        b = memory->_->alloc(memory, sizeof(int));
+        c = memory->_->make(memory, &new_int);
 
         *a = 4;
         *b = 6;
@@ -52,14 +52,14 @@ RUN
 
     CASE("track NULL")
 
-        a = memory->alloc(memory, sizeof(int));
-        b = memory->alloc(memory, sizeof(int));
+        a = memory->_->alloc(memory, sizeof(int));
+        b = memory->_->alloc(memory, sizeof(int));
         c = new_int();
         int* d = new_int();
-        memory->track(memory, c);
-        memory->track(memory, d);
-        memory->track(memory, NULL);
-        memory->track(memory, NULL);
+        memory->_->track(memory, c);
+        memory->_->track(memory, d);
+        memory->_->track(memory, NULL);
+        memory->_->track(memory, NULL);
 
     END
 

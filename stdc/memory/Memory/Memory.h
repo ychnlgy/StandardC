@@ -3,16 +3,18 @@
 
 #include "stdc/lib.h"
 
+Ptr new_Memory();
 typedef struct Memory Memory;
 
-Ptr new_Memory();
-
-struct Memory {
-    List* scope;
-
+typedef struct {
     void    (*track)    (Memory*, Ptr);
     Ptr     (*alloc)    (Memory*, size_t);
     Ptr     (*make)     (Memory*, Maker);
+} MemoryVtable;
+
+struct Memory {
+    MemoryVtable*   _;
+    List*           _scope;
 };
 
 #endif

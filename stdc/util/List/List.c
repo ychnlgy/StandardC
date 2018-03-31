@@ -49,21 +49,14 @@ Ptr new_List() {
 }
 
 void init_List(List* this) {
-    this->_size = 0;
+    this->_         = &LIST_VTABLE;
+    this->_size     = 0;
     this->_capacity = MIN_CAPACITY;
-    this->_data = malloc(MIN_CAPACITY*PTR_SIZE);
+    this->_data     = malloc(MIN_CAPACITY*PTR_SIZE);
 
     long i;
     for (i=0; i<MIN_CAPACITY; i++)
         this->_data[i] = NULL;
-
-    this->size      = &size_List;
-    this->push      = &push_List;
-    this->pop       = &pop_List;
-    this->getitem   = &getitem_List;
-    this->setitem   = &setitem_List;
-    this->at        = &at_List;
-    this->set       = &set_List;
 }
 
 void push_List(List* this, Ptr entry) {

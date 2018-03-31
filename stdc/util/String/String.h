@@ -3,17 +3,10 @@
 
 #include "stdc/lib.h"
 
+Ptr new_String();
 typedef struct String String;
 
-Ptr new_String();
-
-struct String {
-
-    // === FIELDS ===
-    long _size;
-    char* _cstr;
-
-    // === METHODS ===
+typedef struct {
     void        (*set)      (String*, CStr);
     String*     (*copy)     (String*);
     bool        (*equals)   (String*, String*);
@@ -21,6 +14,12 @@ struct String {
     // Getters
     long        (*size)     (String*);
     CStr        (*cstr)     (String*);
+} StringVtable;
+
+struct String {
+    StringVtable*   _;
+    long            _size;
+    char*           _cstr;
 };
 
 #endif

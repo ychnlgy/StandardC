@@ -1,5 +1,6 @@
 #include "stdc/lib.h"
 #include "stdc/unittest/print.h" // for color printing
+#include <string.h>
 #include <assert.h>
 
 /*
@@ -12,26 +13,28 @@
  */
 
 int main() {
+    printBold("Running %s...", __FILE__);
     Memory* mem = new_Memory();
     
-    String* s1 = mem->make(mem, &new_String);
-    s1->set(s1, "Hello world!");
+    String* s1 = mem->_->make(mem, &new_String);
+    s1->_->set(s1, "Hello world!");
     
-    String* s2 = mem->make(mem, &new_String);
-    s2->set(s2, "Carrot");
+    String* s2 = mem->_->make(mem, &new_String);
+    s2->_->set(s2, "Carrot");
     
-    String* s3 = s1->copy(s1);
-    mem->track(mem, s3); // don't forget to let stack know
+    String* s3 = s1->_->copy(s1);
+    mem->_->track(mem, s3); // don't forget to let stack know
                          // about this new block of memory.
     
     // s1 is equal to s3 but not s2.
-    assert(s1->equals(s1, s3));
-    assert(!s1->equals(s1, s2));
-    assert(!s2->equals(s2, s3));
+    assert(s1->_->equals(s1, s3));
+    assert(!s1->_->equals(s1, s2));
+    assert(!s2->_->equals(s2, s3));
     
-    printBold("The length of \"%s\" is: ", s1->cstr(s1));
-    printGreen("%d\n", s1->size(s1));
+    assert(s1->_->size(s1) == 12);
+    assert(strcmp(s1->_->cstr(s1), "Hello world!") == 0);
     
     decref(mem);
+    printGreen("OK\n");
     return 0;
 }
