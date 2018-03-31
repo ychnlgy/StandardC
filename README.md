@@ -17,7 +17,7 @@ git-install.py --uninstall ychnlgy/StdC
 
 ## Quickstart
 
-Write ```main.c```:
+ 1. Write ```main.c```:
 ```cpp
 // include all headers in stdc:
 #include "stdc/lib.h"
@@ -26,7 +26,7 @@ int main() {
   return 0;
 }
 ```
-Write the file ```cake.ini``` (copy-paste the following):
+ 2. Write the file ```cake.ini``` (copy-paste the following):
 ```ini
 BUILD_ARGS         = -coverage
 COMPILER           = gcc
@@ -36,7 +36,7 @@ DEFAULT_SOURCEFILE =
 TEST_INCLUDE       = *_test.c
 TEST_OMIT          = cake .git
 ```
-Compile with [CakeBaker](https://github.com/ychnlgy/CakeBaker):
+ 3. Compile with [CakeBaker](https://github.com/ychnlgy/CakeBaker):
 ```bash
 bakecake.py main.c app.exe
 ```
