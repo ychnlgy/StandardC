@@ -1,4 +1,3 @@
-#include "stdc/lib.h"
 #include "stdc/unittest.h"
 
 SETUP{}

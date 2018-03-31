@@ -8,7 +8,7 @@ typedef struct Memory Memory;
 Ptr new_Memory();
 
 struct Memory {
-    List super;
+    List* scope;
 
     void    (*track)    (Memory*, Ptr);
     Ptr     (*alloc)    (Memory*, size_t);

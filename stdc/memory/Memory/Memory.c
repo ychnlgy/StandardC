@@ -1,19 +1,18 @@
 #include "stdc/lib.h"
 #include "Memory_protected.h"
-#include "stdc/util/List/List_protected.h"
 
 // === PUBLIC METHODS ===
 
 void del_Memory(Ptr this) {
-    List* super = this;
+    List* scope = ((Memory*) this)->scope;
     long i;
-    for (i=0; i<super->size(super); i++)
-        decref(super->getitem(super, i));
-    del_List(super);
+    for (i=0; i<scope->size(scope); i++)
+        decref(scope->getitem(scope, i));
+    decref(scope);
 }
 
 void init_Memory(Memory* this) {
-    init_List((List*) this);
+    this->scope = new_List();
 
     this->track     = &track_Memory;
     this->alloc     = &alloc_Memory;
@@ -28,7 +27,7 @@ void* new_Memory() {
 
 void track_Memory(Memory* this, Ptr ptr) {
     if (ptr != NULL)
-        this->super.push((List*) this, ptr);
+        this->scope->push(this->scope, ptr);
 }
 
 Ptr alloc_Memory(Memory* this, size_t typesize) {

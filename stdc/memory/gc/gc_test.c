@@ -1,5 +1,4 @@
 #include "stdc/unittest.h"
-#include "stdc/lib.h"
 
 #include <stddef.h>
 // NULL
