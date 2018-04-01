@@ -1,24 +1,34 @@
 #ifndef STDC_UTIL_LIST_LIST_PRIVATE
 #define STDC_UTIL_LIST_LIST_PRIVATE
 
-Ptr     new_List        ();
-void    init_List       (ListObject*);
-void    del_List        (Ptr);
+// Construction/destruction
+Ptr         new_List        ();
+void        init_List       (ListObject*);
+void        del_List        (Ptr);
 
-// Getters
-long    size_List       (ListObject*);
+// Methods
+ListObject* concat_List     (ListObject*, ListObject*);
 
-// Modifiers
-void    push_List       (ListObject*, Ptr);
-Ptr     pop_List        (ListObject*);
+// Object interface
+bool        equals_List     (ListObject*, ListObject*);
 
-// Fast but unsafe operations (does not check range).
-Ptr     getitem_List    (ListObject*, long);
-void    setitem_List    (ListObject*, long, Ptr);
+// Container interface
+long        size_List       (ListObject*);
+void        clear_List      (ListObject*);
 
-// Slow but safe operations.(checks range).
-Ptr     at_List         (ListObject*, long);
-bool    set_List        (ListObject*, long, Ptr);
+// Stack interface
+void        push_List       (ListObject*, Ptr);
+void        pushes_List     (ListObject*, long, ...);
+Ptr         pop_List        (ListObject*);
+Ptr         back_List       (ListObject*);
+void        extend_List     (ListObject*, ListObject*);
+
+// Accessor interface
+Ptr         getitem_List    (ListObject*, long);
+void        setitem_List    (ListObject*, long, Ptr);
+Ptr         at_List         (ListObject*, long);
+bool        set_List        (ListObject*, long, Ptr);
+ListObject* slice_List      (ListObject*, long, long, long);
 
 ListVtable List = {
 
@@ -28,13 +38,28 @@ ListVtable List = {
     .del        = &del_List,
     
     // Methods
+    .concat     = &concat_List,
+    
+    // Object interface
+    .equals     = &equals_List,
+    
+    // Container interface
     .size       = &size_List,
+    .clear      = &clear_List,
+    
+    // Stack interface
     .push       = &push_List,
+    .pushes     = &pushes_List,
     .pop        = &pop_List,
+    .back       = &back_List,
+    .extend     = &extend_List,
+    
+    // Accessor interface
     .getitem    = &getitem_List,
     .setitem    = &setitem_List,
     .at         = &at_List,
-    .set        = &set_List
+    .set        = &set_List,
+    .slice      = &slice_List
 };
 
 #endif

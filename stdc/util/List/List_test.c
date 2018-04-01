@@ -77,7 +77,7 @@ RUN
         List.push(arr, j);
         ASSERT(List.size(arr) == 2);
         ASSERT(List.at(arr, 2) == NULL);
-        ASSERT(*((int*) List.at(arr, -1)) == *j);
+        ASSERT(*((int*) List.back(arr)) == *j);
         ASSERT(*((int*) List.at(arr, 1)) == *j);
         ASSERT(*((int*) List.at(arr, 1)) == *j);
 
@@ -245,6 +245,51 @@ RUN
         p = List.pop(arr);
         Memory.track(mem, p);
         ASSERT(p == NULL);
+    
+    END
+    
+    CASE("pushes")
+        List.pushes(arr, 0);
+        ASSERT(List.size(arr) == 0);
+    
+        int* i1 = Memory.alloc(mem, sizeof(int));
+        int* i2 = Memory.alloc(mem, sizeof(int));
+        *i1 = 20;
+        *i2 = 40;
+        
+        List.pushes(arr, 2, i1, i2);
+        ASSERT(List.size(arr) == 2);
+        int* j1 = List.at(arr, 0);
+        int* j2 = List.back(arr);
+        
+        ASSERT(*j1 == *i1);
+        ASSERT(*j2 == *i2);
+    END
+    
+    CASE("equals")
+        ListObject* arr2 = Memory.make(mem, List.new);
+        ASSERT(List.equals(arr, arr2));
+        
+        int* i1 = Memory.alloc(mem, sizeof(int));
+        int* i2 = Memory.alloc(mem, sizeof(int));
+        List.pushes(arr2, 2, i1, i2);
+        
+        ASSERT(!List.equals(arr, arr2));
+        
+        List.pushes(arr, 2, i2, i1);
+        ASSERT(!List.equals(arr, arr2));
+        
+        List.clear(arr);
+        List.pushes(arr, 2, i1, i2);
+        ASSERT(List.equals(arr, arr2));
+    END
+    
+    CASE("extend-concat")
+        
+    
+    END
+    
+    CASE("slice")
     
     END
 

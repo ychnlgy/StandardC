@@ -8,22 +8,34 @@ typedef struct ListObject ListObject;
 typedef struct {
 
     // Construction/destruction
-    Ptr     (*new)      ();
-    void    (*init)     (ListObject*);
-    void    (*del)      (Ptr);
+    Ptr         (*new)      ();
+    void        (*init)     (ListObject*);
+    void        (*del)      (Ptr);
+    //ListObject* (*copy)     (ListObject*);
+    
+    // Methods
+    ListObject* (*concat)   (ListObject*, ListObject*);
+
+    // Object interface
+    bool        (*equals)   (ListObject*, ListObject*);
 
     // Container interface
-    long    (*size)     (ListObject*);
+    long        (*size)     (ListObject*);
+    void        (*clear)    (ListObject*);
 
     // Stack interface
-    void    (*push)     (ListObject*, Ptr);
-    Ptr     (*pop)      (ListObject*);
+    void        (*push)     (ListObject*, Ptr);
+    void        (*pushes)   (ListObject*, long, ...);
+    Ptr         (*pop)      (ListObject*);
+    Ptr         (*back)     (ListObject*);
+    void        (*extend)   (ListObject*, ListObject*);
 
     // Accessor interface
-    Ptr     (*getitem)  (ListObject*, long);
-    void    (*setitem)  (ListObject*, long, Ptr);
-    Ptr     (*at)       (ListObject*, long);
-    bool    (*set)      (ListObject*, long, Ptr);
+    Ptr         (*getitem)  (ListObject*, long);
+    void        (*setitem)  (ListObject*, long, Ptr);
+    Ptr         (*at)       (ListObject*, long);
+    bool        (*set)      (ListObject*, long, Ptr);
+    ListObject* (*slice)    (ListObject*, long, long, long);
 
     // Iteration
     // TODO: implement them!
