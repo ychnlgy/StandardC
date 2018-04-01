@@ -43,12 +43,7 @@ int main() {
   int n = List.size(list);
   // n == 2
   
-  int* k1 = List.pop(list);
-  Memory.track(mem, k1); // IMPORTANT:
-                       // List.pop does not decref popped items.
-                       // Since the block of memory pointed to
-                       // by k1 is no longer referenced by the list,
-                       // it needs to be tracked by the memory scope.
+  int* k1 = List.pop(list, mem);
 
   int m = List.size(list);
   // m == 1
@@ -107,7 +102,6 @@ int main() {
   decref(mem);
 }
 ```
-**You should not track this pointer with the local memory scope under normal circumstances.**
 
 ## List.setitem(_this_, _i_, _ptr_)
 ```c
@@ -134,8 +128,6 @@ it will return ```NULL``` if **i** is outside list boundaries.
 It also supports negative indexing: 
 ```i = -1``` means the back of the list,
 ```i = -2``` means the second last item, etc.
-
-**You should not track this pointer with the local memory scope under normal circumstances.**
 
 ## List.set(_this_, _i_, _ptr_)
 ```c
@@ -198,64 +190,17 @@ int main() {
 }
 ```
 
-## List.pop(_this_)
+## List.pop(_this_, _mem_)
 ```c
-Ptr List.pop(ListObject* this);
+Ptr List.pop(ListObject* this, MemoryObject*);
 ```
 Removes and returns the last element of the list. 
 
-**The returned pointer is not decref'd so it needs to be tracked by the local [memory scope](Memory.md).**
-
-This is intentional. Consider the case when the list contains the very last reference to an element.
-If it decrefs every element it pops, then it will return the pointer to free'd memory in this case.
-```c
-// Here is an example demonstrating the problem
-// if List.pop decrefs the element pointer.
-
-#include "stdc/lib.h"
-
-ListObject* foo() {
-  MemoryObject* mem = Memory.new();
-  
-  ListObject* list = Memory.make(mem, List.new);
-  
-  int* i = Memory.alloc(mem, sizeof(int));
-  // i has refcount 1
-  
-  List.push(list, i);
-  // i now has refcount 2
-  
-  incref(list);
-  // incref on the list does not incref its elements.
-  // therefore i still has refcount 2
-  
-  decref(mem);
-  // i now has refcount 1
-  
-  return list;
-}
-
-int main() {
-  MemoryObject* mem = Memory.new();
-  
-  ListObject* list = foo();
-  Memory.track(mem, list);
-  
-  int* j = List.pop(list);  // if List.pop were to decref the pointers
-                             // it pops, j will point to free'd memory,
-  Memory.track(mem, j);
-  
-  decref(mem); // all blocks of memory in this scope are free'd
-  return 0;
-}
-```
 ## List.back(_this_)
 ```c
 Ptr List.back(ListObject* this);
 ```
 Returns the pointer to the last element in the list.
-
-**You should not track this pointer with the local memory scope under normal circumstances.**
 
 ## List.extend(_this_, _otherlist_)
 ```c
@@ -265,19 +210,17 @@ Appends the other list to the end of this list.
 
 Automatically incref's each element of the other list.
 
-## List.concat(_this_, _otherlist_)
+## List.concat(_this_, _otherlist_, _mem_)
 ```c
-ListObject* List.concat(ListObject* this, ListObject* otherlist);
+ListObject* List.concat(ListObject* this, ListObject* otherlist, MemoryObject* mem);
 ```
 Makes a new list consisting of elements of this list followed by the elements of the other list.
 
 Automatically incref's each element of both lists.
 
-**Remember to track the returned new list with the local [memory scope](Memory.md).**
-
-## List.slice(_this_, _i_, _j_)
+## List.slice(_this_, _mem_, _i_, _j_)
 ```c
-ListObject* List.slice(ListObject* this, long i, long j);
+ListObject* List.slice(ListObject* this, MemoryObject* mem, long i, long j);
 ```
 Creates a new list consisting of elements **i** up to but not including **j**.
 The returned ```ListObject*``` is ```NULL``` if **j** is less than **i** or
@@ -285,7 +228,6 @@ if any of the two indices are outside the bounds of the list.
 
 Each of its constituting elements are automatically incref'd.
 
-**Remember to track the returned new list with the local [memory scope](Memory.md).**
 ```c
 #include "stdc/lib.h"
 
@@ -302,16 +244,13 @@ int main() {
   List.pushes(list, 4, i, i+1, i+2, i+3);
   // list is [20, 30, 40, 50]
   
-  ListObject* sublist1 = List.slice(list, 1, 3);
-  Memory.track(mem, sublist1);
+  ListObject* sublist1 = List.slice(list, mem, 1, 3);
   // sublist1 is [30, 40]
   
-  ListObject* sublist2 = List.slice(list, List.size(list), 0);
-  Memory.track(mem, sublist2);
+  ListObject* sublist2 = List.slice(list, mem, List.size(list), 0);
   // sublist2 is NULL
   
-  ListObject* sublist3 = List.slice(list, 0, List.size(list));
-  Memory.track(mem, sublist3);
+  ListObject* sublist3 = List.slice(list, mem, 0, List.size(list));
   // sublist3 is a copy of list
   
   decref(mem);
