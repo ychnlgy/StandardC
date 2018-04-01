@@ -16,7 +16,7 @@ calling decref on their pointers upon destruction.
 #include "stdc/lib.h"
 
 void foo() {
-  Memory* mem = new_Memory();
+  MemoryObject* mem = Memory.new();
   
   // do stuff
   // ...
@@ -29,7 +29,7 @@ void foo() {
 
 ## Memory.alloc(_this_, _typesize_)
 ```c
-Ptr Memory.alloc(Memory* this, size_t typesize);
+Ptr Memory.alloc(MemoryObject* this, size_t typesize);
 ```
 Allocates a block of memory of size **typesize**. 
 The newly allocated memory now belongs to this memory scope
@@ -39,11 +39,11 @@ and will be decref'd when this memory scope is destroyed.
 #include "stdc/lib.h"
 
 void bar() {
-  Memory* mem = new_Memory();
+  MemoryObject* mem = Memory.new();
   
-  int* i1 = mem->_->alloc(mem, sizeof(int));
-  int* i2 = mem->_->alloc(mem, sizeof(int));
-  int* i3 = mem->_->alloc(mem, sizeof(int));
+  int* i1 = Memory.alloc(mem, sizeof(int));
+  int* i2 = Memory.alloc(mem, sizeof(int));
+  int* i3 = Memory.alloc(mem, sizeof(int));
   
   incref(i3); // allow i3 to survive beyond the memory scope.
   decref(mem); // i1 and i2 will be free'd here.
@@ -53,7 +53,7 @@ void bar() {
 
 ## Memory.make(_this_, _maker_)
 ```c
-Ptr Memory.alloc(Memory* this, Maker maker);
+Ptr Memory.alloc(MemoryObject* this, Maker maker);
 ```
 Constructs the class specified by **maker**.
 See [types](../stdc/util/types.h) for the declaration of ```Maker```.
@@ -63,11 +63,11 @@ and will be decref'd when this memory scope is destroyed.
 #include "stdc/lib.h"
 
 void hen() {
-  Memory* mem = new_Memory();
+  MemoryObject* mem = Memory.new();
   
-  List* i1 = mem->_->make(mem, &new_List);
-  List* i2 = mem->_->make(mem, &new_List);
-  List* i3 = mem->_->make(mem, &new_List);
+  ListObject* i1 = Memory.make(mem, &new_List);
+  ListObject* i2 = Memory.make(mem, &new_List);
+  ListObject* i3 = Memory.make(mem, &new_List);
   
   incref(i3); // allow i3 to survive beyond the memory scope.
   decref(mem); // i1 and i2 will be free'd here.
@@ -77,7 +77,7 @@ void hen() {
 
 ## Memory.track(_this_, _ptr_)
 ```c
-void Memory.track(Memory* this, Ptr ptr);
+void Memory.track(MemoryObject* this, Ptr ptr);
 ```
 Assign the **ptr** to this memory scope.
 The memory block of **ptr** now belongs to this memory scope
@@ -86,16 +86,16 @@ and will be decref'd when this memory scope is destroyed.
 #include "stdc/lib.h"
 #include <stdio.h>
 
-List* createRange(int n) {
-  Memory* mem = new_Memory();
+ListObject* createRange(int n) {
+  MemoryObject* mem = Memory.new();
   
-  List* list = mem->_->make(mem, &new_List);
+  ListObject* list = Memory.make(mem, &new_List);
   
   int i;
   for (i=0; i<=n; i++) {
-    int* ni = mem->_->alloc(mem, sizeof(int));
+    int* ni = Memory.alloc(mem, sizeof(int));
     *ni = i;
-    list->_->push(list, ni);
+    List.push(list, ni);
   }
   
   incref(list); // return heap-allocated memory
@@ -104,17 +104,17 @@ List* createRange(int n) {
 }
 
 int sumRange(int n) {
-  Memory* mem = new_Memory();
+  MemoryObject* mem = Memory.new();
   
-  List* range = createRange(n);
-  mem->_->track(mem, range); // since range is heap-allocated memory
+  ListObject* range = createRange(n);
+  Memory.track(mem, range); // since range is heap-allocated memory
                           // it will need to be tracked by the
                           // current memory scope.
   
   int out = 0;
   int i;
-  for (i=0; i<range->_->size(range); i++)
-    out += *((int*) range->_->getitem(range, i));
+  for (i=0; i<List.size(range); i++)
+    out += *((int*) List.getitem(range, i));
   
   decref(mem); // range is free'd
   return out;

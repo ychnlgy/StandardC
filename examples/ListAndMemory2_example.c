@@ -11,18 +11,18 @@
  *  - Pay attention to returning lists from functions.
  */
 
-List* createReverseRange(int n) {
-    Memory* mem = new_Memory();
+ListObject* createReverseRange(int n) {
+    MemoryObject* mem = Memory.new();
     
-    List* list = mem->_->make(mem, &new_List);
+    ListObject* list = Memory.make(mem, List.new);
     int i;
     for (i=n; i>0; i--) {
         // we want the elements to persist
         // beyond local variable scope,
         // so we allocate memory on the heap.
-        int* j = mem->_->alloc(mem, sizeof(int));
+        int* j = Memory.alloc(mem, sizeof(int));
         *j = i;
-        list->_->push(list, j);
+        List.push(list, j);
     }
     
     incref(list); // always incref the objects
@@ -34,40 +34,40 @@ List* createReverseRange(int n) {
                  // access them later.
 }
 
-int sumList(List* list) {
+int sumList(ListObject* list) {
     int out = 0;
     int i;
-    for (i=0; i<list->_->size(list); i++) {
+    for (i=0; i<List.size(list); i++) {
         // getitem does not check for range,
         // so it is only safe to use when
         // you know the indices are within bounds.
-        int* j = list->_->getitem(list, i);
+        int* j = List.getitem(list, i);
         out += *j;
     }
     return out;
 }
 
-void incList(List* list) {
+void incList(ListObject* list) {
     // returns a original list with each
     // element of the input list 
     // incremented by 1.
     int i;
-    for (i=0; i<list->_->size(list); i++) {
-        int* j = list->_->getitem(list, i);
+    for (i=0; i<List.size(list); i++) {
+        int* j = List.getitem(list, i);
         (*j)++;
         // setitem does not check for range,
         // so it is only safe to use when
         // you know the indices are within bounds.
-        list->_->setitem(list, i, j);
+        List.setitem(list, i, j);
     }
 }
 
 int main() {
     printBold("Running %s...", __FILE__);
-    Memory* mem = new_Memory();
+    MemoryObject* mem = Memory.new();
     
-    List* list = createReverseRange(100);
-    mem->_->track(mem, list); // track this list on
+    ListObject* list = createReverseRange(100);
+    Memory.track(mem, list); // track this list on
                            // local stack memory.
     
     int sum = sumList(list);

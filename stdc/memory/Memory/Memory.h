@@ -3,18 +3,22 @@
 
 #include "stdc/lib.h"
 
-Ptr new_Memory();
-typedef struct Memory Memory;
+typedef struct MemoryObject MemoryObject;
 
 typedef struct {
-    void    (*track)    (Memory*, Ptr);
-    Ptr     (*alloc)    (Memory*, size_t);
-    Ptr     (*make)     (Memory*, Maker);
+
+    // Construction/destruction
+    Ptr     (*new)      ();
+    void    (*init)     (MemoryObject*);
+    void    (*del)      (Ptr);
+    
+    // Methods
+    void    (*track)    (MemoryObject*, Ptr);
+    Ptr     (*alloc)    (MemoryObject*, size_t);
+    Ptr     (*make)     (MemoryObject*, Maker);
+
 } MemoryVtable;
 
-struct Memory {
-    MemoryVtable*   _;
-    List*           _scope;
-};
+extern MemoryVtable Memory;
 
 #endif

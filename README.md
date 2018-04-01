@@ -41,11 +41,6 @@ TEST_OMIT          = cake .git
 bakecake.py main.c app.exe
 ```
 
-## Note on class methods
-The methods of a class are stored in the field ```_``` of the class object.
-
-In the documentation that follow, ```Class.method()``` represents ```Class->_->method()``` in C code.
-
 ## Documentation
 | Feature                          | Description                                                  |
 |----------------------------------|--------------------------------------------------------------|
@@ -64,3 +59,8 @@ In the documentation that follow, ```Class.method()``` represents ```Class->_->m
 | List    | [Basic](examples/List_example1.c) and [advanced](examples/List_example2.c) demonstrations of List methods. |
 | String  | [A demonstration of String methods.](examples/String_example.c) |
 | Unittest | [How to write a unittest using StdC framework.](stdc/unittest/unittest_fail11of17_test.c) |
+
+## Note
+All code in this package compiled without errors or warnings on my machine.
+If you encountered any compilation problems, 
+please write a GitHub issue so I can fix it.

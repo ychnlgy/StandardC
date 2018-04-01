@@ -6,12 +6,12 @@ int encrypt(int i) {
 
 void use(Ptr ptr){}
 
-List* arr;
-Memory* mem;
+ListObject* arr;
+MemoryObject* mem;
 
 SETUP {
-    mem = new_Memory();
-    arr = mem->_->make(mem, &new_List);
+    mem = Memory.new();
+    arr = Memory.make(mem, List.new);
 }
 
 TEARDOWN {
@@ -21,65 +21,65 @@ TEARDOWN {
 RUN
 
     CASE("repeated-push")
-        int* i = mem->_->alloc(mem, sizeof(int));
-        arr->_->push(arr, i);
-        arr->_->push(arr, i);
-        arr->_->push(arr, i);
+        int* i = Memory.alloc(mem, sizeof(int));
+        List.push(arr, i);
+        List.push(arr, i);
+        List.push(arr, i);
     END
 
     CASE("immediate-free")
-        List* arr2 = mem->_->make(mem, &new_List);
+        ListObject* arr2 = Memory.make(mem, List.new);
         use(arr2);
     END
 
     CASE("push-pop NULL")
 
-        ASSERT(arr->_->size(arr) == 0);
-        arr->_->push(arr, NULL);
-        ASSERT(arr->_->size(arr) == 1);
-        arr->_->push(arr, NULL);
-        ASSERT(arr->_->size(arr) == 2);
-        ASSERT(arr->_->pop(arr) == NULL);
-        ASSERT(arr->_->size(arr) == 1);
-        ASSERT(arr->_->pop(arr) == NULL);
-        ASSERT(arr->_->size(arr) == 0);
+        ASSERT(List.size(arr) == 0);
+        List.push(arr, NULL);
+        ASSERT(List.size(arr) == 1);
+        List.push(arr, NULL);
+        ASSERT(List.size(arr) == 2);
+        ASSERT(List.pop(arr) == NULL);
+        ASSERT(List.size(arr) == 1);
+        ASSERT(List.pop(arr) == NULL);
+        ASSERT(List.size(arr) == 0);
 
     END
 
     CASE("push-pop")
-        ASSERT(arr->_->at(arr, 0) == NULL);
-        ASSERT(arr->_->at(arr, 1) == NULL);
-        ASSERT(arr->_->at(arr, 2) == NULL);
-        int* i = mem->_->alloc(mem, sizeof(int));
-        int* j = mem->_->alloc(mem, sizeof(int));
+        ASSERT(List.at(arr, 0) == NULL);
+        ASSERT(List.at(arr, 1) == NULL);
+        ASSERT(List.at(arr, 2) == NULL);
+        int* i = Memory.alloc(mem, sizeof(int));
+        int* j = Memory.alloc(mem, sizeof(int));
         *i = 50;
         *j = 4;
 
-        arr->_->push(arr, i);
-        arr->_->push(arr, j);
-        ASSERT(arr->_->size(arr) == 2);
-        ASSERT(*((int*) arr->_->getitem(arr, 1)) == *j);
-        ASSERT(*((int*) arr->_->at(arr, -2)) == *i);
+        List.push(arr, i);
+        List.push(arr, j);
+        ASSERT(List.size(arr) == 2);
+        ASSERT(*((int*) List.getitem(arr, 1)) == *j);
+        ASSERT(*((int*) List.at(arr, -2)) == *i);
 
-        int* test1 = arr->_->pop(arr);
-        mem->_->track(mem, test1);
+        int* test1 = List.pop(arr);
+        Memory.track(mem, test1);
         ASSERT(*test1 == *j);
 
-        int* test2 = arr->_->pop(arr);
-        mem->_->track(mem, test2);
+        int* test2 = List.pop(arr);
+        Memory.track(mem, test2);
         ASSERT(*test2 == *i);
 
-        ASSERT(arr->_->size(arr) == 0);
-        ASSERT(arr->_->pop(arr) == NULL);
-        ASSERT(arr->_->pop(arr) == NULL);
-        ASSERT(arr->_->size(arr) == 0);
-        arr->_->push(arr, i);
-        arr->_->push(arr, j);
-        ASSERT(arr->_->size(arr) == 2);
-        ASSERT(arr->_->at(arr, 2) == NULL);
-        ASSERT(*((int*) arr->_->at(arr, -1)) == *j);
-        ASSERT(*((int*) arr->_->at(arr, 1)) == *j);
-        ASSERT(*((int*) arr->_->at(arr, 1)) == *j);
+        ASSERT(List.size(arr) == 0);
+        ASSERT(List.pop(arr) == NULL);
+        ASSERT(List.pop(arr) == NULL);
+        ASSERT(List.size(arr) == 0);
+        List.push(arr, i);
+        List.push(arr, j);
+        ASSERT(List.size(arr) == 2);
+        ASSERT(List.at(arr, 2) == NULL);
+        ASSERT(*((int*) List.at(arr, -1)) == *j);
+        ASSERT(*((int*) List.at(arr, 1)) == *j);
+        ASSERT(*((int*) List.at(arr, 1)) == *j);
 
     END
 
@@ -88,13 +88,13 @@ RUN
         int TEST_N = 10000;
 
         int i;
-        ASSERT(arr->_->size(arr) == 0);
+        ASSERT(List.size(arr) == 0);
 
         // Fill the array with many encrypted ints to induce resize.
         for (i=0; i<TEST_N; i++) {
-            int* j = mem->_->alloc(mem, sizeof(int));
+            int* j = Memory.alloc(mem, sizeof(int));
             *j = encrypt(i);
-            arr->_->push(arr, j);
+            List.push(arr, j);
         }
 
         // Test the indices within the resized array.
@@ -104,18 +104,18 @@ RUN
             int j = encrypt(p);
             int* k;
 
-            k = arr->_->getitem(arr, p);
+            k = List.getitem(arr, p);
             ASSERT(*k == j);
 
             // Test if at does the same as getitem.
-            k = arr->_->at(arr, p);
+            k = List.at(arr, p);
             ASSERT(*k == j);
         }
 
         // Test the indices outside the resized array.
         int is2[] = {TEST_N, TEST_N+1, 2*TEST_N};
         for (i=0; i<LEN(is2); i++) {
-            int* k = arr->_->at(arr, is2[i]);
+            int* k = List.at(arr, is2[i]);
             ASSERT(k == NULL);
         }
 
@@ -123,127 +123,127 @@ RUN
         for (i=0; i<TEST_N; i++) {
             int p = TEST_N-i-1;
             int j = encrypt(p);
-            int* k = arr->_->pop(arr);
-            mem->_->track(mem, k);
-            ASSERT(arr->_->size(arr) == p);
+            int* k = List.pop(arr);
+            Memory.track(mem, k);
+            ASSERT(List.size(arr) == p);
             ASSERT(j == *k);
         }
 
     END
 
     CASE("setitem")
-        ASSERT(arr->_->size(arr) == 0);
+        ASSERT(List.size(arr) == 0);
 
-        int* i0 = mem->_->alloc(mem, sizeof(int*));
-        int* i1 = mem->_->alloc(mem, sizeof(int*));
-        int* i2 = mem->_->alloc(mem, sizeof(int*));
-        int* i3 = mem->_->alloc(mem, sizeof(int*));
+        int* i0 = Memory.alloc(mem, sizeof(int*));
+        int* i1 = Memory.alloc(mem, sizeof(int*));
+        int* i2 = Memory.alloc(mem, sizeof(int*));
+        int* i3 = Memory.alloc(mem, sizeof(int*));
 
         *i0 = 1;
         *i1 = 2;
         *i2 = 3;
         *i3 = 4;
 
-        arr->_->push(arr, i0);
-        arr->_->push(arr, i1);
+        List.push(arr, i0);
+        List.push(arr, i1);
 
         // replace the pushed items
-        arr->_->set(arr, 1, i2);
-        ASSERT(arr->_->size(arr) == 2);
-        ASSERT(*((int*) arr->_->getitem(arr, 0)) == *i0);
-        ASSERT(*((int*) arr->_->getitem(arr, 1)) == *i2);
+        List.set(arr, 1, i2);
+        ASSERT(List.size(arr) == 2);
+        ASSERT(*((int*) List.getitem(arr, 0)) == *i0);
+        ASSERT(*((int*) List.getitem(arr, 1)) == *i2);
 
-        arr->_->setitem(arr, 0, i3);
-        ASSERT(arr->_->size(arr) == 2);
-        ASSERT(*((int*) arr->_->getitem(arr, 0)) == *i3);
-        ASSERT(*((int*) arr->_->getitem(arr, 1)) == *i2);
+        List.setitem(arr, 0, i3);
+        ASSERT(List.size(arr) == 2);
+        ASSERT(*((int*) List.getitem(arr, 0)) == *i3);
+        ASSERT(*((int*) List.getitem(arr, 1)) == *i2);
 
     END
 
     CASE("set out-of-bounds")
         int size = 40;
         int k;
-        int* i = mem->_->alloc(mem, sizeof(int*));
+        int* i = Memory.alloc(mem, sizeof(int*));
         *i = 5;
         for (k=0; k<size; k++)
-            arr->_->push(arr, i);
+            List.push(arr, i);
 
-        int* j = mem->_->alloc(mem, sizeof(int*));
+        int* j = Memory.alloc(mem, sizeof(int*));
         *j = 100;
 
-        ASSERT(arr->_->set(arr, size-1, j));
-        ASSERT(*((int*) arr->_->getitem(arr, size-1)) == *j);
-        ASSERT(*((int*) arr->_->getitem(arr, size-2)) == *i);
-        ASSERT(*((int*) arr->_->getitem(arr, size-3)) == *i);
-        ASSERT(*((int*) arr->_->getitem(arr, 0)) == *i);
-        ASSERT(*((int*) arr->_->getitem(arr, size >> 1)) == *i);
+        ASSERT(List.set(arr, size-1, j));
+        ASSERT(*((int*) List.getitem(arr, size-1)) == *j);
+        ASSERT(*((int*) List.getitem(arr, size-2)) == *i);
+        ASSERT(*((int*) List.getitem(arr, size-3)) == *i);
+        ASSERT(*((int*) List.getitem(arr, 0)) == *i);
+        ASSERT(*((int*) List.getitem(arr, size >> 1)) == *i);
 
         int d[] = {0, 1, 100};
-        int* p = mem->_->alloc(mem, sizeof(int*));
+        int* p = Memory.alloc(mem, sizeof(int*));
         *p = 500;
         for (k=0; k<LEN(d); k++) {
-            ASSERT(!arr->_->set(arr, size+d[k], p));
-            ASSERT(*((int*) arr->_->getitem(arr, size-1)) == *j);
-            ASSERT(*((int*) arr->_->getitem(arr, size-2)) == *i);
-            ASSERT(*((int*) arr->_->getitem(arr, size-3)) == *i);
-            ASSERT(*((int*) arr->_->getitem(arr, 0)) == *i);
-            ASSERT(*((int*) arr->_->getitem(arr, size >> 1)) == *i);
+            ASSERT(!List.set(arr, size+d[k], p));
+            ASSERT(*((int*) List.getitem(arr, size-1)) == *j);
+            ASSERT(*((int*) List.getitem(arr, size-2)) == *i);
+            ASSERT(*((int*) List.getitem(arr, size-3)) == *i);
+            ASSERT(*((int*) List.getitem(arr, 0)) == *i);
+            ASSERT(*((int*) List.getitem(arr, size >> 1)) == *i);
         }
 
         long null_pos = 10;
-        ASSERT(arr->_->set(arr, -null_pos, NULL));
+        ASSERT(List.set(arr, -null_pos, NULL));
 
-        int* test1 = arr->_->pop(arr);
-        mem->_->track(mem, test1);
+        int* test1 = List.pop(arr);
+        Memory.track(mem, test1);
         ASSERT(*test1 == *j);
 
         for (k=0; k<null_pos-2; k++) {
-            int* test2 = arr->_->pop(arr);
-            mem->_->track(mem, test2);
+            int* test2 = List.pop(arr);
+            Memory.track(mem, test2);
             ASSERT(*test2 == *i);
         }
-        ASSERT(arr->_->pop(arr) == NULL);
-        mem->_->track(mem, NULL);
+        ASSERT(List.pop(arr) == NULL);
+        Memory.track(mem, NULL);
 
-        int* test3 = arr->_->pop(arr);
-        mem->_->track(mem, test3);
+        int* test3 = List.pop(arr);
+        Memory.track(mem, test3);
         ASSERT(*test3 == *i);
 
     END
 
     CASE("push-pop refcount")
     
-        Memory* mem2 = new_Memory();
+        MemoryObject* mem2 = Memory.new();
         
-        int* b1 = mem2->_->alloc(mem2, sizeof(int));
-        int* b2 = mem2->_->alloc(mem2, sizeof(int));
+        int* b1 = Memory.alloc(mem2, sizeof(int));
+        int* b2 = Memory.alloc(mem2, sizeof(int));
         
         *b1 = 20;
         *b2 = 30;
         
-        arr->_->push(arr, b1);
-        arr->_->push(arr, b2);
+        List.push(arr, b1);
+        List.push(arr, b2);
         // b1, b2 now have ref=2
         
         decref(mem2);
         // b1, b2 now have ref=1
         
         int* p;
-        p = arr->_->pop(arr);
-        mem->_->track(mem, p);
+        p = List.pop(arr);
+        Memory.track(mem, p);
         ASSERT(p != NULL);
         ASSERT(*p == *b2);
         
-        p = arr->_->pop(arr);
-        mem->_->track(mem, p);
+        p = List.pop(arr);
+        Memory.track(mem, p);
         ASSERT(*p == *b1);
         
-        p = arr->_->pop(arr);
-        mem->_->track(mem, p);
+        p = List.pop(arr);
+        Memory.track(mem, p);
         ASSERT(p == NULL);
         
-        p = arr->_->pop(arr);
-        mem->_->track(mem, p);
+        p = List.pop(arr);
+        Memory.track(mem, p);
         ASSERT(p == NULL);
     
     END

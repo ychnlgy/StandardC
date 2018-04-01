@@ -2,17 +2,17 @@
 
 #include <string.h>
 
-String* s1;
-String* s2;
-Memory* mem;
+StringObject* s1;
+StringObject* s2;
+MemoryObject* mem;
 
 SETUP {
-    mem = new_Memory();
-    s1 = mem->_->make(mem, &new_String);
-    s1->_->set(s1, "Hello world!");
+    mem = Memory.new();
+    s1 = Memory.make(mem, String.new);
+    String.set(s1, "Hello world!");
 
-    s2 = mem->_->make(mem, &new_String);
-    s2->_->set(s2, "Evil bunny");
+    s2 = Memory.make(mem, String.new);
+    String.set(s2, "Evil bunny");
 }
 
 TEARDOWN {
@@ -21,71 +21,71 @@ TEARDOWN {
 
 RUN
     CASE("size")
-        ASSERT(s1->_->size(s1) == 12);
-        ASSERT(s2->_->size(s2) == 10);
+        ASSERT(String.size(s1) == 12);
+        ASSERT(String.size(s2) == 10);
     END
 
     CASE("re-set")
-        s1->_->set(s1, "No memory leaks!");
-        ASSERT(s1->_->size(s1) == 16);
-        s1->_->set(s1, "Half");
-        ASSERT(!(s1->_->equals(s1, s2)));
+        String.set(s1, "No memory leaks!");
+        ASSERT(String.size(s1) == 16);
+        String.set(s1, "Half");
+        ASSERT(!(String.equals(s1, s2)));
     
-        String* s3 = mem->_->make(mem, &new_String);
-        s3->_->set(s3, "Half");
-        ASSERT(s1->_->equals(s1, s3));
+        StringObject* s3 = Memory.make(mem, String.new);
+        String.set(s3, "Half");
+        ASSERT(String.equals(s1, s3));
     END
 
     CASE("copy")
-        String* s3 = s1->_->copy(s1);
-        mem->_->track(mem, s3);
-        String* s4 = s3->_->copy(s3);
-        mem->_->track(mem, s4);
-        ASSERT(s3->_->size(s3) == 12);
-        ASSERT(s4->_->size(s4) == 12);
-        ASSERT(s3->_->equals(s3, s1));
-        ASSERT(s4->_->equals(s4, s1));
+        StringObject* s3 = String.copy(s1);
+        Memory.track(mem, s3);
+        StringObject* s4 = String.copy(s3);
+        Memory.track(mem, s4);
+        ASSERT(String.size(s3) == 12);
+        ASSERT(String.size(s4) == 12);
+        ASSERT(String.equals(s3, s1));
+        ASSERT(String.equals(s4, s1));
 
-        s2->_->set(s2, "Hello world!");
-        ASSERT(s2->_->equals(s2, s3));
-        ASSERT(s2->_->equals(s2, s1));
-        ASSERT(s2->_->equals(s2, s4));
+        String.set(s2, "Hello world!");
+        ASSERT(String.equals(s2, s3));
+        ASSERT(String.equals(s2, s1));
+        ASSERT(String.equals(s2, s4));
 
-        s2->_->set(s2, "Hello world");
-        ASSERT(!(s2->_->equals(s2, s3)));
-        ASSERT(!(s2->_->equals(s2, s1)));
-        ASSERT(!(s2->_->equals(s2, s4)));
+        String.set(s2, "Hello world");
+        ASSERT(!(String.equals(s2, s3)));
+        ASSERT(!(String.equals(s2, s1)));
+        ASSERT(!(String.equals(s2, s4)));
 
-        s3->_->set(s3, "Superman1234");
-        ASSERT(s3->_->size(s3) == 12);
-        ASSERT(s4->_->size(s4) == 12);
-        ASSERT(!s3->_->equals(s3, s4));
+        String.set(s3, "Superman1234");
+        ASSERT(String.size(s3) == 12);
+        ASSERT(String.size(s4) == 12);
+        ASSERT(!String.equals(s3, s4));
 
     END
 
     CASE("get-cstr")
-        ASSERT(strcmp(s2->_->cstr(s2), s1->_->cstr(s1)) != 0);
-        s2->_->set(s2, "Hello world!");
-        ASSERT(strcmp(s2->_->cstr(s2), s1->_->cstr(s1)) == 0);
+        ASSERT(strcmp(String.cstr(s2), String.cstr(s1)) != 0);
+        String.set(s2, "Hello world!");
+        ASSERT(strcmp(String.cstr(s2), String.cstr(s1)) == 0);
     END
     
     CASE("format")
-        s1->_->set(s1, "%d - %d + %d = %s");
+        String.set(s1, "%d - %d + %d = %s");
         
-        String* s3 = s1->_->format(s1, 12, 3, 2000, "Answer");
-        mem->_->track(mem, s3);
+        StringObject* s3 = String.format(s1, 12, 3, 2000, "Answer");
+        Memory.track(mem, s3);
         
-        int d = strlen(s3->_->cstr(s3));
-        ASSERT(s3->_->size(s3) == d);
+        int d = strlen(String.cstr(s3));
+        ASSERT(String.size(s3) == d);
         
-        String* s4 = mem->_->make(mem, &new_String);
-        s4->_->set(s4, "12 - 3 + 2000 = Answer");
+        StringObject* s4 = Memory.make(mem, String.new);
+        String.set(s4, "12 - 3 + 2000 = Answer");
         
-        ASSERT(s4->_->equals(s4, s3));
-        ASSERT(!s4->_->equals(s4, s1));
-        ASSERT(!s3->_->equals(s3, s1));
-        ASSERT(!s4->_->equals(s4, s2));
-        ASSERT(!s3->_->equals(s3, s2));
+        ASSERT(String.equals(s4, s3));
+        ASSERT(!String.equals(s4, s1));
+        ASSERT(!String.equals(s3, s1));
+        ASSERT(!String.equals(s4, s2));
+        ASSERT(!String.equals(s3, s2));
     END
 
 STOP

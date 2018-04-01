@@ -8,10 +8,10 @@ int* a;
 int* b;
 int* c;
 
-Memory* memory;
+MemoryObject* memory;
 
 SETUP{
-    memory = new_Memory();
+    memory = Memory.new();
 }
 
 TEARDOWN{
@@ -39,10 +39,10 @@ RUN
     CASE("new-method")
 
         a = new(sizeof(int), NULL);
-        memory->_->track(memory, a);
+        Memory.track(memory, a);
 
-        b = memory->_->alloc(memory, sizeof(int));
-        c = memory->_->make(memory, &new_int);
+        b = Memory.alloc(memory, sizeof(int));
+        c = Memory.make(memory, &new_int);
 
         *a = 4;
         *b = 6;
@@ -52,14 +52,14 @@ RUN
 
     CASE("track NULL")
 
-        a = memory->_->alloc(memory, sizeof(int));
-        b = memory->_->alloc(memory, sizeof(int));
+        a = Memory.alloc(memory, sizeof(int));
+        b = Memory.alloc(memory, sizeof(int));
         c = new_int();
         int* d = new_int();
-        memory->_->track(memory, c);
-        memory->_->track(memory, d);
-        memory->_->track(memory, NULL);
-        memory->_->track(memory, NULL);
+        Memory.track(memory, c);
+        Memory.track(memory, d);
+        Memory.track(memory, NULL);
+        Memory.track(memory, NULL);
 
     END
 

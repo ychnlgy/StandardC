@@ -3,27 +3,41 @@
 
 #include "stdc/lib.h"
 
-Ptr new_String();
-typedef struct String String;
+typedef struct StringObject StringObject;
 
 typedef struct {
-    void        (*set)      (String*, CStr);
-    String*     (*copy)     (String*);
-    bool        (*equals)   (String*, String*);
+
+    // Construction/destruction
+    Ptr             (*new)          ();
+    void            (*init)         (StringObject*);
+    void            (*del)          (Ptr);
+    
+    // Methods
+    void            (*set)          (StringObject*, CStr);
+    StringObject*   (*copy)         (StringObject*);
+    bool            (*equals)       (StringObject*, StringObject*);
 
     // Getters
-    long        (*size)     (String*);
-    CStr        (*cstr)     (String*);
+    long            (*size)         (StringObject*);
+    CStr            (*cstr)         (StringObject*);
 
     // Useful methods
-    String*     (*format)   (String*, ...);
+    StringObject*   (*format)       (StringObject*, ...);
+    
+    // TODO: implement
+//    String*     (*rstrip)       (String*);
+//    String*     (*lstrip)       (String*);
+//    String*     (*strip)        (String*);
+//    List*       (*split)        (String*, char);
+//    List*       (*splitstr)     (String*, String*);
+//    bool        (*beginswith)   (String*, String*);
+//    bool        (*endswith)     (String*, String*);
+//    bool        (*contains)     (String*, String*);
+//    String*     (*substr)       (String*, long, long);
+//    long        (*hash)         (String*);
     
 } StringVtable;
 
-struct String {
-    StringVtable*   _;
-    long            _size;
-    char*           _cstr;
-};
+extern StringVtable String;
 
 #endif

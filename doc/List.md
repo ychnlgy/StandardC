@@ -15,42 +15,42 @@ All elements of the list are pointers to the original data.
 #include "stdc/lib.h"
 
 int main() {
-  Memory* mem = new_Memory();
+  MemoryObject* mem = Memory.new();
   
-  List* list = mem->_->make(mem, &new_List);
+  ListObject* list = Memory.make(mem, List.new);
   
-  int* i1 = mem->_->alloc(mem, sizeof(int));
-  int* i2 = mem->_->alloc(mem, sizeof(int));
+  int* i1 = Memory.alloc(mem, sizeof(int));
+  int* i2 = Memory.alloc(mem, sizeof(int));
   *i1 = 20;
   *i2 = 40;
   
-  list->_->push(list, i1);
-  list->_->push(list, i2);
+  List.push(list, i1);
+  List.push(list, i2);
   // list is now [20, 40]
   
-  list->_->set(list, 0, i2);
+  List.set(list, 0, i2);
   // list is now [40, 40]
   
-  list->_->set(list, -1, i1);
+  List.set(list, -1, i1);
   // list is now [40, 20]
   
   *i1 = 60;
   // list is now [40, 60]
   
-  int* j1 = list->_->at(list, -1);
+  int* j1 = List.at(list, -1);
   // *j1 == *i1 == 60
   
-  int n = list->_->size(list);
+  int n = List.size(list);
   // n == 2
   
-  int* k1 = list->_->pop(list);
-  mem->_->track(mem, k1); // IMPORTANT:
+  int* k1 = List.pop(list);
+  Memory.track(mem, k1); // IMPORTANT:
                        // List.pop does not decref popped items.
                        // Since the block of memory pointed to
                        // by k1 is no longer referenced by the list,
                        // it needs to be tracked by the memory scope.
 
-  int m = list->_->size(list);
+  int m = List.size(list);
   // m == 1
   
   decref(mem); // all memory is free'd - no leaks!
@@ -60,13 +60,13 @@ int main() {
 
 ## List.size(_this_)
 ```c
-long List.size(List* this);
+long List.size(ListObject* this);
 ```
 Returns the number of elements in the list.
 
 ## List.getitem(_this_, _i_)
 ```c
-Ptr List.getitem(List* this, long i);
+Ptr List.getitem(ListObject* this, long i);
 ```
 Returns the pointer to the element at position **i**.
 It does not check if **i** is within the list boundaries,
@@ -80,16 +80,16 @@ void fn(char* c) {
 }
 
 int main() {
-  Memory* mem = new_Memory();
+  MemoryObject* mem = Memory.new();
   
-  List* list = mem->_->make(mem, &new_List);
+  ListObject* list = Memory.make(mem, List.new);
   
-  char* c1 = mem->_->alloc(mem, sizeof(char));
-  char* c2 = mem->_->alloc(mem, sizeof(char));
+  char* c1 = Memory.alloc(mem, sizeof(char));
+  char* c2 = Memory.alloc(mem, sizeof(char));
   
   int i;
-  for (i=0; i<list->_->size(list); i++)
-    fn(list->_->getitem(list, i));
+  for (i=0; i<List.size(list); i++)
+    fn(List.getitem(list, i));
   
   decref(mem);
 }
@@ -97,7 +97,7 @@ int main() {
 
 ## List.setitem(_this_, _i_, _ptr_)
 ```c
-void List.setitem(List* this, long i, Ptr ptr);
+void List.setitem(ListObject* this, long i, Ptr ptr);
 ```
 Replaces the pointer at index **i** with **ptr**.
 It does not check if **i** is within the list boundaries,
@@ -111,7 +111,7 @@ decref's the original pointer at that index if it is not ```NULL```.
 
 ## List.at(_this_, _i_)
 ```c
-Ptr List.at(List* this, long i);
+Ptr List.at(ListObject* this, long i);
 ```
 Returns the pointer to the element at position **i**.
 This is the safer alternative to ```List.getitem``` because
@@ -124,7 +124,7 @@ It also supports negative indexing:
 
 ## List.set(_this_, _i_, _ptr_)
 ```c
-bool List.set(List* this, long i, Ptr ptr);
+bool List.set(ListObject* this, long i, Ptr ptr);
 ```
 Replaces the pointer at index **i** with **ptr**.
 This is the safer alternative to ```List.setitem``` because
@@ -142,7 +142,7 @@ decref's the original pointer at that index if it is not ```NULL```.
 
 ## List.push(_this_, _ptr_)
 ```c
-void List.push(List* this, Ptr ptr);
+void List.push(ListObject* this, Ptr ptr);
 ```
 Appends the **ptr** to the back of the list, resizing if needed. 
 
@@ -153,7 +153,7 @@ Automatically incref's **ptr**.
 
 ## List.pop(_this_)
 ```c
-Ptr List.pop(List* this);
+Ptr List.pop(ListObject* this);
 ```
 Removes and returns the last element of the list. 
 
@@ -167,15 +167,15 @@ If it decrefs every element it pops, then it will return the pointer to free'd m
 
 #include "stdc/lib.h"
 
-List* foo() {
-  Memory* mem = new_Memory();
+ListObject* foo() {
+  MemoryObject* mem = Memory.new();
   
-  List* list = mem->_->make(mem, &new_List);
+  ListObject* list = Memory.make(mem, List.new);
   
-  int* i = mem->_->alloc(mem, sizeof(int));
+  int* i = Memory.alloc(mem, sizeof(int));
   // i has refcount 1
   
-  list->_->push(list, i);
+  List.push(list, i);
   // i now has refcount 2
   
   incref(list);
@@ -189,14 +189,14 @@ List* foo() {
 }
 
 int main() {
-  Memory* mem = new_Memory();
+  MemoryObject* mem = Memory.new();
   
-  List* list = foo();
-  mem->_->track(mem, list);
+  ListObject* list = foo();
+  Memory.track(mem, list);
   
-  int* j = list->_->pop(list);  // if List.pop were to decref the pointers
+  int* j = List.pop(list);  // if List.pop were to decref the pointers
                              // it pops, j will point to free'd memory,
-  mem->_->track(mem, j);
+  Memory.track(mem, j);
   
   decref(mem); // all blocks of memory in this scope are free'd
   return 0;

@@ -1,39 +1,36 @@
 #include "stdc/lib.h"
-#include "Memory_protected.h"
-
-// === PUBLIC METHODS ===
+#include "Memory_private.h"
 
 void del_Memory(Ptr this) {
-    List* _scope = ((Memory*) this)->_scope;
+    ListObject* scope = ((MemoryObject*) this)->scope;
     long i;
-    for (i=0; i<_scope->_->size(_scope); i++)
-        decref(_scope->_->getitem(_scope, i));
-    decref(_scope);
+    for (i=0; i<List.size(scope); i++)
+        decref(List.getitem(scope, i));
+    decref(scope);
 }
 
-void init_Memory(Memory* this) {
-    this->_      = &MEMORY_VTABLE;
-    this->_scope = new_List();
+void init_Memory(MemoryObject* this) {
+    this->scope = List.new();
 }
 
 void* new_Memory() {
-    Memory* this = new(sizeof(Memory), &del_Memory);
+    MemoryObject* this = new(sizeof(Memory), &del_Memory);
     init_Memory(this);
     return this;
 }
 
-void track_Memory(Memory* this, Ptr ptr) {
+void track_Memory(MemoryObject* this, Ptr ptr) {
     if (ptr != NULL)
-        this->_scope->_->push(this->_scope, ptr);
+        List.push(this->scope, ptr);
 }
 
-Ptr alloc_Memory(Memory* this, size_t typesize) {
+Ptr alloc_Memory(MemoryObject* this, size_t typesize) {
     Ptr ptr = new(typesize, NULL);
     track_Memory(this, ptr);
     return ptr;
 }
 
-Ptr make_Memory(Memory* this, Maker maker) {
+Ptr make_Memory(MemoryObject* this, Maker maker) {
     Ptr ptr = maker();
     track_Memory(this, ptr);
     return ptr;

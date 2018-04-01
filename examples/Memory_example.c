@@ -9,7 +9,7 @@
  *  - make : construct objects that this Memory scope knows about.
  *
  * The purpose of Memory is to reduce free/decref calls by the coder.
- * Simply make a new Memory scope with new_Memory() at the beginning
+ * Simply make a new Memory scope with Memory.new() at the beginning
  * of the scope and call decref on the memory object to call decref on
  * all the memory blocks it is responsible for.
  */
@@ -21,20 +21,20 @@ typedef struct SuperExpensiveStruct {
 } SuperExpensiveStruct;
 
 // Returns the sum of the list.
-SuperExpensiveStruct* sum(List*);
+SuperExpensiveStruct* sum(ListObject*);
 
 // Returns the sum of the three integers.
 int simpleSum(int* a, int* b, int* c);
 
 int main() {
     printBold("Running %s...", __FILE__);
-    Memory* mem = new_Memory();
+    MemoryObject* mem = Memory.new();
 
     // Allocate a bunch of integers that do not
     // need the programmer to remember to free.
-    int* i1 = mem->_->alloc(mem, sizeof(int)); *i1 = 20;
-    int* i2 = mem->_->alloc(mem, sizeof(int)); *i2 = 40;
-    int* i3 = mem->_->alloc(mem, sizeof(int)); *i3 = 60;
+    int* i1 = Memory.alloc(mem, sizeof(int)); *i1 = 20;
+    int* i2 = Memory.alloc(mem, sizeof(int)); *i2 = 40;
+    int* i3 = Memory.alloc(mem, sizeof(int)); *i3 = 60;
 
     int result = simpleSum(i1, i2, i3);
     assert(result == 120);
@@ -42,7 +42,7 @@ int main() {
     // Classes have special constructors and destructors.
     // List is such a class and it is allocated via new_List.
     // Use Memory.make(this, &constructor) to make these classes.
-    List* numlist = mem->_->make(mem, &new_List);
+    ListObject* numlist = Memory.make(mem, List.new);
     // numlist is currently empty []
 
     SuperExpensiveStruct* ses;
@@ -52,41 +52,41 @@ int main() {
     // Since ses is a dynamically allocated pointer,
     // we want the current memory stack to track it
     // so we won't have to remember to decref it.
-    mem->_->track(mem, ses);
+    Memory.track(mem, ses);
     
     assert(ses->result == 0);
 
     // Lists automatically incref any items pushed to it.
-    numlist->_->push(numlist, i1);
-    numlist->_->push(numlist, i2);
-    numlist->_->push(numlist, i3);
+    List.push(numlist, i1);
+    List.push(numlist, i2);
+    List.push(numlist, i3);
     // numlist is currently [20, 40, 60].
 
     ses = sum(numlist);
 
     // This ses is a different pointer from the previous one.
     // The memory stack should track it.
-    mem->_->track(mem, ses);
+    Memory.track(mem, ses);
 
     assert(ses->result == 120);
 
     // List.set(this, i, ptr) decrefs the object
     // at the set position i if it is not NULL, and
     // increfs the new ptr set to that position.
-    numlist->_->set(numlist, 0, i3);
+    List.set(numlist, 0, i3);
     // numlist is currently [60, 40, 60]
 
     ses = sum(numlist);
-    mem->_->track(mem, ses);
+    Memory.track(mem, ses);
 
     assert(ses->result == 160);
 
     // python style negative indexing also works
-    numlist->_->set(numlist, -1, i1);
+    List.set(numlist, -1, i1);
     // numlist is currently [60, 40, 20]
 
     ses = sum(numlist);
-    mem->_->track(mem, ses);
+    Memory.track(mem, ses);
 
     assert(ses->result == 120);
 
@@ -98,12 +98,12 @@ int main() {
     return 0;
 }
 
-SuperExpensiveStruct* sum(List* numlist) {
+SuperExpensiveStruct* sum(ListObject* numlist) {
     // allocate stack for each function body.
     // remember to deallocate it with decref at the end!
-    Memory* mem = new_Memory();
+    MemoryObject* mem = Memory.new();
 
-    SuperExpensiveStruct* ses = mem->_->alloc(
+    SuperExpensiveStruct* ses = Memory.alloc(
         mem, 
         sizeof(SuperExpensiveStruct)
     );
@@ -111,10 +111,10 @@ SuperExpensiveStruct* sum(List* numlist) {
     // sum elements of the array.
     ses->result = 0;
     long i;
-    for (i=0; i<numlist->_->size(numlist); i++) {
+    for (i=0; i<List.size(numlist); i++) {
         // List.getitem(this, i) returns a pointer
         // to the original data.
-        int* k = numlist->_->getitem(numlist, i);
+        int* k = List.getitem(numlist, i);
         ses->result += *k;
     }
 

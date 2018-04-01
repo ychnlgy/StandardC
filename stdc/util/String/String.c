@@ -1,5 +1,5 @@
 #include "stdc/lib.h"
-#include "String_protected.h"
+#include "String_private.h"
 
 #include <string.h>
 // strncpy, strlen, strcmp
@@ -19,21 +19,21 @@ char* _String_copyCStr(CStr src, int len) {
     return cstrPtr;
 }
 
-long _String_getFormattedSize(String* this, va_list args) {
+long _String_getFormattedSize(StringObject* this, va_list args) {
     return vsnprintf(
         NULL,
         0,
-        this->_cstr,
+        this->cstr,
         args
     );
 }
 
-char* _String_getFormattedCStr(String* this, va_list args, long size) {
+char* _String_getFormattedCStr(StringObject* this, va_list args, long size) {
     char* cstr = malloc(sizeof(char)*(++size));
     vsnprintf(
         cstr,
         size,
-        this->_cstr,
+        this->cstr,
         args
     );
     return cstr;
@@ -42,50 +42,49 @@ char* _String_getFormattedCStr(String* this, va_list args, long size) {
 // === METHODS ===
 
 void del_String(Ptr this) {
-    free(((String*) this)->_cstr);
+    free(((StringObject*) this)->cstr);
 }
 
 Ptr new_String() {
-    String* this = new(sizeof(String), &del_String);
+    StringObject* this = new(sizeof(StringObject), &del_String);
     init_String(this);
     return this;
 }
 
-void init_String(String* this) {
-    this->_ = &STRING_VTABLE;
-    this->_size = 0;
-    this->_cstr = NULL;
+void init_String(StringObject* this) {
+    this->size = 0;
+    this->cstr = NULL;
 }
 
-void set_String(String* this, CStr cstr) {
-    free(this->_cstr);
-    this->_size = strlen(cstr);
-    this->_cstr = _String_copyCStr(cstr, this->_size);
+void set_String(StringObject* this, CStr cstr) {
+    free(this->cstr);
+    this->size = strlen(cstr);
+    this->cstr = _String_copyCStr(cstr, this->size);
 }
 
-String* copy_String(String* this) {
-    String* copy = new_String();
-    copy->_size = this->_size;
-    copy->_cstr = _String_copyCStr(this->_cstr, this->_size);
+StringObject* copy_String(StringObject* this) {
+    StringObject* copy = new_String();
+    copy->size = this->size;
+    copy->cstr = _String_copyCStr(this->cstr, this->size);
     return copy;
 }
 
-bool equals_String(String* this, String* other) {
-    return strcmp(this->_cstr, other->_cstr) == 0;
+bool equals_String(StringObject* this, StringObject* other) {
+    return strcmp(this->cstr, other->cstr) == 0;
 }
 
-long size_String(String* this) {
-    return this->_size;
+long size_String(StringObject* this) {
+    return this->size;
 }
 
-CStr cstr_String(String* this) {
-    return this->_cstr;
+CStr cstr_String(StringObject* this) {
+    return this->cstr;
 }
 
-String* format_String(String* this, ...) {
+StringObject* format_String(StringObject* this, ...) {
     va_list args;
     
-    String* s = new_String();
+    StringObject* s = new_String();
     
     va_start(args, this);
     long size = _String_getFormattedSize(this, args);
@@ -95,10 +94,10 @@ String* format_String(String* this, ...) {
     // if (size < 0) // encoding error
     //    return NULL;
     
-    s->_size = size;
+    s->size = size;
     
     va_start(args, this);
-    s->_cstr = _String_getFormattedCStr(this, args, size);
+    s->cstr = _String_getFormattedCStr(this, args, size);
     va_end(args);
     
     return s;

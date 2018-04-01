@@ -19,9 +19,9 @@ Increases the reference count of **ptr** by 1 and returns the new reference coun
 // continuing from the Foo example...
 
 Foo* fooify() {
-  Memory* mem = new_Memory();
+  MemoryObject* mem = Memory.new();
   
-  Foo* foo = mem->_->make(mem, &new_Foo);
+  Foo* foo = Memory.make(mem, &new_Foo);
   *foo->i = 34;
   
   incref(foo); // increase its reference count to prevent
@@ -59,10 +59,10 @@ int main() {
   decref(i3);
   
   // do:
-  Memory* mem = new_Memory();
-  int* i4 = mem->_->alloc(mem, sizeof(int));
-  char* i5 = mem->_->alloc(mem, sizeof(char));
-  int* i6 = mem->_->alloc(mem, sizeof(int));
+  MemoryObject* mem = Memory.new();
+  int* i4 = Memory.alloc(mem, sizeof(int));
+  char* i5 = Memory.alloc(mem, sizeof(char));
+  int* i6 = Memory.alloc(mem, sizeof(int));
   decref(mem); // less opportunity to forget to free memory.
 }
 ```
@@ -122,8 +122,8 @@ int main() {
   decref(foo); // foo and foo->i are completely freed.
   
   // ...but it is better to do this:
-  Memory* mem = new_Memory();
-  Foo* foo2 = mem->_->make(mem, &new_Foo);
+  MemoryObject* mem = Memory.new();
+  Foo* foo2 = Memory.make(mem, &new_Foo);
   
   // do stuff with foo2
   // ...
