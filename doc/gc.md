@@ -4,17 +4,17 @@ A few functions for reference counting.
 
 ## Files
 
-[stdc/memory/gc/gc.h](../stdc/memory/gc/gc.h)
+ * [stdc/memory/gc/gc.h](../stdc/memory/gc/gc.h)
 
-[stdc/memory/gc/gc.c](../stdc/memory/gc/gc.c)
+ * [stdc/memory/gc/gc.c](../stdc/memory/gc/gc.c)
 
-[stdc/memory/gc/gc_test.c](../stdc/memory/gc/gc_test.c)
+ * [stdc/memory/gc/gc_test.c](../stdc/memory/gc/gc_test.c)
 
 ## incref(_ptr_)
 ```c
 int incref(Ptr ptr);
 ```
-Increases the reference count of **ptr** by 1 and returns the new reference count. The input **ptr** must have been allocated by ```new```. This function is typically used when returning a dynamically allocated object at the end of a function:
+Increases the reference count of **ptr** by 1 and returns the new reference count. If **ptr** is ```NULL```, the reference count is not updated and the returned value is ```-1```. The input **ptr** must have been allocated by ```new```. This function is typically used when returning a dynamically allocated object at the end of a function:
 ```c
 // continuing from the Foo example...
 
@@ -37,7 +37,7 @@ You can see how ```incref``` is used in [List.c](../stdc/util/List/List.c) (ctrl
 ```c
 int decref(Ptr ptr);
 ```
-Decreases the reference count of **ptr** by 1 and returns the new reference count. The input **ptr** must have been allocated by ```new```. This function is typically used to attempt to free its memory - which is successfully freed when its reference count is decreased to 0.
+Decreases the reference count of **ptr** by 1 and returns the new reference count. If **ptr** is ```NULL```, the reference count is not updated and the returned value is ```-1```. The input **ptr** must have been allocated by ```new```. This function is typically used to attempt to free its memory - which is successfully freed when its reference count is decreased to 0.
 
 ## new(_typesize_, _destructor_)
  ```c
