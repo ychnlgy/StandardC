@@ -21,9 +21,7 @@ int main() {
     StringObject* s2 = Memory.make(mem, String.new);
     String.set(s2, "Carrot");
     
-    StringObject* s3 = String.copy(s1);
-    Memory.track(mem, s3); // don't forget to let stack know
-                         // about this new block of memory.
+    StringObject* s3 = String.copy(s1, mem);
     
     // s1 is equal to s3 but not s2.
     assert(String.equals(s1, s3));
@@ -44,13 +42,12 @@ void String.set(StringObject* this, CStr cstr);
 Sets the value of this string to **cstr**. 
 See [types](../stdc/util/types.h) for the declaration of ```CStr```.
 
-## String.copy(_this_)
+## String.copy(_this_, _mem_)
 ```c
-StringObject* String.copy(StringObject* this);
+StringObject* String.copy(StringObject* this, MemoryObject* mem);
 ```
 Allocates a copy of this string on heap memory and returns the pointer to it.
 
-**Remember to track it on the memory scope.**
 
 ```c
 #include "stdc/lib.h"
@@ -59,8 +56,7 @@ int main() {
   MemoryObject* mem = Memory.new();
   
   StringObject* s1 = Memory.make(mem, String.new);
-  StringObject* s2 = String.copy(s1);
-  Memory.track(mem, s2); // if you forget this, memory leak of s2 will occur.
+  StringObject* s2 = String.copy(s1, mem);
   
   decref(mem); // no memory leaks.
 }
@@ -84,12 +80,12 @@ CStr String.cstr(StringObject* this);
 ```
 Returns the [CStr](../stdc/util/types.h) data of this string.
 
-## String.format(_this_, ...)
+## String.format(_this_, MemoryObject*, ...)
 ```c
-StringObject* String.format(StringObject* this, ...);
+StringObject* String.format(StringObject* this, MemoryObject* mem, ...);
 ```
-Formats this string with variable arguments. 
-Returns the formatted string that should be tracked by the [memory scope](Memory.md).
+Formats this string with variable arguments and returns a new string. 
+
 ```c
 #include "stdc/lib.h"
 #include <stdio.h>
@@ -100,10 +96,10 @@ int main() {
     StringObject* s1 = Memory.make(mem, String.new);
     String.set(s1, "%d eggs a %s. Have a good day, %s!\n");
     
-    StringObject* s2 = String.format(s1, 12, "dozen", "mister");
-    Memory.track(mem, s2); // REMEMBER TO DO THIS!
+    StringObject* s2 = String.format(s1, mem, 12, "dozen", "mister");
     
-    printf("%s", String.cstr(s2));
+    printf("%s", String.cstr(s2)); 
+    // prints: "12 eggs a dozen. Have a good day, mister!\n"
     
     decref(mem);
 }
