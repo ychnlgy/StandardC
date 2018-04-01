@@ -14,16 +14,13 @@
 void _List_resize(ListObject* this, size_t n) {
     Ptr* data = malloc(n*PTR_SIZE);
     long size = MIN(this->size, n);
+    this->size = size;
 
-    long i;
-    for (i=0; i<size; i++)
-        data[i] = this->data[i];
-    for (i=size; i<n; i++)
-        data[i] = NULL;
+    while (--size >= 0)
+        data[size] = this->data[size];
 
     free(this->data);
 
-    this->size = size;
     this->capacity = n;
     this->data = data;
 }
@@ -50,10 +47,6 @@ void init_List(ListObject* this) {
     this->size     = 0;
     this->capacity = MIN_CAPACITY;
     this->data     = malloc(MIN_CAPACITY*PTR_SIZE);
-
-    long i;
-    for (i=0; i<MIN_CAPACITY; i++)
-        this->data[i] = NULL;
 }
 
 void del_List(Ptr ptr) {
@@ -66,8 +59,8 @@ void del_List(Ptr ptr) {
 
 // Methods
 
-ListObject* concat_List(ListObject* this, ListObject* other) {
-    ListObject* newl = new_List();
+ListObject* concat_List(ListObject* this, ListObject* other, MemoryObject* mem) {
+    ListObject* newl = Memory.make(mem, &new_List);
     List.extend(newl, this);
     List.extend(newl, other);
     return newl;
@@ -102,8 +95,7 @@ void clear_List(ListObject* this) {
 void push_List(ListObject* this, Ptr entry) {
     if (this->size >= this->capacity)
        _List_resize(this, this->capacity*RESIZE_FACTOR);
-    if (entry != NULL)
-        incref(entry);
+    incref(entry);
     this->data[this->size++] = entry;
 }
 
@@ -117,11 +109,11 @@ void pushes_List(ListObject* this, long n, ...) {
     va_end(args);
 }
 
-Ptr pop_List(ListObject* this) {
+Ptr pop_List(ListObject* this, MemoryObject* mem) {
     if (this->size <= 0)
         return NULL;
-    Ptr out = this->data[this->size-1];
-    this->data[--this->size] = NULL;
+    Ptr out = this->data[--this->size];
+    Memory.track(mem, out);
     return out;
 }
 
@@ -133,7 +125,7 @@ void extend_List(ListObject* this, ListObject* other) {
     long reqsize = this->size + other->size;
     if (reqsize >= this->capacity)
         _List_resize(this, reqsize*RESIZE_FACTOR);
-    this->size = reqsize;
+    
     long i, j;
     for (
         i=this->size,   j=0;
@@ -141,10 +133,11 @@ void extend_List(ListObject* this, ListObject* other) {
         i++,            j++
     ) {
         Ptr ptr = other->data[j];
-        if (ptr != NULL)
-            incref(ptr);
+        incref(ptr);
         this->data[i] = ptr;
     }
+    
+    this->size = reqsize;
 }
 
 // Accessor interface
@@ -156,10 +149,8 @@ Ptr getitem_List(ListObject* this, long i) {
 void setitem_List(ListObject* this, long i, Ptr entry) {
     Ptr original = this->data[i];
     this->data[i] = entry;
-    if (entry != NULL)
-        incref(entry); 
-    if (original != NULL)
-        decref(original);
+    incref(entry);
+    decref(original);
 }
 
 Ptr at_List(ListObject* this, long i) {
@@ -178,23 +169,26 @@ bool set_List(ListObject* this, long i, Ptr entry) {
     }
 }
 
-ListObject* slice_List(ListObject* this, long i, long j, long step) {
+ListObject* slice_List(ListObject* this, MemoryObject* mem, long i, long j) {
     if (j < i)
         return NULL;
-    if (i < 0 || j >= this->size)
+    if (i < 0 || j > this->size)
         return NULL;
     
-    ListObject* sublist = new_List();
+    ListObject* sublist = Memory.make(mem, &new_List);
     
     long d = j - i;
     if (d > MIN_CAPACITY)
         _List_resize(sublist, d*RESIZE_FACTOR);
     
     long k, p;
-    for (k=i, p=0; k<j; k++, p++) {
+    for (
+        k=i, p=0;
+        k<j; 
+        k++, p++
+    ) {
         Ptr ptr = this->data[k];
-        if (ptr != NULL)
-            incref(ptr);
+        incref(ptr);
         sublist->data[p] = ptr;
     }
     sublist->size = d;

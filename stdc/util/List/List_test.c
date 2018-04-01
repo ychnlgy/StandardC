@@ -39,9 +39,9 @@ RUN
         ASSERT(List.size(arr) == 1);
         List.push(arr, NULL);
         ASSERT(List.size(arr) == 2);
-        ASSERT(List.pop(arr) == NULL);
+        ASSERT(List.pop(arr, mem) == NULL);
         ASSERT(List.size(arr) == 1);
-        ASSERT(List.pop(arr) == NULL);
+        ASSERT(List.pop(arr, mem) == NULL);
         ASSERT(List.size(arr) == 0);
 
     END
@@ -61,17 +61,15 @@ RUN
         ASSERT(*((int*) List.getitem(arr, 1)) == *j);
         ASSERT(*((int*) List.at(arr, -2)) == *i);
 
-        int* test1 = List.pop(arr);
-        Memory.track(mem, test1);
+        int* test1 = List.pop(arr, mem);
         ASSERT(*test1 == *j);
 
-        int* test2 = List.pop(arr);
-        Memory.track(mem, test2);
+        int* test2 = List.pop(arr, mem);
         ASSERT(*test2 == *i);
 
         ASSERT(List.size(arr) == 0);
-        ASSERT(List.pop(arr) == NULL);
-        ASSERT(List.pop(arr) == NULL);
+        ASSERT(List.pop(arr, mem) == NULL);
+        ASSERT(List.pop(arr, mem) == NULL);
         ASSERT(List.size(arr) == 0);
         List.push(arr, i);
         List.push(arr, j);
@@ -123,8 +121,7 @@ RUN
         for (i=0; i<TEST_N; i++) {
             int p = TEST_N-i-1;
             int j = encrypt(p);
-            int* k = List.pop(arr);
-            Memory.track(mem, k);
+            int* k = List.pop(arr, mem);
             ASSERT(List.size(arr) == p);
             ASSERT(j == *k);
         }
@@ -193,20 +190,16 @@ RUN
         long null_pos = 10;
         ASSERT(List.set(arr, -null_pos, NULL));
 
-        int* test1 = List.pop(arr);
-        Memory.track(mem, test1);
+        int* test1 = List.pop(arr, mem);
         ASSERT(*test1 == *j);
 
         for (k=0; k<null_pos-2; k++) {
-            int* test2 = List.pop(arr);
-            Memory.track(mem, test2);
+            int* test2 = List.pop(arr, mem);
             ASSERT(*test2 == *i);
         }
-        ASSERT(List.pop(arr) == NULL);
-        Memory.track(mem, NULL);
+        ASSERT(List.pop(arr, mem) == NULL);
 
-        int* test3 = List.pop(arr);
-        Memory.track(mem, test3);
+        int* test3 = List.pop(arr, mem);
         ASSERT(*test3 == *i);
 
     END
@@ -229,21 +222,17 @@ RUN
         // b1, b2 now have ref=1
         
         int* p;
-        p = List.pop(arr);
-        Memory.track(mem, p);
+        p = List.pop(arr, mem);
         ASSERT(p != NULL);
         ASSERT(*p == *b2);
         
-        p = List.pop(arr);
-        Memory.track(mem, p);
+        p = List.pop(arr, mem);
         ASSERT(*p == *b1);
         
-        p = List.pop(arr);
-        Memory.track(mem, p);
+        p = List.pop(arr, mem);
         ASSERT(p == NULL);
         
-        p = List.pop(arr);
-        Memory.track(mem, p);
+        p = List.pop(arr, mem);
         ASSERT(p == NULL);
     
     END
@@ -284,13 +273,105 @@ RUN
         ASSERT(List.equals(arr, arr2));
     END
     
-    CASE("extend-concat")
+    CASE("empty extend-concat")
+        ListObject* arr2 = Memory.make(mem, List.new);
         
+        List.extend(arr, arr2);
+        ASSERT(List.size(arr) == 0);
+        ASSERT(List.size(arr2) == 0);
+        
+        ListObject* arr3 = List.concat(arr, arr2, mem);
+        ASSERT(List.size(arr) == 0);
+        ASSERT(List.size(arr2) == 0);
+        ASSERT(List.size(arr3) == 0);
+    END
+    
+    CASE("extend")
+        ListObject* arr2 = Memory.make(mem, List.new);
+        ListObject* arr3 = Memory.make(mem, List.new);
+        ListObject* arr4 = Memory.make(mem, List.new);
+        
+        long size1 = 10000;
+        long i;
+        for (i=0; i<size1; i++) {
+            int* k = Memory.alloc(mem, sizeof(int));
+            *k = i;
+            List.push(arr, k);
+            List.push(arr3, k);
+        }
+        
+        List.extend(arr2, arr);
+        ASSERT(List.size(arr2) == size1);
+        ASSERT(List.equals(arr, arr2));
+        ASSERT(List.equals(arr2, arr3));
+        ASSERT(List.equals(arr, arr3));
+        ASSERT(!List.equals(arr4, arr));
+        ASSERT(!List.equals(arr4, arr2));
+        ASSERT(!List.equals(arr4, arr3));
+    
+    END
+    
+    CASE("extend-concat")
+        ListObject* arr2 = Memory.make(mem, List.new);
+        
+        long i;
+        long size = 10000;
+        for (i=0; i<size; i++) {
+            int* k = Memory.alloc(mem, sizeof(int));
+            *k = i;
+            List.push(arr, k);
+        }
+        
+        ASSERT(List.size(arr) == size);
+        ListObject* arr3 = List.concat(arr, arr2, mem);
+        
+        ASSERT(List.size(arr3) == size);
+        ASSERT(List.equals(arr3, arr));
+        ASSERT(!List.equals(arr3, arr2));
+        
+        List.extend(arr3, arr2);
+        
+        ASSERT(List.equals(arr3, arr));
+        ASSERT(!List.equals(arr3, arr2));
+        
+        List.extend(arr2, arr3);
+        
+        ASSERT(List.size(arr2) == size);
+        ASSERT(List.equals(arr3, arr));
+        ASSERT(List.equals(arr3, arr2));
     
     END
     
     CASE("slice")
+        ListObject* arr2 = Memory.make(mem, List.new);
     
+        long i;
+        long size = 1000;
+        for (i=0; i<size; i++) {
+            int* k = Memory.alloc(mem, sizeof(int));
+            *k = i;
+            List.push(arr, k);
+        }
+        
+        ListObject* sub1 = List.slice(arr, mem, 0, size);
+        ASSERT(List.equals(sub1, arr));
+        
+        ListObject* sub2 = List.slice(arr, mem, 0, 0);
+        ASSERT(List.size(sub2) == 0);
+        ASSERT(List.equals(sub2, arr2));
+        
+        ListObject* sub3 = List.slice(arr, mem, size, size);
+        ASSERT(List.size(sub3) == 0);
+        ASSERT(List.equals(sub3, arr2));
+        
+        long start = 5;
+        long end = 10;
+        ListObject* sub4 = List.slice(arr, mem, start, end);
+        ASSERT(List.size(sub4) == 5);
+        for (i=0; i<end-start; i++) {
+            int* k = List.getitem(sub4, i);
+            ASSERT(*k == i+start);
+        }
     END
 
 STOP

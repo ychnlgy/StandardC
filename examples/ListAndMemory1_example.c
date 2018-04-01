@@ -74,18 +74,16 @@ int main() {
     int* j6 = List.at(list, 0);
     assert(*j6 == 90);
     
-    int* j7 = List.pop(list);
+    int* j7 = List.pop(list, mem);
     // List is now [90]
     assert(*j7 == 60);
-    Memory.track(mem, j7); // stack needs to keep track of popped elements.
     
     // List is now []
-    int* j8 = List.pop(list);
+    int* j8 = List.pop(list, mem);
     assert(*j8 == 90);
-    Memory.track(mem, j8); // stack needs to keep track of popped elements.
     
     // Popping an empty list returns NULL.
-    int* j9 = List.pop(list);
+    int* j9 = List.pop(list, mem);
     assert(j9 == NULL);
     assert(List.size(list) == 0);
 

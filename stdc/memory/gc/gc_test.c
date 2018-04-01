@@ -42,5 +42,10 @@ RUN
         int* c = new(sizeof(int), NULL);
         ASSERT(decref(c) == 0);
     END
+    
+    CASE("inc-decref NULL")
+        ASSERT(incref(NULL) == -1);
+        ASSERT(decref(NULL) == -1);
+    END
 
 STOP

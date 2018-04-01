@@ -14,7 +14,7 @@ typedef struct {
     //ListObject* (*copy)     (ListObject*);
     
     // Methods
-    ListObject* (*concat)   (ListObject*, ListObject*);
+    ListObject* (*concat)   (ListObject*, ListObject*, MemoryObject*);
 
     // Object interface
     bool        (*equals)   (ListObject*, ListObject*);
@@ -26,7 +26,7 @@ typedef struct {
     // Stack interface
     void        (*push)     (ListObject*, Ptr);
     void        (*pushes)   (ListObject*, long, ...);
-    Ptr         (*pop)      (ListObject*);
+    Ptr         (*pop)      (ListObject*, MemoryObject*);
     Ptr         (*back)     (ListObject*);
     void        (*extend)   (ListObject*, ListObject*);
 
@@ -35,7 +35,7 @@ typedef struct {
     void        (*setitem)  (ListObject*, long, Ptr);
     Ptr         (*at)       (ListObject*, long);
     bool        (*set)      (ListObject*, long, Ptr);
-    ListObject* (*slice)    (ListObject*, long, long, long);
+    ListObject* (*slice)    (ListObject*, MemoryObject*, long, long);
 
     // Iteration
     // TODO: implement them!

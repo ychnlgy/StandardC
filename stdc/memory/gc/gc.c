@@ -35,10 +35,14 @@ Ptr new(size_t bytes, Destructor destructor) {
 }
 
 int incref(Ptr p) {
+    if (p == NULL)
+        return -1;
     return ++_ptrToGCHeader(p)->refcount;
 }
 
 int decref(Ptr p) {
+    if (p == NULL)
+        return -1;
     _GCHeader* gch = _ptrToGCHeader(p);
     int ref = --gch->refcount;
     if (ref == 0) {

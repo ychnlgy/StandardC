@@ -1,13 +1,15 @@
 #ifndef STDC_UTIL_LIST_LIST_PRIVATE
 #define STDC_UTIL_LIST_LIST_PRIVATE
 
+#include "stdc/lib.h"
+
 // Construction/destruction
 Ptr         new_List        ();
 void        init_List       (ListObject*);
 void        del_List        (Ptr);
 
 // Methods
-ListObject* concat_List     (ListObject*, ListObject*);
+ListObject* concat_List     (ListObject*, ListObject*, MemoryObject*);
 
 // Object interface
 bool        equals_List     (ListObject*, ListObject*);
@@ -19,7 +21,7 @@ void        clear_List      (ListObject*);
 // Stack interface
 void        push_List       (ListObject*, Ptr);
 void        pushes_List     (ListObject*, long, ...);
-Ptr         pop_List        (ListObject*);
+Ptr         pop_List        (ListObject*, MemoryObject*);
 Ptr         back_List       (ListObject*);
 void        extend_List     (ListObject*, ListObject*);
 
@@ -28,7 +30,7 @@ Ptr         getitem_List    (ListObject*, long);
 void        setitem_List    (ListObject*, long, Ptr);
 Ptr         at_List         (ListObject*, long);
 bool        set_List        (ListObject*, long, Ptr);
-ListObject* slice_List      (ListObject*, long, long, long);
+ListObject* slice_List      (ListObject*, MemoryObject*, long, long);
 
 ListVtable List = {
 

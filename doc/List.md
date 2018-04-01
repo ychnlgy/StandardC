@@ -192,7 +192,7 @@ int main() {
 
 ## List.pop(_this_, _mem_)
 ```c
-Ptr List.pop(ListObject* this, MemoryObject*);
+Ptr List.pop(ListObject* this, MemoryObject* mem);
 ```
 Removes and returns the last element of the list. 
 
