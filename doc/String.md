@@ -91,7 +91,7 @@ Returns the [CStr](../stdc/util/types.h) data of this string.
 String* String.format(String* this, ...);
 ```
 Formats this string with variable arguments. 
-Returns the new formatted String that should be tracked by the current [memory scope](Memory.md).
+Returns the formatted String that should be tracked by the [memory scope](Memory.md).
 ```c
 #include "stdc/lib.h"
 #include <stdio.h>
