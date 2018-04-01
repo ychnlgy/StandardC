@@ -74,14 +74,39 @@ bool String.equals(String* this, String* other);
 ```
 Returns ```true``` if this string equals the other string.
 
-## String.size(_this_);
+## String.size(_this_)
 ```c
 long String.size(String* this);
 ```
 Returns the number of characters in this string.
 
-## String.cstr(_this_);
+## String.cstr(_this_)
 ```c
 CStr String.cstr(String* this);
 ```
 Returns the [CStr](../stdc/util/types.h) data of this string.
+
+## String.format(_this_, ...)
+```c
+String* String.format(String* this, ...);
+```
+Formats this string with variable arguments. 
+Returns the new formatted String that should be tracked by the current [memory scope](Memory.md).
+```c
+#include "stdc/lib.h"
+#include <stdio.h>
+
+int main() {
+    Memory* mem = new_Memory();
+    
+    String* s1 = mem->_->make(mem, &new_String);
+    s1->_->set(s1, "%d eggs a %s. Have a good day, %s!\n");
+    
+    String* s2 = s1->_->format(s1, 12, "dozen", "mister");
+    mem->_->track(mem, s2); // REMEMBER TO DO THIS!
+    
+    printf("%s", s2->_->cstr(s2));
+    
+    decref(mem);
+}
+```
