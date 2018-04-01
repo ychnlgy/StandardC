@@ -4,6 +4,25 @@ Dynamically resizable array-list.
 
 All elements of the list are pointers to the original data.
 
+## Methods chart
+| Interface | Method |
+|-----------|--------|
+| Object | ```Ptr List.new();``` |
+|        | ```bool List.equals(ListObject* this, ListObject* other);``` |
+| Container | ```long List.size(ListObject* this);``` |
+|           | ```void List.clear(ListObject* this);``` |
+| Stack | ```void List.push(ListObject* this, Ptr ptr);``` |
+|       | ```void List.pushes(ListObject* this, long n, ...);``` |
+|       | ```Ptr List.pop(ListObject* this, MemoryObject* mem);``` |
+|       | ```Ptr List.back(ListObject* this);``` |
+|       | ```void List.extend(ListObject* this, ListObject* other);``` |
+| Accessor | ```Ptr List.getitem(ListObject* this, long i);``` |
+|          | ```void List.setitem(ListObject* this, long i, Ptr ptr);``` |
+|          | ```Ptr List.at(ListObject* this, long i);``` |
+|          | ```void List.set(ListObject* this, long i, Ptr ptr);``` |
+|          | ```ListObject* List.slice(ListObject* this, MemoryObject* mem, long i, long j);``` |
+| List | ```ListObject* List.concat(ListObject* this, ListObject* other, MemoryObject* mem);``` |
+
 ## Files
  * [stdc/util/List/List.h](../stdc/util/List/List.h)
  * [stdc/util/List/protected.h](../stdc/util/List/protected.h)
@@ -50,102 +69,38 @@ int main() {
   return 0;
 }
 ```
+## Object
 
-## List.size(_this_)
+#### List.new()
 ```c
-long List.size(ListObject* this);
+Ptr List.new();
 ```
-Returns the number of elements in the list.
+Returns a pointer to the newly allocated memory for a ```ListObject```.
 
-## List.clear(_this_)
-```c
-void List.clear(ListObject* this);
-```
-Removes and decref's all elements in the list.
-
-## List.equals(_this_, _other_)
+#### List.equals(_this_, _other_)
 ```c
 bool List.equals(ListObject* this, ListObject* other);
 ```
 Returns true if the two lists have the same length and 
 corresponding elements are equal.
 
-## List.getitem(_this_, _i_)
+## Container
+
+#### List.size(_this_)
 ```c
-Ptr List.getitem(ListObject* this, long i);
+long List.size(ListObject* this);
 ```
-Returns the pointer to the element at position **i**.
-It does not check if **i** is within the list boundaries,
-so this method should only be used in loops for safety.
+Returns the number of elements in the list.
 
+#### List.clear(_this_)
 ```c
-#include "stdc/lib.h"
-
-void fn(char* c) {
-  // do something
-}
-
-int main() {
-  MemoryObject* mem = Memory.new();
-  
-  ListObject* list = Memory.make(mem, List.new);
-  
-  char* c1 = Memory.alloc(mem, sizeof(char));
-  char* c2 = Memory.alloc(mem, sizeof(char));
-  
-  int i;
-  for (i=0; i<List.size(list); i++)
-    fn(List.getitem(list, i));
-  
-  decref(mem);
-}
+void List.clear(ListObject* this);
 ```
+Removes and decref's all elements in the list.
 
-## List.setitem(_this_, _i_, _ptr_)
-```c
-void List.setitem(ListObject* this, long i, Ptr ptr);
-```
-Replaces the pointer at index **i** with **ptr**.
-It does not check if **i** is within the list boundaries,
-so this method should only be used in loops for safety.
+## Stack
 
-The **ptr** must be either ```NULL``` or allocated by [```new```](gc.md) at some point.
-Ideally, **ptr** is allocated by the [memory scope](Memory.md).
-
-Automatically incref's **ptr** if it is not ```NULL``` and 
-decref's the original pointer at that index if it is not ```NULL```.
-
-## List.at(_this_, _i_)
-```c
-Ptr List.at(ListObject* this, long i);
-```
-Returns the pointer to the element at position **i**.
-This is the safer alternative to ```List.getitem``` because
-it will return ```NULL``` if **i** is outside list boundaries.
-
-It also supports negative indexing: 
-```i = -1``` means the back of the list,
-```i = -2``` means the second last item, etc.
-
-## List.set(_this_, _i_, _ptr_)
-```c
-bool List.set(ListObject* this, long i, Ptr ptr);
-```
-Replaces the pointer at index **i** with **ptr**.
-This is the safer alternative to ```List.setitem``` because
-it will do nothing and return ```false``` if **i** is outside list boundaries.
-
-It also supports negative indexing: 
-```i = -1``` means the back of the list,
-```i = -2``` means the second last item, etc.
-
-The **ptr** must be either ```NULL``` or allocated by [```new```](gc.md) at some point.
-Ideally, **ptr** is allocated by the [memory scope](Memory.md).
-
-Automatically incref's **ptr** if it is not ```NULL``` and 
-decref's the original pointer at that index if it is not ```NULL```.
-
-## List.push(_this_, _ptr_)
+#### List.push(_this_, _ptr_)
 ```c
 void List.push(ListObject* this, Ptr ptr);
 ```
@@ -156,7 +111,7 @@ Ideally, **ptr** is allocated by the [memory scope](Memory.md).
 
 Automatically incref's **ptr**.
 
-## List.pushes(_this_, _n_, ...)
+#### List.pushes(_this_, _n_, ...)
 ```c
 void List.pushes(ListObject* this, long n, ...);
 ```
@@ -188,19 +143,19 @@ int main() {
 }
 ```
 
-## List.pop(_this_, _mem_)
+#### List.pop(_this_, _mem_)
 ```c
 Ptr List.pop(ListObject* this, MemoryObject* mem);
 ```
 Removes and returns the last element of the list. 
 
-## List.back(_this_)
+#### List.back(_this_)
 ```c
 Ptr List.back(ListObject* this);
 ```
 Returns the pointer to the last element in the list.
 
-## List.extend(_this_, _otherlist_)
+#### List.extend(_this_, _otherlist_)
 ```c
 void List.extend(ListObject* this, ListObject* otherlist);
 ```
@@ -208,15 +163,83 @@ Appends the other list to the end of this list.
 
 Automatically incref's each element of the other list.
 
-## List.concat(_this_, _otherlist_, _mem_)
+## Accessor
+
+#### List.getitem(_this_, _i_)
 ```c
-ListObject* List.concat(ListObject* this, ListObject* otherlist, MemoryObject* mem);
+Ptr List.getitem(ListObject* this, long i);
 ```
-Makes a new list consisting of elements of this list followed by the elements of the other list.
+Returns the pointer to the element at position **i**.
+It does not check if **i** is within the list boundaries,
+so this method should only be used in loops for safety.
 
-Automatically incref's each element of both lists.
+```c
+#include "stdc/lib.h"
 
-## List.slice(_this_, _mem_, _i_, _j_)
+void fn(char* c) {
+  // do something
+}
+
+int main() {
+  MemoryObject* mem = Memory.new();
+  
+  ListObject* list = Memory.make(mem, List.new);
+  
+  char* c1 = Memory.alloc(mem, sizeof(char));
+  char* c2 = Memory.alloc(mem, sizeof(char));
+  
+  int i;
+  for (i=0; i<List.size(list); i++)
+    fn(List.getitem(list, i));
+  
+  decref(mem);
+}
+```
+#### List.setitem(_this_, _i_, _ptr_)
+```c
+void List.setitem(ListObject* this, long i, Ptr ptr);
+```
+Replaces the pointer at index **i** with **ptr**.
+It does not check if **i** is within the list boundaries,
+so this method should only be used in loops for safety.
+
+The **ptr** must be either ```NULL``` or allocated by [```new```](gc.md) at some point.
+Ideally, **ptr** is allocated by the [memory scope](Memory.md).
+
+Automatically incref's **ptr** if it is not ```NULL``` and 
+decref's the original pointer at that index if it is not ```NULL```.
+
+#### List.at(_this_, _i_)
+```c
+Ptr List.at(ListObject* this, long i);
+```
+Returns the pointer to the element at position **i**.
+This is the safer alternative to ```List.getitem``` because
+it will return ```NULL``` if **i** is outside list boundaries.
+
+It also supports negative indexing: 
+```i = -1``` means the back of the list,
+```i = -2``` means the second last item, etc.
+
+#### List.set(_this_, _i_, _ptr_)
+```c
+bool List.set(ListObject* this, long i, Ptr ptr);
+```
+Replaces the pointer at index **i** with **ptr**.
+This is the safer alternative to ```List.setitem``` because
+it will do nothing and return ```false``` if **i** is outside list boundaries.
+
+It also supports negative indexing: 
+```i = -1``` means the back of the list,
+```i = -2``` means the second last item, etc.
+
+The **ptr** must be either ```NULL``` or allocated by [```new```](gc.md) at some point.
+Ideally, **ptr** is allocated by the [memory scope](Memory.md).
+
+Automatically incref's **ptr** if it is not ```NULL``` and 
+decref's the original pointer at that index if it is not ```NULL```.
+
+#### List.slice(_this_, _mem_, _i_, _j_)
 ```c
 ListObject* List.slice(ListObject* this, MemoryObject* mem, long i, long j);
 ```
@@ -254,4 +277,13 @@ int main() {
   decref(mem);
 }
 ```
+
+## List
+#### List.concat(_this_, _otherlist_, _mem_)
+```c
+ListObject* List.concat(ListObject* this, ListObject* otherlist, MemoryObject* mem);
+```
+Makes a new list consisting of elements of this list followed by the elements of the other list.
+
+Automatically incref's each element of both lists.
 
