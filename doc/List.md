@@ -157,7 +157,7 @@ Ptr List.pop(ListObject* this);
 ```
 Removes and returns the last element of the list. 
 
-**The returned pointer is not decref'd so it needs to be tracked by the local memory scope.**
+**The returned pointer is not decref'd so it needs to be tracked by the local [memory scope](Memory.md).**
 
 This is intentional. Consider the case when the list contains the very last reference to an element.
 If it decrefs every element it pops, then it will return the pointer to free'd memory in this case.
@@ -202,4 +202,23 @@ int main() {
   return 0;
 }
 ```
+## List.back(_this_)
+```c
+Ptr List.back(ListObject* this);
+```
+Returns the pointer to the last element in the list.
 
+## List.extend(_this_, _otherlist_)
+```c
+void List.extend(ListObject* this, ListObject* otherlist);
+```
+Appends the other list to the end of this list.
+Automatically incref's each element of the other list.
+
+## List.concat(_this_, _otherlist_)
+```c
+List* List.concat(ListObject* this, ListObject* otherlist);
+```
+Makes a new list consisting of elements of this list followed by the elements of the other list.
+
+**Remember to track the returned new list with the local [memory scope](Memory.md).**
