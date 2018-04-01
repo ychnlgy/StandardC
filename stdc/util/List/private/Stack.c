@@ -1,16 +1,16 @@
+#ifdef STDC_UTIL_LIST_PRIVATE
+
 #include <stdarg.h>
 // va_arg, va_start, va_end, va_list
 
-#include "private.h"
-
-void push_List(ListObject* this, Ptr entry) {
+static void push_List(ListObject* this, Ptr entry) {
     if (this->size >= this->capacity)
        _List_resize(this, this->capacity*RESIZE_FACTOR);
     incref(entry);
     this->data[this->size++] = entry;
 }
 
-void pushes_List(ListObject* this, long n, ...) {
+static void pushes_List(ListObject* this, long n, ...) {
     va_list args;
     va_start(args, n);
     
@@ -32,7 +32,7 @@ Ptr back_List(ListObject* this) {
     return this->data[this->size-1];
 }
 
-void extend_List(ListObject* this, ListObject* other) {
+static void extend_List(ListObject* this, ListObject* other) {
     long reqsize = this->size + other->size;
     if (reqsize >= this->capacity)
         _List_resize(this, reqsize*RESIZE_FACTOR);
@@ -50,3 +50,5 @@ void extend_List(ListObject* this, ListObject* other) {
     
     this->size = reqsize;
 }
+
+#endif

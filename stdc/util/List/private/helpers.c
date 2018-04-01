@@ -1,6 +1,6 @@
-#include "private.h"
+#ifdef STDC_UTIL_LIST_PRIVATE
 
-void _List_resize(ListObject* this, size_t n) {
+static void _List_resize(ListObject* this, size_t n) {
     Ptr* data = malloc(n*PTR_SIZE);
     long size = MIN(this->size, n);
     this->size = size;
@@ -14,10 +14,12 @@ void _List_resize(ListObject* this, size_t n) {
     this->data = data;
 }
 
-bool _List_isWithin(ListObject* this, long i) {
+static bool _List_isWithin(ListObject* this, long i) {
     return i < this->size && this->size != 0;
 }
 
-long _List_fitWithin(ListObject* this, long i) {
+static long _List_fitWithin(ListObject* this, long i) {
     return MOD(i, this->size);
 }
+
+#endif

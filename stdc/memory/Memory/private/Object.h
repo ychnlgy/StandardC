@@ -1,10 +1,7 @@
-#ifndef STDC_MEMORY_MEMORY_PRIVATE_OBJECT
-#define STDC_MEMORY_MEMORY_PRIVATE_OBJECT
+#ifdef STDC_MEMORY_MEMORY_PRIVATE
 
-#include "private.h"
-
-Ptr     new_Memory      ();
-void    del_Memory      (Ptr);
-void    init_Memory     (MemoryObject*);
+static Ptr     new_Memory      ();
+static void    del_Memory      (Ptr);
+static void    init_Memory     (MemoryObject*);
 
 #endif

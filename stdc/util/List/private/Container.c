@@ -1,10 +1,12 @@
-#include "private.h"
+#ifdef STDC_UTIL_LIST_PRIVATE
 
-long size_List(ListObject* this) {
+static long size_List(ListObject* this) {
     return this->size;
 }
 
-void clear_List(ListObject* this) {
+static void clear_List(ListObject* this) {
     del_List(this);
     init_List(this);
 }
+
+#endif

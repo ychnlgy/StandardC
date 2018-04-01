@@ -16,12 +16,12 @@
 
 #define GCH_SIZE sizeof(_GCHeader)
 
-typedef struct _GCHeader {
+typedef struct {
     Destructor destructor;
     int refcount;
 } _GCHeader;
 
-_GCHeader* _ptrToGCHeader(Ptr p) {
+static _GCHeader* ptrToGCHeader(Ptr p) {
     return (_GCHeader*) (((char*) p) - GCH_SIZE);
 }
 
@@ -37,13 +37,13 @@ Ptr new(size_t bytes, Destructor destructor) {
 int incref(Ptr p) {
     if (p == NULL)
         return -1;
-    return ++_ptrToGCHeader(p)->refcount;
+    return ++ptrToGCHeader(p)->refcount;
 }
 
 int decref(Ptr p) {
     if (p == NULL)
         return -1;
-    _GCHeader* gch = _ptrToGCHeader(p);
+    _GCHeader* gch = ptrToGCHeader(p);
     int ref = --gch->refcount;
     if (ref == 0) {
         if (gch->destructor != NULL)

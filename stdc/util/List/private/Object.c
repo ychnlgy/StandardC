@@ -1,18 +1,18 @@
-#include "private.h"
+#ifdef STDC_UTIL_LIST_PRIVATE
 
-Ptr new_List() {
+static Ptr new_List() {
     ListObject* this = new(sizeof(List), &del_List);
     init_List(this);
     return this;
 }
 
-void init_List(ListObject* this) {
+static void init_List(ListObject* this) {
     this->size     = 0;
     this->capacity = MIN_CAPACITY;
     this->data     = malloc(MIN_CAPACITY*PTR_SIZE);
 }
 
-void del_List(Ptr ptr) {
+static void del_List(Ptr ptr) {
     ListObject this = *((ListObject*) ptr);
     long i;
     for (i=0; i<this.size; i++)
@@ -20,7 +20,7 @@ void del_List(Ptr ptr) {
     free(this.data);
 }
 
-bool equals_List(ListObject* this, ListObject* other) {
+static bool equals_List(ListObject* this, ListObject* other) {
     if (this->size != other->size)
         return false;
     
@@ -30,3 +30,5 @@ bool equals_List(ListObject* this, ListObject* other) {
             return false;
     return true;
 }
+
+#endif

@@ -1,7 +1,6 @@
-#ifndef STDC_UTIL_LIST_PRIVATE_CONTAINER
-#define STDC_UTIL_LIST_PRIVATE_CONTAINER
+#ifdef STDC_UTIL_LIST_PRIVATE
 
-long size_List  (ListObject*);
-void clear_List (ListObject*);
+static long size_List  (ListObject*);
+static void clear_List (ListObject*);
 
 #endif

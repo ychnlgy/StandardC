@@ -1,12 +1,9 @@
-#ifndef STDC_UTIL_LIST_PRIVATE_ACCESSOR
-#define STDC_UTIL_LIST_PRIVATE_ACCESSOR
+#ifdef STDC_UTIL_LIST_PRIVATE
 
-#include "private.h"
-
-Ptr         getitem_List    (ListObject*, long);
-void        setitem_List    (ListObject*, long, Ptr);
-Ptr         at_List         (ListObject*, long);
-bool        set_List        (ListObject*, long, Ptr);
-ListObject* slice_List      (ListObject*, MemoryObject*, long, long);
+static Ptr         getitem_List    (ListObject*, long);
+static void        setitem_List    (ListObject*, long, Ptr);
+static Ptr         at_List         (ListObject*, long);
+static bool        set_List        (ListObject*, long, Ptr);
+static ListObject* slice_List      (ListObject*, MemoryObject*, long, long);
 
 #endif

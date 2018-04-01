@@ -1,12 +1,9 @@
-#ifndef STDC_UTIL_STRING_PRIVATE_STRING
-#define STDC_UTIL_STRING_PRIVATE_STRING
+#ifdef STDC_UTIL_STRING_PRIVATE
 
-#include "private.h"
-
-void            set_String      (StringObject*, CStr);
-StringObject*   copy_String     (StringObject*);
-long            size_String     (StringObject*);
-CStr            cstr_String     (StringObject*);
-StringObject*   format_String   (StringObject*, ...);
+static void            set_String      (StringObject*, CStr);
+static StringObject*   copy_String     (StringObject*);
+static long            size_String     (StringObject*);
+static CStr            cstr_String     (StringObject*);
+static StringObject*   format_String   (StringObject*, ...);
 
 #endif

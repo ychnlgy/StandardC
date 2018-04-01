@@ -1,24 +1,24 @@
-#include "private.h"
+#ifdef STDC_UTIL_LIST_PRIVATE
 
-Ptr getitem_List(ListObject* this, long i) {
+static Ptr getitem_List(ListObject* this, long i) {
     return this->data[i];
 }
 
-void setitem_List(ListObject* this, long i, Ptr entry) {
+static void setitem_List(ListObject* this, long i, Ptr entry) {
     Ptr original = this->data[i];
     this->data[i] = entry;
     incref(entry);
     decref(original);
 }
 
-Ptr at_List(ListObject* this, long i) {
+static Ptr at_List(ListObject* this, long i) {
     if (_List_isWithin(this, i))
         return this->data[_List_fitWithin(this, i)];
     else
         return NULL;
 }
 
-bool set_List(ListObject* this, long i, Ptr entry) {
+static bool set_List(ListObject* this, long i, Ptr entry) {
     if (_List_isWithin(this, i)) {
         setitem_List(this, _List_fitWithin(this, i), entry);
        return true;
@@ -27,7 +27,7 @@ bool set_List(ListObject* this, long i, Ptr entry) {
     }
 }
 
-ListObject* slice_List(ListObject* this, MemoryObject* mem, long i, long j) {
+static ListObject* slice_List(ListObject* this, MemoryObject* mem, long i, long j) {
     if (j < i)
         return NULL;
     if (i < 0 || j > this->size)
@@ -52,3 +52,5 @@ ListObject* slice_List(ListObject* this, MemoryObject* mem, long i, long j) {
     sublist->size = d;
     return sublist;
 }
+
+#endif

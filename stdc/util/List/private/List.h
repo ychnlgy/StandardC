@@ -1,8 +1,5 @@
-#ifndef STDC_UTIL_LIST_PRIVATE_LIST
-#define STDC_UTIL_LIST_PRIVATE_LIST
+#ifdef STDC_UTIL_LIST_PRIVATE
 
-#include "private.h"
-
-ListObject* concat_List (ListObject*, ListObject*, MemoryObject*);
+static ListObject* concat_List (ListObject*, ListObject*, MemoryObject*);
 
 #endif

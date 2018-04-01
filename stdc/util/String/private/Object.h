@@ -1,11 +1,8 @@
-#ifndef STDC_UTIL_STRING_PRIVATE_OBJECT
-#define STDC_UTIL_STRING_PRIVATE_OBJECT
+#ifdef STDC_UTIL_STRING_PRIVATE
 
-#include "private.h"
-
-Ptr  new_String    ();
-void del_String    (Ptr);
-void init_String   (StringObject*);
-bool equals_String (StringObject*, StringObject*);
+static Ptr  new_String    ();
+static void del_String    (Ptr);
+static void init_String   (StringObject*);
+static bool equals_String (StringObject*, StringObject*);
 
 #endif

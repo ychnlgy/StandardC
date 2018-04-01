@@ -1,11 +1,8 @@
-#ifndef STDC_UTIL_LIST_PRIVATE_OBJECT
-#define STDC_UTIL_LIST_PRIVATE_OBJECT
+#ifdef STDC_UTIL_LIST_PRIVATE
 
-#include "private.h"
-
-Ptr         new_List        ();
-void        init_List       (ListObject*);
-void        del_List        (Ptr);
-bool        equals_List     (ListObject*, ListObject*);
+static Ptr         new_List        ();
+static void        init_List       (ListObject*);
+static void        del_List        (Ptr);
+static bool        equals_List     (ListObject*, ListObject*);
 
 #endif
