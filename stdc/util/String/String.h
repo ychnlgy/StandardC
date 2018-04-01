@@ -21,8 +21,8 @@ typedef struct {
     
     // Methods
     void            (*set)          (StringObject*, CStr);
-    StringObject*   (*copy)         (StringObject*);
-    StringObject*   (*format)       (StringObject*, ...);
+    StringObject*   (*copy)         (StringObject*, MemoryObject*);
+    StringObject*   (*format)       (StringObject*, MemoryObject*, ...);
     
     
 

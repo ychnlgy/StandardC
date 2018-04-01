@@ -22,9 +22,7 @@ int main() {
     StringObject* s2 = Memory.make(mem, String.new);
     String.set(s2, "Carrot");
     
-    StringObject* s3 = String.copy(s1);
-    Memory.track(mem, s3); // don't forget to let stack know
-                         // about this new block of memory.
+    StringObject* s3 = String.copy(s1, mem);
     
     // s1 is equal to s3 but not s2.
     assert(String.equals(s1, s3));

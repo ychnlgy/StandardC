@@ -12,8 +12,8 @@ static void set_String(StringObject* this, CStr cstr) {
     this->cstr = copyCStr(cstr, this->size);
 }
 
-static StringObject* copy_String(StringObject* this) {
-    StringObject* copy = new_String();
+static StringObject* copy_String(StringObject* this, MemoryObject* mem) {
+    StringObject* copy = Memory.make(mem, &new_String);
     copy->size = this->size;
     copy->cstr = copyCStr(this->cstr, this->size);
     return copy;
@@ -27,12 +27,12 @@ static CStr cstr_String(StringObject* this) {
     return this->cstr;
 }
 
-static StringObject* format_String(StringObject* this, ...) {
+static StringObject* format_String(StringObject* this, MemoryObject* mem, ...) {
     va_list args;
     
-    StringObject* s = new_String();
+    StringObject* s = Memory.make(mem, &new_String);
     
-    va_start(args, this);
+    va_start(args, mem);
     long size = getFormattedSize(this, args);
     va_end(args);
     
@@ -42,7 +42,7 @@ static StringObject* format_String(StringObject* this, ...) {
     
     s->size = size;
     
-    va_start(args, this);
+    va_start(args, mem);
     s->cstr = getFormattedCStr(this, args, size);
     va_end(args);
     

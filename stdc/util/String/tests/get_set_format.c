@@ -37,10 +37,8 @@ RUN
     END
 
     CASE("copy")
-        StringObject* s3 = String.copy(s1);
-        Memory.track(mem, s3);
-        StringObject* s4 = String.copy(s3);
-        Memory.track(mem, s4);
+        StringObject* s3 = String.copy(s1, mem);
+        StringObject* s4 = String.copy(s3, mem);
         ASSERT(String.size(s3) == 12);
         ASSERT(String.size(s4) == 12);
         ASSERT(String.equals(s3, s1));
@@ -72,8 +70,7 @@ RUN
     CASE("format")
         String.set(s1, "%d - %d + %d = %s");
         
-        StringObject* s3 = String.format(s1, 12, 3, 2000, "Answer");
-        Memory.track(mem, s3);
+        StringObject* s3 = String.format(s1, mem, 12, 3, 2000, "Answer");
         
         int d = strlen(String.cstr(s3));
         ASSERT(String.size(s3) == d);
