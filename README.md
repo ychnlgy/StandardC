@@ -42,12 +42,15 @@ bakecake.py main.c app.exe
 ```
 
 ## Documentation
+| Class                            | Description                                                  |
+|----------------------------------|--------------------------------------------------------------|
+| [Memory](doc/Memory.md)          | Acts like a memory stack to reduce use of free and decref.   |
+| [List](doc/List.md)              | Dynamically-resizing arraylist.                              |
+| [String](doc/String.md)          | String class for easy and safe string manipulation.          |
+
 | Feature                          | Description                                                  |
 |----------------------------------|--------------------------------------------------------------|
 | [Garbage Collection](doc/gc.md)  | Reference-counting for dynamically allocated objects.        |
-| [Memory](doc/Memory.md)          | Acts like a memory stack to reduce use of free and decref.   |
-| [List](doc/List.md)              | Dynamically resizing array-list.                             |
-| [String](doc/String.md)          | String class for easy and safe string manipulation.          |
 | [Utility](doc/util.md)           | Collection of useful functions for dealing with C.           |
 | [Types](stdc/util/types.h)       | Several predefined types wrapped in typedef for ease of use. |
 | [Unittest](doc/unittest.md)      | Small set of functions for nice looking unittests.           |
