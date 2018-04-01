@@ -56,7 +56,7 @@ bakecake.py main.c app.exe
 | Feature | Description |
 |---------|--------------------------------------------------------------|
 | Memory  | [How to use Memory to track, allocate and make memory blocks.](examples/Memory_example.c) |
-| List    | [Basic](examples/List_example1.c) and [advanced](examples/List_example2.c) demonstrations of List methods. |
+| List    | [Basic](examples/ListAndMemory1_example.c) and [advanced](examples/ListAndMemory2_example.c) demonstrations of List methods. |
 | String  | [A demonstration of String methods.](examples/String_example.c) |
 | Unittest | [How to write a unittest using StdC framework.](stdc/unittest/unittest_fail11of17_test.c) |
 
