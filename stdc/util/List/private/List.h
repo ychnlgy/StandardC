@@ -3,6 +3,6 @@
 
 #include "private.h"
 
-ListObject* concat_List     (ListObject*, ListObject*, MemoryObject*);
+ListObject* concat_List (ListObject*, ListObject*, MemoryObject*);
 
 #endif
