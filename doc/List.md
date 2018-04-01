@@ -75,7 +75,7 @@ Removes and decref's all elements in the list.
 bool List.equals(ListObject* this, ListObject* other);
 ```
 Returns true if the two lists have the same length and 
-each element of this list equals the corresponding element of the other list.
+corresponding elements are equal.
 
 ## List.getitem(_this_, _i_)
 ```c
@@ -107,7 +107,7 @@ int main() {
   decref(mem);
 }
 ```
-**You should not track this pointer with the local memory scope under normal circumstances, since the list still contains a reference to this element.**
+**You should not track this pointer with the local memory scope under normal circumstances.**
 
 ## List.setitem(_this_, _i_, _ptr_)
 ```c
@@ -135,7 +135,7 @@ It also supports negative indexing:
 ```i = -1``` means the back of the list,
 ```i = -2``` means the second last item, etc.
 
-**You should not track this pointer with the local memory scope under normal circumstances, since the list still contains a reference to this element.**
+**You should not track this pointer with the local memory scope under normal circumstances.**
 
 ## List.set(_this_, _i_, _ptr_)
 ```c
@@ -255,7 +255,7 @@ Ptr List.back(ListObject* this);
 ```
 Returns the pointer to the last element in the list.
 
-**You should not track this pointer with the local memory scope under normal circumstances, since the list still contains a reference to this element.**
+**You should not track this pointer with the local memory scope under normal circumstances.**
 
 ## List.extend(_this_, _otherlist_)
 ```c
@@ -283,7 +283,7 @@ Creates a new list consisting of elements **i** up to but not including **j**.
 The returned ```ListObject*``` is ```NULL``` if **j** is less than **i** or
 if any of the two indices are outside the bounds of the list.
 
-Each of its consituting elements are automatically incref'd.
+Each of its constituting elements are automatically incref'd.
 
 **Remember to track the returned new list with the local [memory scope](Memory.md).**
 ```c
@@ -313,8 +313,6 @@ int main() {
   ListObject* sublist3 = List.slice(list, 0, List.size(list));
   Memory.track(mem, sublist3);
   // sublist3 is a copy of list
-  
-  ListObject* sublist3 = List.slice(list
   
   decref(mem);
 }
