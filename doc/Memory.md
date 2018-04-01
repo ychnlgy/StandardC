@@ -8,8 +8,6 @@ calling decref on their pointers upon destruction.
 ## Files
  * [stdc/memory/Memory/Memory.h](../stdc/memory/Memory/Memory.h)
  * [stdc/memory/Memory/Memory_protected.h](../stdc/memory/Memory/Memory_protected.h)
- * [stdc/memory/Memory/Memory.c](../stdc/memory/Memory/Memory.c)
- * [stdc/memory/Memory/Memory_test.c](../stdc/memory/Memory/Memory_test.c)
 
 ## General usage
 ```c

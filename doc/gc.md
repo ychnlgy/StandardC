@@ -3,12 +3,7 @@
 A few functions for reference counting.
 
 ## Files
-
  * [stdc/memory/gc/gc.h](../stdc/memory/gc/gc.h)
-
- * [stdc/memory/gc/gc.c](../stdc/memory/gc/gc.c)
-
- * [stdc/memory/gc/gc_test.c](../stdc/memory/gc/gc_test.c)
 
 ## incref(_ptr_)
 ```c

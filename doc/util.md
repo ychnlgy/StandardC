@@ -4,7 +4,6 @@ Small collection of useful macros.
 
 ## Files
  * [stdc/util/util.h](../stdc/util/util.h)
- * [stdc/util/util_test.c](.../stdc/util/util_test.c)
 
 ## MAX(_a_, _b_)
 Returns max{a, b}.

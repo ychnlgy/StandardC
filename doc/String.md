@@ -5,8 +5,6 @@ String class for the ease of string manipulation.
 ## Files
  * [stdc/util/String/String.h](../stdc/util/String/String.h)
  * [stdc/util/String/String_protected.h](../stdc/util/String/String_protected.h)
- * [stdc/util/String/String.c](../stdc/util/String/String.c)
- * [stdc/util/String/String_test.c](../stdc/util/String/String_test.c)
 
 ## Demonstration
 ```c

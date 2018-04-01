@@ -6,9 +6,7 @@ All elements of the list are pointers to the original data.
 
 ## Files
  * [stdc/util/List/List.h](../stdc/util/List/List.h)
- * [stdc/util/List/List_protected.h](../stdc/util/List/List_protected.h)
- * [stdc/util/List/List.c](../stdc/util/List/List.c)
- * [stdc/util/List/List_test.c](../stdc/util/List/List_test.c)
+ * [stdc/util/List/protected.h](../stdc/util/List/protected.h)
 
 ## Demonstration
 ```c

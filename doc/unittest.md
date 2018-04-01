@@ -4,13 +4,6 @@ C unittest framework.
 
 ## Files
  * [stdc/unittest.h](../stdc/unittest.h)
- * [stdc/unittest/unittest.h](../stdc/unittest/unittest.h)
- * [stdc/unittest/unittest.c](../stdc/unittest/unittest.c)
- * [stdc/unittest/unittest_good_test.c](../stdc/unittest/unittest_good_test.c)
- * [stdc/unittest/unittest_fail11of17_test.c](../stdc/unittest/unittest_fail11of17_test.c)
- * [stdc/unittest/print.h](../stdc/unittest/print.h)
- * [stdc/unittest/print.c](../stdc/unittest/print.c)
- * [stdc/unittest/print_test.c](../stdc/unittest/print_test.c)
 
 ## Demonstration
 ```c

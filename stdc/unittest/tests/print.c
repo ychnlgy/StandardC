@@ -1,4 +1,4 @@
-#include "print.h"
+#include "../print.h"
 
 int main() {
     printRed("RED ");
