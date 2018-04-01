@@ -3,10 +3,6 @@
 
 #include "stdc/lib.h"
 
-struct MemoryObject {
-    ListObject* scope;
-};
-
 Ptr     new_Memory      ();
 void    del_Memory      (Ptr);
 void    init_Memory     (MemoryObject*);
@@ -25,6 +21,7 @@ MemoryVtable Memory = {
     .track = &track_Memory,
     .alloc = &alloc_Memory,
     .make  = &make_Memory
+
 };
 
 #endif

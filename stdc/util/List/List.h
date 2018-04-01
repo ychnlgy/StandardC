@@ -12,22 +12,16 @@ typedef struct {
     void    (*init)     (ListObject*);
     void    (*del)      (Ptr);
 
-
-    // Methods
+    // Container interface
     long    (*size)     (ListObject*);
+
+    // Stack interface
     void    (*push)     (ListObject*, Ptr);
     Ptr     (*pop)      (ListObject*);
 
-    /* NOTE: Accessors take long position rather than
-     * the unsigned size_t because there may be times
-     * where accidents happen and wierd things happen.
-     */
-
-    // Fast but unsafe accessors (does not check range)
+    // Accessor interface
     Ptr     (*getitem)  (ListObject*, long);
     void    (*setitem)  (ListObject*, long, Ptr);
-
-    // Slow but safe accessors (checks for range)
     Ptr     (*at)       (ListObject*, long);
     bool    (*set)      (ListObject*, long, Ptr);
 

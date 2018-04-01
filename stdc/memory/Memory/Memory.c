@@ -1,4 +1,5 @@
 #include "stdc/lib.h"
+#include "Memory_protected.h"
 #include "Memory_private.h"
 
 void del_Memory(Ptr this) {

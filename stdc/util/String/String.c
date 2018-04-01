@@ -1,4 +1,5 @@
 #include "stdc/lib.h"
+#include "String_protected.h"
 #include "String_private.h"
 
 #include <string.h>

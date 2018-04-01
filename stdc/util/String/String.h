@@ -12,17 +12,22 @@ typedef struct {
     void            (*init)         (StringObject*);
     void            (*del)          (Ptr);
     
-    // Methods
-    void            (*set)          (StringObject*, CStr);
-    StringObject*   (*copy)         (StringObject*);
+    // Object interface
     bool            (*equals)       (StringObject*, StringObject*);
-
+    
     // Getters
     long            (*size)         (StringObject*);
     CStr            (*cstr)         (StringObject*);
+    
+    // Methods
+    void            (*set)          (StringObject*, CStr);
+    StringObject*   (*copy)         (StringObject*);
+    StringObject*   (*format)       (StringObject*, ...);
+    
+    
 
     // Useful methods
-    StringObject*   (*format)       (StringObject*, ...);
+    
     
     // TODO: implement
 //    String*     (*rstrip)       (String*);

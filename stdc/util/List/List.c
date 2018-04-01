@@ -1,4 +1,5 @@
 #include "stdc/lib.h"
+#include "List_protected.h"
 #include "List_private.h"
 
 #define MIN_CAPACITY 10

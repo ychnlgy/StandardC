@@ -3,11 +3,6 @@
 
 #include "stdc/lib.h"
 
-struct StringObject {
-    long  size;
-    char* cstr;
-};
-
 Ptr             new_String      ();
 void            del_String      (Ptr);
 void            init_String     (StringObject*);

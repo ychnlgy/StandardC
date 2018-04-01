@@ -1,14 +1,6 @@
 #ifndef STDC_UTIL_LIST_LIST_PRIVATE
 #define STDC_UTIL_LIST_LIST_PRIVATE
 
-#include "stdc/lib.h"
-
-struct ListObject {
-    long size;
-    long capacity;
-    Ptr* data;
-};
-
 Ptr     new_List        ();
 void    init_List       (ListObject*);
 void    del_List        (Ptr);
