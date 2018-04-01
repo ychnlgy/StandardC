@@ -14,6 +14,10 @@ typedef struct {
     // Getters
     long        (*size)     (String*);
     CStr        (*cstr)     (String*);
+
+    // Useful methods
+    String*     (*format)   (String*, ...);
+    
 } StringVtable;
 
 struct String {
