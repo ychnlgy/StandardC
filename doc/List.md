@@ -96,7 +96,7 @@ Returns the number of elements in the list.
 ```c
 void List.clear(ListObject* this);
 ```
-Removes and decref's all elements in the list.
+Removes all elements in the list.
 
 ## Stack
 
@@ -108,8 +108,6 @@ Appends the **ptr** to the back of the list, resizing if needed.
 
 The **ptr** must be either ```NULL``` or allocated by [```new```](gc.md) at some point.
 Ideally, **ptr** is allocated by the [memory scope](Memory.md).
-
-Automatically incref's **ptr**.
 
 #### List.pushes(_this_, _n_, ...)
 ```c
@@ -161,8 +159,6 @@ void List.extend(ListObject* this, ListObject* otherlist);
 ```
 Appends the other list to the end of this list.
 
-Automatically incref's each element of the other list.
-
 ## Accessor
 
 #### List.getitem(_this_, _i_)
@@ -206,9 +202,6 @@ so this method should only be used in loops for safety.
 The **ptr** must be either ```NULL``` or allocated by [```new```](gc.md) at some point.
 Ideally, **ptr** is allocated by the [memory scope](Memory.md).
 
-Automatically incref's **ptr** if it is not ```NULL``` and 
-decref's the original pointer at that index if it is not ```NULL```.
-
 #### List.at(_this_, _i_)
 ```c
 Ptr List.at(ListObject* this, long i);
@@ -236,9 +229,6 @@ It also supports negative indexing:
 The **ptr** must be either ```NULL``` or allocated by [```new```](gc.md) at some point.
 Ideally, **ptr** is allocated by the [memory scope](Memory.md).
 
-Automatically incref's **ptr** if it is not ```NULL``` and 
-decref's the original pointer at that index if it is not ```NULL```.
-
 #### List.slice(_this_, _mem_, _i_, _j_)
 ```c
 ListObject* List.slice(ListObject* this, MemoryObject* mem, long i, long j);
@@ -247,22 +237,23 @@ Creates a new list consisting of elements **i** up to but not including **j**.
 The returned ```ListObject*``` is ```NULL``` if **j** is less than **i** or
 if any of the two indices are outside the bounds of the list.
 
-Each of its constituting elements are automatically incref'd.
-
 ```c
 #include "stdc/lib.h"
 
 int main() {
   MemoryObject* mem = Memory.new();
   
-  int* i = Memory.alloc(mem, sizeof(int)*4);
-  i[0] = 20;
-  i[1] = 30;
-  i[2] = 40;
-  i[3] = 50;
+  int* i1 = Memory.alloc(mem, sizeof(int));
+  int* i2 = Memory.alloc(mem, sizeof(int));
+  int* i3 = Memory.alloc(mem, sizeof(int));
+  int* i4 = Memory.alloc(mem, sizeof(int));
+  *i1 = 20;
+  *i2 = 30;
+  *i3 = 40;
+  *i4 = 50;
   
   ListObject list = Memory.make(mem, List.new);
-  List.pushes(list, 4, i, i+1, i+2, i+3);
+  List.pushes(list, 4, i1, i2, i3, i4);
   // list is [20, 30, 40, 50]
   
   ListObject* sublist1 = List.slice(list, mem, 1, 3);
@@ -284,6 +275,36 @@ int main() {
 ListObject* List.concat(ListObject* this, ListObject* otherlist, MemoryObject* mem);
 ```
 Makes a new list consisting of elements of this list followed by the elements of the other list.
+```c
+#include "stdc/lib.h"
 
-Automatically incref's each element of both lists.
+int main() {
+    MemoryObject* mem = Memory.new();
+    
+    int* i1 = Memory.alloc(mem, sizeof(int));
+    int* i2 = Memory.alloc(mem, sizeof(int));
+    int* i3 = Memory.alloc(mem, sizeof(int));
+    int* i4 = Memory.alloc(mem, sizeof(int));
+    
+    *i1 = 1;
+    *i2 = 2;
+    *i3 = 3;
+    *i4 = 4;
+    
+    ListObject* l1 = Memory.make(mem, List.new);
+    ListObject* l2 = Memory.make(mem, List.new);
+    
+    List.push(l1, i1);
+    List.push(l1, i2);
+    // l1 contains [1, 2]
+    
+    List.push(l2, i3);
+    List.push(l2, i4);
+    // l2 contains [3, 4]
+    
+    ListObject* l3 = List.concat(l1, l2, mem);
+    // l3 contains [1, 2, 3, 4]
 
+    decref(mem); // all memory is free'd
+}
+```

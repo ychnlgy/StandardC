@@ -38,8 +38,13 @@ typedef struct {
 //    bool        (*beginswith)   (String*, String*);
 //    bool        (*endswith)     (String*, String*);
 //    bool        (*contains)     (String*, String*);
-//    String*     (*substr)       (String*, long, long);
 //    long        (*hash)         (String*);
+
+//    char*       (*at)           (String*, long);
+//    bool        (*set)          (String*, long, char);
+//    char*       (*getitem)      (String*, long);
+//    void        (*setitem)      (String*, long, char);
+//    String*     (*slice)        (String*, MemoryObject*, long, long);
     
 } StringVtable;
 
