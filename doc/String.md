@@ -28,7 +28,8 @@ String class for the ease of string manipulation.
 |        | ```bool String.endswith(StringObject* this, StringObject* substring);``` |
 |        | ```StringObject* String.replace(StringObject* this, char oldc, char newc, MemoryObject* mem);``` |
 |        | ```StringObject* String.replacestr(StringObject* this, StringObject* oldSubstr, StringObject* newSubstr, MemoryObject* mem);``` |
-|        | ```StringObject* String.join(StringObject* this, ListObject* liststr, MemoryObject* mem);``` |
+|        | ```StringObject* String.join(char c, ListObject* liststr, MemoryObject* mem);``` |
+|        | ```StringObject* String.joinstr(StringObject* this, ListObject* liststr, MemoryObject* mem);``` |
 
 ## Files
  * [stdc/util/String/String.h](../stdc/util/String/String.h)
@@ -254,8 +255,14 @@ StringObject* String.replacestr(StringObject* this, StringObject* oldSubstr, Str
 ```
 Makes a new string with substring **oldSubstr** of **this** string replaced with **newSubstr**.
 
-#### String.join(_this_, _liststr_, _mem_)
+#### String.join(_c_, _liststr_, _mem_)
 ```c
-StringObject* String.join(StringObject* this, ListObject* liststr, MemoryObject* mem);
+StringObject* String.join(char c, ListObject* liststr, MemoryObject* mem);
+```
+Makes a new string by joining **liststr** with **c**. **Notice how the first argument is not "this".**
+
+#### String.joinstr(_this_, _liststr_, _mem_)
+```c
+StringObject* String.joinstr(StringObject* this, ListObject* liststr, MemoryObject* mem);
 ```
 Makes a new string by joining **liststr** with **this** string.
