@@ -5,6 +5,14 @@ Local memory scope to reduce the use of free/decref.
 A memory scope is responsible for any memory blocks it allocates or tracks, 
 calling decref on their pointers upon destruction.
 
+## Methods chart
+| Interface | Method |
+|-----------|--------|
+| Object | ```Ptr Memory.new();``` |
+| Memory | ```Ptr Memory.alloc(MemoryObject* this, size_t typesize);``` |
+|        | ```Ptr Memory.make(MemoryObject* this, Maker maker);``` |
+|        | ```void Memory.track(MemoryObject* this, Ptr ptr);``` |
+
 ## Files
  * [stdc/memory/Memory/Memory.h](../stdc/memory/Memory/Memory.h)
  * [stdc/memory/Memory/Memory_protected.h](../stdc/memory/Memory/Memory_protected.h)
@@ -24,8 +32,15 @@ void foo() {
                // will be decref'd.
 }
 ```
+## Object
+#### Memory.new()
+```c
+Ptr Memory.new();
+```
+Returns a pointer to the newly allocated memory for the memory scope.
 
-## Memory.alloc(_this_, _typesize_)
+## Memory
+#### Memory.alloc(_this_, _typesize_)
 ```c
 Ptr Memory.alloc(MemoryObject* this, size_t typesize);
 ```
@@ -49,7 +64,7 @@ void bar() {
 }
 ```
 
-## Memory.make(_this_, _maker_)
+#### Memory.make(_this_, _maker_)
 ```c
 Ptr Memory.alloc(MemoryObject* this, Maker maker);
 ```
@@ -73,7 +88,7 @@ void hen() {
 }
 ```
 
-## Memory.track(_this_, _ptr_)
+#### Memory.track(_this_, _ptr_)
 ```c
 void Memory.track(MemoryObject* this, Ptr ptr);
 ```
