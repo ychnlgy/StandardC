@@ -7,8 +7,8 @@ ListVtable List = {
     .init       = &init_List,
     .del        = &del_List,
     
-    // Methods
-    .concat     = &concat_List,
+    // Numeric
+    .add        = &concat_List,
     
     // Object interface
     .equals     = &equals_List,

@@ -13,8 +13,8 @@ typedef struct {
     void        (*del)      (Ptr);
     //ListObject* (*copy)     (ListObject*);
     
-    // Methods
-    ListObject* (*concat)   (ListObject*, ListObject*, MemoryObject*);
+    // Numeric
+    ListObject* (*add)      (ListObject*, ListObject*, MemoryObject*);
 
     // Object interface
     bool        (*equals)   (ListObject*, ListObject*);

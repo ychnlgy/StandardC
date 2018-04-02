@@ -72,7 +72,7 @@ RUN
         ASSERT(List.size(arr) == 0);
         ASSERT(List.size(arr2) == 0);
         
-        ListObject* arr3 = List.concat(arr, arr2, mem);
+        ListObject* arr3 = List.add(arr, arr2, mem);
         ASSERT(List.size(arr) == 0);
         ASSERT(List.size(arr2) == 0);
         ASSERT(List.size(arr3) == 0);
@@ -115,7 +115,7 @@ RUN
         }
         
         ASSERT(List.size(arr) == size);
-        ListObject* arr3 = List.concat(arr, arr2, mem);
+        ListObject* arr3 = List.add(arr, arr2, mem);
         
         ASSERT(List.size(arr3) == size);
         ASSERT(List.equals(arr3, arr));
