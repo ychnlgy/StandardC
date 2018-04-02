@@ -8,5 +8,9 @@ static StringObject*    lstrip_String       (StringObject*, MemoryObject*);
 static StringObject*    strip_String        (StringObject*, MemoryObject*);
 static ListObject*      split_String        (StringObject*, char, MemoryObject*);
 static ListObject*      splitstr_String     (StringObject*, StringObject*, MemoryObject*);
+static StringObject*    replace_String      (StringObject*, char, char, MemoryObject*);
+static StringObject*    replacestr_String   (StringObject*, StringObject*, StringObject*, MemoryObject*);
+static StringObject*    join_String         (char, ListObject*, MemoryObject*);
+static StringObject*    joinstr_String      (StringObject*, ListObject*, MemoryObject*);
 
 #endif

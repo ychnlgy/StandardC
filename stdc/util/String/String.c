@@ -37,7 +37,11 @@ StringVtable String = {
     .lstrip     = &lstrip_String,
     .strip      = &strip_String,
     .split      = &split_String,
-    .splitstr   = &splitstr_String
+    .splitstr   = &splitstr_String,
+    .replace    = &replace_String,
+    .replacestr = &replacestr_String,
+    .join       = &join_String,
+    .joinstr    = &joinstr_String
 
 };
 

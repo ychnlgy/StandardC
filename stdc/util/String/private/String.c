@@ -57,10 +57,6 @@ static StringObject* strip_String(StringObject* this, MemoryObject* mem) {
     return slice_String(this, start, end+1, mem);
 }
 
-static bool matchChar(StringObject* this, StringObject* delim, long i) {
-    return this->cstr[i] == *((char*) delim);
-}
-
 static ListObject* split_String(StringObject* this, char delim, MemoryObject* mem) {
     return split(this, &delim, 1, &matchChar, mem);
 }
@@ -70,6 +66,26 @@ static ListObject* splitstr_String(StringObject* this, StringObject* substr, Mem
         return NULL;
     else
         return split(this, substr, substr->size, &match, mem);
+}
+
+static StringObject* replace_String(StringObject* this, char oldc, char newc, MemoryObject* mem) {
+    ListObject* parts = split_String(this, oldc, mem);
+    return join_String(newc, parts, mem);
+}
+
+static StringObject* replacestr_String(StringObject* this, StringObject* oldSubstr, StringObject* newSubstr, MemoryObject* mem) {
+    if (oldSubstr->size == 0)
+        return NULL;
+    ListObject* parts = splitstr_String(this, oldSubstr, mem);
+    return joinstr_String(newSubstr, parts, mem);
+}
+
+static StringObject* join_String(char c, ListObject* liststr, MemoryObject* mem) {
+    return join(&c, 1, liststr, mem);
+}
+
+static StringObject* joinstr_String(StringObject* this, ListObject* liststr, MemoryObject* mem) {
+    return join(this->cstr, this->size, liststr, mem);
 }
 
 #endif

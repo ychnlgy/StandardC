@@ -103,4 +103,37 @@ static ListObject* split(
     return out;
 }
 
+static bool matchChar(StringObject* this, StringObject* delim, long i) {
+    return this->cstr[i] == *((char*) delim);
+}
+
+static StringObject* join(char* cstr, long n, ListObject* liststr, MemoryObject* mem) {
+    StringObject* out = Memory.make(mem, &new_String);
+    long size = 0;
+    long listsize = List.size(liststr);
+    if (listsize == 0)
+        return out;
+    
+    long i, j, k;
+    for (i=0; i<listsize; i++)
+        size += size_String(List.getitem(liststr, i));
+    size += (listsize - 1)*n; // number of delimiter chars
+    out->size = size;
+    out->cstr = malloc(sizeof(char)*(size+1));
+    
+    StringObject* item0 = List.getitem(liststr, 0);
+    for (i=0; i<item0->size; i++)
+        out->cstr[i] = item0->cstr[i];
+    for (k=1; k<listsize; k++) {
+        for (j=0; j<n; j++)
+            out->cstr[i++] = cstr[j];
+        StringObject* item = List.getitem(liststr, k);
+        for (j=0; j<item->size; j++)
+            out->cstr[i++] = item->cstr[j];
+    }
+    out->cstr[size] = '\0';
+    out->hash = calculateHash(out);
+    return out;
+}
+
 #endif

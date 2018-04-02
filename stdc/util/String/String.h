@@ -44,6 +44,10 @@ typedef struct {
     StringObject*   (*strip)        (StringObject*, MemoryObject*);
     ListObject*     (*split)        (StringObject*, char, MemoryObject*);
     ListObject*     (*splitstr)     (StringObject*, StringObject*, MemoryObject*);
+    StringObject*   (*replace)      (StringObject*, char, char, MemoryObject*);
+    StringObject*   (*replacestr)   (StringObject*, StringObject*, StringObject*, MemoryObject*);
+    StringObject*   (*join)         (char, ListObject*, MemoryObject*);
+    StringObject*   (*joinstr)      (StringObject*, ListObject*, MemoryObject*);
 
 } StringVtable;
 

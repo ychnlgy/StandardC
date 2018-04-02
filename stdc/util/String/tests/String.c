@@ -268,5 +268,89 @@ RUN
         ListObject* ss1 = String.splitstr(s1, s2, mem);
         ASSERT(ss1 == NULL);
     END
+    
+    CASE("split same")
+        ListObject* ss = String.splitstr(s1, s1, mem);
+        ASSERT(List.size(ss) == 2);
+        s1 = List.getitem(ss, 0);
+        ASSERT(String.size(s1) == 0);
+        s2 = List.getitem(ss, 1);
+        ASSERT(String.size(s2) == 0);
+    END
+    
+    CASE("join")
+        String.set(s1, " Hello world evil bunny. ");
+        ListObject* ss1 = String.split(s1, ' ', mem);
+        
+        StringObject* s3 = String.join(' ', ss1, mem);
+        ASSERT(String.equals(s1, s3));
+    END
+    
+    CASE("join empty")
+        String.set(s1, "");
+        ListObject* ss1 = String.split(s1, ' ', mem);
+        
+        StringObject* s3 = String.join(' ', ss1, mem);
+        ASSERT(String.equals(s1, s3));
+        ASSERT(String.size(s3) == 0);
+    END
+    
+    CASE("joinstr")
+        String.set(s1, "world Hello world world bunny. world ");
+        String.set(s2, "world ");
+        ListObject* ss1 = String.splitstr(s1, s2, mem);
+        s2 = String.joinstr(s2, ss1, mem);
+        ASSERT(String.equals(s1, s2));
+    END
+    
+    CASE("joinstr-empty")
+        ListObject* list = Memory.make(mem, List.new);
+        String.set(s1, "%d");
+        long i;
+        for (i=0; i<10; i++)
+            List.push(list, String.format(s1, mem, i));
+        String.set(s2, "0123456789");
+        String.set(s1, "");
+        s1 = String.joinstr(s1, list, mem);
+        ASSERT(String.equals(s1, s2));
+    END
+    
+    CASE("joinstr 1")
+        ListObject* list = Memory.make(mem, List.new);
+        String.set(s1, "");
+        String.set(s2, ".");
+        List.pushes(list, 2, s1, s1); // push s1 twice
+        s1 = String.joinstr(s2, list, mem);
+        ASSERT(String.equals(s1, s2));
+    END
+    
+    CASE("replace")
+        String.set(s1, " Hello world evil bunny. ");
+        StringObject* s3 = String.replace(s1, ' ', '.', mem);
+        String.set(s2, ".Hello.world.evil.bunny..");
+        ASSERT(String.equals(s3, s2));
+        ASSERT(!String.equals(s1, s3));
+    END
+    
+    CASE("replace empty")
+        String.set(s1, "");
+        s2 = String.replace(s1, ' ', '.', mem);
+        ASSERT(String.equals(s1, s2));
+    END
+    
+    CASE("replacestr")
+        String.set(s1, "world Hello world world bunny. world ");
+        String.set(s2, "world ");
+        StringObject* s3 = Memory.make(mem, String.new);
+        String.set(s3, ".");
+        StringObject* s4 = String.replacestr(s2, s1, s3, mem);
+        ASSERT(String.equals(s4, s2));
+        s4 = String.replacestr(s2, s2, s3, mem);
+        ASSERT(String.equals(s4, s3));
+        s4 = String.replacestr(s1, s2, s3, mem);
+        String.set(s3, ".Hello ..bunny. .");
+        ASSERT(String.equals(s3, s4));
+        
+    END
 
 STOP
