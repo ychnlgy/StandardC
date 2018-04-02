@@ -107,42 +107,45 @@ static bool matchChar(StringObject* this, StringObject* delim, long i) {
     return this->cstr[i] == *((char*) delim);
 }
 
-static long getStringSizeOfList(ListObject* liststr, long listsize, long n) {
+static long getStringSizeOfList(ListObject* liststr, long n) {
     long size = 0;
     long i;
-    for (i=0; i<listsize; i++)
+    for (i=0; i<List.size(liststr); i++)
         size += size_String(List.getitem(liststr, i));
-    size += (listsize - 1)*n; // number of delimiter chars
+    size += (List.size(liststr) - 1)*n; // number of delimiter chars
     return size;
 }
 
-/*static char* getCStrFromList(ListObject* liststr, char* cstr, long n, long size)*/
-
-static StringObject* join(char* cstr, long n, ListObject* liststr, MemoryObject* mem) {
-    StringObject* out = Memory.make(mem, &new_String);
-
-    long listsize = List.size(liststr);
-    if (listsize == 0)
-        return out;
-    
-    long size = getStringSizeOfList(liststr, listsize, n);
-    
-    out->size = size;
-    out->cstr = malloc(sizeof(char)*(size+1));
+static char* getCStrFromList(ListObject* liststr, char* cstr, long n, long size) {
+    char* out = malloc(sizeof(char) * (size+1));
     
     StringObject* item0 = List.getitem(liststr, 0);
     
     long i, j, k;
     for (i=0; i<item0->size; i++)
-        out->cstr[i] = item0->cstr[i];
-    for (k=1; k<listsize; k++) {
+        out[i] = item0->cstr[i];
+    for (k=1; k<List.size(liststr); k++) {
         for (j=0; j<n; j++)
-            out->cstr[i++] = cstr[j];
+            out[i++] = cstr[j];
         StringObject* item = List.getitem(liststr, k);
         for (j=0; j<item->size; j++)
-            out->cstr[i++] = item->cstr[j];
+            out[i++] = item->cstr[j];
     }
-    out->cstr[i] = '\0';
+    out[i] = '\0';
+    
+    return out;
+}
+
+static StringObject* join(char* cstr, long n, ListObject* liststr, MemoryObject* mem) {
+    StringObject* out = Memory.make(mem, &new_String);
+
+    if (List.size(liststr) == 0)
+        return out;
+    
+    long size = getStringSizeOfList(liststr, n);
+    
+    out->size = size;
+    out->cstr = getCStrFromList(liststr, cstr, n, size);
     out->hash = calculateHash(out);
     return out;
 }

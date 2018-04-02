@@ -12,7 +12,8 @@ static bool  match              (StringObject*, StringObject*, long);
 static bool  matchChar          (StringObject*, StringObject*, long);
 static bool  isWhiteSpace       (char);
 static long  countWhiteSpace    (StringObject*, long, long);
-
+static char* getCStrFromList    (ListObject*, char*, long, long);
+static long  getStringSizeOfList(ListObject*, long);
 static StringObject* join(char*, long, ListObject*, MemoryObject*);
 
 static ListObject* split(

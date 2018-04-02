@@ -352,5 +352,13 @@ RUN
         ASSERT(String.equals(s3, s4));
         
     END
+    
+    CASE("replacestr empty")
+        String.set(s2, "");
+        StringObject* s3 = Memory.make(mem, String.new);
+        String.set(s3, "Hello");
+        s1 = String.replacestr(s1, s2, s3, mem);
+        ASSERT(s1 == NULL);
+    END
 
 STOP
