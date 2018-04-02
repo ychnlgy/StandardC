@@ -12,15 +12,15 @@ static void setitem_List(ListObject* this, long i, Ptr entry) {
 }
 
 static Ptr at_List(ListObject* this, long i) {
-    if (_List_isWithin(this, i))
-        return this->data[_List_fitWithin(this, i)];
+    if (isWithin(this, i))
+        return this->data[fitWithin(this, i)];
     else
         return NULL;
 }
 
 static bool set_List(ListObject* this, long i, Ptr entry) {
-    if (_List_isWithin(this, i)) {
-        setitem_List(this, _List_fitWithin(this, i), entry);
+    if (isWithin(this, i)) {
+        setitem_List(this, fitWithin(this, i), entry);
        return true;
     } else {
         return false;
@@ -37,7 +37,7 @@ static ListObject* slice_List(ListObject* this, MemoryObject* mem, long i, long 
     
     long d = j - i;
     if (d > MIN_CAPACITY)
-        _List_resize(sublist, d*RESIZE_FACTOR);
+        resize(sublist, d*RESIZE_FACTOR);
     
     long k, p;
     for (

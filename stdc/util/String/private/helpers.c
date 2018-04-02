@@ -33,4 +33,25 @@ static char* getFormattedCStr(StringObject* this, va_list args, long size) {
     return cstr;
 }
 
+static bool isWithin(StringObject* this, long i) {
+    return i < this->size && this->size != 0;
+}
+
+static long fitWithin(StringObject* this, long i) {
+    return MOD(i, this->size);
+}
+
+static bool match(StringObject* this, StringObject* other, long i) {
+    long k, p;
+    for (
+        k=i, p=0;
+        p < other->size;
+        k++, p++
+    ) {
+        if (this->cstr[k] != other->cstr[p])
+            return false;
+    }
+    return true;
+}
+
 #endif

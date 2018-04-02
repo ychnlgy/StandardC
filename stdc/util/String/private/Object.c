@@ -16,10 +16,23 @@ static Ptr new_String() {
 static void init_String(StringObject* this) {
     this->size = 0;
     this->cstr = NULL;
+    this->hash = calculateHash(this);
 }
 
 static bool equals_String(StringObject* this, StringObject* other) {
     return strcmp(this->cstr, other->cstr) == 0;
+}
+
+static CStr cstr_String(StringObject* this) {
+    return this->cstr;
+}
+
+static StringObject* copy_String(StringObject* this, MemoryObject* mem) {
+    StringObject* copy = Memory.make(mem, &new_String);
+    copy->size = this->size;
+    copy->cstr = copyCStr(this->cstr, this->size);
+    copy->hash = this->hash;
+    return copy;
 }
 
 #endif

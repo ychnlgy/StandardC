@@ -1,9 +1,6 @@
 #ifdef STDC_UTIL_STRING_PRIVATE
 
-static void            set_String      (StringObject*, CStr);
-static StringObject*   copy_String     (StringObject*, MemoryObject*);
-static long            size_String     (StringObject*);
-static CStr            cstr_String     (StringObject*);
-static StringObject*   format_String   (StringObject*, MemoryObject*, ...);
-
+static StringObject*    format_String       (StringObject*, MemoryObject*, ...);
+static bool             startswith_String   (StringObject*, StringObject*);
+static bool             endswith_String     (StringObject*, StringObject*);
 #endif

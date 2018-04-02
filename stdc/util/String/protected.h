@@ -6,6 +6,7 @@
 struct StringObject {
     long  size;
     char* cstr;
+    long  hash;
 };
 
 #endif

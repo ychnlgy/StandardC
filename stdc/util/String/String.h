@@ -12,39 +12,49 @@ typedef struct {
     void            (*init)         (StringObject*);
     void            (*del)          (Ptr);
     
-    // Object interface
-    bool            (*equals)       (StringObject*, StringObject*);
-    
-    // Getters
-    long            (*size)         (StringObject*);
+    // Object
     CStr            (*cstr)         (StringObject*);
+    bool            (*equals)       (StringObject*, StringObject*);
+    StringObject*   (*copy)         (StringObject*, MemoryObject*);
+    
+    // Hashable
+    long            (*hash)         (StringObject*);
+    
+    // Numeric
+    StringObject*   (*add)          (StringObject*, StringObject*, MemoryObject*);
+//    StringObject*   (*mult)         (StringObject*, MemoryObject*, long);
+    
+    // Container
+    long            (*size)         (StringObject*);
+    bool            (*contains)     (StringObject*, StringObject*);
+    
+    // Accessor
+    void            (*set)          (StringObject*, CStr);
+    char*           (*at)           (StringObject*, long);
+    char*           (*getitem)      (StringObject*, long);
+    StringObject*   (*slice)        (StringObject*, MemoryObject*, long, long);
+    long            (*index)        (StringObject*, StringObject*);
     
     // Methods
-    void            (*set)          (StringObject*, CStr);
-    StringObject*   (*copy)         (StringObject*, MemoryObject*);
     StringObject*   (*format)       (StringObject*, MemoryObject*, ...);
-    
+    bool            (*startswith)   (StringObject*, StringObject*);
+    bool            (*endswith)     (StringObject*, StringObject*);
     
 
     // Useful methods
     
     
     // TODO: implement
-//    String*     (*rstrip)       (String*);
-//    String*     (*lstrip)       (String*);
-//    String*     (*strip)        (String*);
-//    List*       (*split)        (String*, char);
-//    List*       (*splitstr)     (String*, String*);
-//    bool        (*beginswith)   (String*, String*);
-//    bool        (*endswith)     (String*, String*);
-//    bool        (*contains)     (String*, String*);
-//    long        (*hash)         (String*);
+//    StringObject*     (*rstrip)       (StringObject*, MemoryObject*);
+//    StringObject*     (*lstrip)       (StringObject*, MemoryObject*);
+//    StringObject*     (*strip)        (StringObject*, MemoryObject*);
+//    List*       (*split)        (StringObject*, char, MemoryObject*);
+//    List*       (*splitstr)     (StringObject*, StringObject*, MemoryObject*);
+   
+//    
+//    long        (*hash)         (StringObject*);
 
-//    char*       (*at)           (String*, long);
-//    bool        (*set)          (String*, long, char);
-//    char*       (*getitem)      (String*, long);
-//    void        (*setitem)      (String*, long, char);
-//    String*     (*slice)        (String*, MemoryObject*, long, long);
+
     
 } StringVtable;
 

@@ -6,14 +6,33 @@ StringVtable String = {
     .new        = &new_String,
     .init       = &init_String,
     .del        = &del_String,
+    
+    // Object
     .equals     = &equals_String,
-
-    // Methods
-    .set        = &set_String,
-    .copy       = &copy_String,
-    .size       = &size_String,
     .cstr       = &cstr_String,
-    .format     = &format_String
+    .copy       = &copy_String,
+    
+    // Hashable
+    .hash       = &hash_String,
+    
+    // Numeric
+    .add        = &add_String,
+
+    // Container
+    .size       = &size_String,
+    .contains   = &contains_String,
+    
+    // Accessor
+    .set        = &set_String,
+    .getitem    = &getitem_String,
+    .at         = &at_String,
+    .slice      = &slice_String,
+    .index      = &index_String,
+    
+    // String
+    .format     = &format_String,
+    .startswith = &startswith_String,
+    .endswith   = &endswith_String
 
 };
 

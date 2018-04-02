@@ -1,31 +1,7 @@
 #ifdef STDC_UTIL_STRING_PRIVATE
 
-#include <string.h>
-// strlen
-
 #include <stdarg.h>
 // va_list, va_start, va_end
-
-static void set_String(StringObject* this, CStr cstr) {
-    free(this->cstr);
-    this->size = strlen(cstr);
-    this->cstr = copyCStr(cstr, this->size);
-}
-
-static StringObject* copy_String(StringObject* this, MemoryObject* mem) {
-    StringObject* copy = Memory.make(mem, &new_String);
-    copy->size = this->size;
-    copy->cstr = copyCStr(this->cstr, this->size);
-    return copy;
-}
-
-static long size_String(StringObject* this) {
-    return this->size;
-}
-
-static CStr cstr_String(StringObject* this) {
-    return this->cstr;
-}
 
 static StringObject* format_String(StringObject* this, MemoryObject* mem, ...) {
     va_list args;
@@ -44,9 +20,22 @@ static StringObject* format_String(StringObject* this, MemoryObject* mem, ...) {
     
     va_start(args, mem);
     s->cstr = getFormattedCStr(this, args, size);
+    s->hash = calculateHash(s);
     va_end(args);
     
     return s;
+}
+
+static bool startswith_String(StringObject* this, StringObject* substring) {
+    if (substring->size > this->size)
+        return false;
+    return match(this, substring, 0);
+}
+
+static bool endswith_String(StringObject* this, StringObject* substring) {
+    if (substring->size > this->size)
+        return false;
+    return match(this, substring, this->size-substring->size);
 }
 
 #endif

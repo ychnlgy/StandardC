@@ -5,7 +5,7 @@
 
 static void push_List(ListObject* this, Ptr entry) {
     if (this->size >= this->capacity)
-       _List_resize(this, this->capacity*RESIZE_FACTOR);
+       resize(this, this->capacity*RESIZE_FACTOR);
     incref(entry);
     this->data[this->size++] = entry;
 }
@@ -35,7 +35,7 @@ Ptr back_List(ListObject* this) {
 static void extend_List(ListObject* this, ListObject* other) {
     long reqsize = this->size + other->size;
     if (reqsize >= this->capacity)
-        _List_resize(this, reqsize*RESIZE_FACTOR);
+        resize(this, reqsize*RESIZE_FACTOR);
     
     long i, j;
     for (
