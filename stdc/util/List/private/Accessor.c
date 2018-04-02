@@ -28,9 +28,7 @@ static bool set_List(ListObject* this, long i, Ptr entry) {
 }
 
 static ListObject* slice_List(ListObject* this, MemoryObject* mem, long i, long j) {
-    if (j < i)
-        return NULL;
-    if (i < 0 || j > this->size)
+    if (j < i || i < 0 || j > this->size)
         return NULL;
     
     ListObject* sublist = Memory.make(mem, &new_List);

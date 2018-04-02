@@ -32,30 +32,19 @@ typedef struct {
     void            (*set)          (StringObject*, CStr);
     char*           (*at)           (StringObject*, long);
     char*           (*getitem)      (StringObject*, long);
-    StringObject*   (*slice)        (StringObject*, MemoryObject*, long, long);
+    StringObject*   (*slice)        (StringObject*, long, long, MemoryObject*);
     long            (*index)        (StringObject*, StringObject*);
     
     // Methods
     StringObject*   (*format)       (StringObject*, MemoryObject*, ...);
     bool            (*startswith)   (StringObject*, StringObject*);
     bool            (*endswith)     (StringObject*, StringObject*);
-    
+    StringObject*   (*rstrip)       (StringObject*, MemoryObject*);
+    StringObject*   (*lstrip)       (StringObject*, MemoryObject*);
+    StringObject*   (*strip)        (StringObject*, MemoryObject*);
+    ListObject*     (*split)        (StringObject*, char, MemoryObject*);
+    ListObject*     (*splitstr)     (StringObject*, StringObject*, MemoryObject*);
 
-    // Useful methods
-    
-    
-    // TODO: implement
-//    StringObject*     (*rstrip)       (StringObject*, MemoryObject*);
-//    StringObject*     (*lstrip)       (StringObject*, MemoryObject*);
-//    StringObject*     (*strip)        (StringObject*, MemoryObject*);
-//    List*       (*split)        (StringObject*, char, MemoryObject*);
-//    List*       (*splitstr)     (StringObject*, StringObject*, MemoryObject*);
-   
-//    
-//    long        (*hash)         (StringObject*);
-
-
-    
 } StringVtable;
 
 extern StringVtable String;

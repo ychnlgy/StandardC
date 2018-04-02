@@ -32,7 +32,12 @@ StringVtable String = {
     // String
     .format     = &format_String,
     .startswith = &startswith_String,
-    .endswith   = &endswith_String
+    .endswith   = &endswith_String,
+    .rstrip     = &rstrip_String,
+    .lstrip     = &lstrip_String,
+    .strip      = &strip_String,
+    .split      = &split_String,
+    .splitstr   = &splitstr_String
 
 };
 

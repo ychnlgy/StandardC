@@ -6,8 +6,12 @@
 static void set_String(StringObject* this, CStr cstr) {
     free(this->cstr);
     this->size = strlen(cstr);
-    this->cstr = copyCStr(cstr, this->size);
-    this->hash = calculateHash(this);
+    if (this->size <= 0) {
+        init_String(this);
+    } else {
+        this->cstr = copyCStr(cstr, this->size);
+        this->hash = calculateHash(this);
+    }
 }
 
 static char* getitem_String(StringObject* this, long i) {
@@ -21,7 +25,7 @@ static char* at_String(StringObject* this, long i) {
         return NULL;
 }
 
-static StringObject* slice_String(StringObject* this, MemoryObject* mem, long i, long j) {
+static StringObject* slice_String(StringObject* this, long i, long j, MemoryObject* mem) {
     if (i > j || i < 0 || j > this->size)
         return NULL;
     

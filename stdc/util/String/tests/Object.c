@@ -21,6 +21,14 @@ TEARDOWN {
 
 RUN
 
+    CASE("empty equals")
+        String.set(s1, "");
+        ASSERT(!String.equals(s1, s2));
+        ASSERT(!String.equals(s2, s1));
+        String.set(s2, "");
+        ASSERT(String.equals(s1, s2));
+    END
+
     CASE("copy")
         StringObject* s3 = String.copy(s1, mem);
         StringObject* s4 = String.copy(s3, mem);

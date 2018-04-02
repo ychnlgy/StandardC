@@ -20,7 +20,14 @@ static void init_String(StringObject* this) {
 }
 
 static bool equals_String(StringObject* this, StringObject* other) {
-    return strcmp(this->cstr, other->cstr) == 0;
+    long this0  = (this->size == 0);
+    long other0 = (other->size == 0);
+    if (this0 & other0)
+        return true;
+    else if (this0 ^ other0)
+        return false;
+    else
+        return strcmp(this->cstr, other->cstr) == 0;
 }
 
 static CStr cstr_String(StringObject* this) {
