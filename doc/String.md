@@ -24,7 +24,7 @@ String class for the ease of string manipulation.
 |        | ```StringObject* String.strip(StringObject* this, MemoryObject* mem);``` |
 |        | ```List* String.split(StringObject* this, char delimiter, MemoryObject* mem);``` |
 |        | ```List* String.splitstr(StringObject* this, StringObject* delimiter, MemoryObject* mem);``` |
-|        | ```bool String.beginswith(StringObject* this, StringObject* substring);``` |
+|        | ```bool String.startswith(StringObject* this, StringObject* substring);``` |
 |        | ```bool String.endswith(StringObject* this, StringObject* substring);``` |
 
 ## Files
@@ -120,7 +120,9 @@ long String.size(StringObject* this);
 Returns the number of characters in this string.
 
 #### String.contains(_this_, _substring_)
-```bool String.contains(StringObject* this, StringObject* substring);```
+```c
+bool String.contains(StringObject* this, StringObject* substring);
+```
 Returns true if **substring** can be located within **this** string.
 
 ## Accessor
@@ -138,7 +140,7 @@ char* String.at(StringObject* this, long i);
 ```
 Returns the pointer to the character at index **i** for **this** string.
 
-Safer version of ```String.getitem``` because it checks for boundaries.
+It functions as a safer version of ```String.getitem``` because it returns ``NULL`` if **i** is out of string bounds.
 
 Accepts negative indexing (i.e. ```i = -1``` returns the character at the back of the string).
 
@@ -161,6 +163,14 @@ or **i** is negative or **j** exceeds the length of the string,
 the method will return ```NULL```.
 
 If **i** equals **j**, the method will return an empty string.
+
+#### String.index(_this_, _substring_)
+```c
+long String.index(StringObject* this, StringObject* substring);
+```
+Returns the index at which **substring** appears in **this** string. 
+
+If **substring** is not found in **this** string, ```-1``` is returned.
 
 ## String
 #### String.format(_this_, _mem_, ...)
@@ -202,8 +212,14 @@ TODO
 #### String.splitstr(_this_, _substring_, _mem_)
 TODO
 
-#### String.beginswith(_this_, _substring_)
-TODO
+#### String.startswith(_this_, _substring_)
+```c
+bool String.startswith(StringObject* this, StringObject* substring);
+```
+Returns true if **this** string starts with **substring**.
 
 #### String.endswith(_this_, _substring_)
-TODO
+```c
+bool String.endswith(StringObject* this, StringObject* substring);
+```
+Returns true if **this** string ends with **substring**.
