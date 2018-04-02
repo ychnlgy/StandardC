@@ -107,21 +107,32 @@ static bool matchChar(StringObject* this, StringObject* delim, long i) {
     return this->cstr[i] == *((char*) delim);
 }
 
+static long getStringSizeOfList(ListObject* liststr, long listsize, long n) {
+    long size = 0;
+    long i;
+    for (i=0; i<listsize; i++)
+        size += size_String(List.getitem(liststr, i));
+    size += (listsize - 1)*n; // number of delimiter chars
+    return size;
+}
+
+/*static char* getCStrFromList(ListObject* liststr, char* cstr, long n, long size)*/
+
 static StringObject* join(char* cstr, long n, ListObject* liststr, MemoryObject* mem) {
     StringObject* out = Memory.make(mem, &new_String);
-    long size = 0;
+
     long listsize = List.size(liststr);
     if (listsize == 0)
         return out;
     
-    long i, j, k;
-    for (i=0; i<listsize; i++)
-        size += size_String(List.getitem(liststr, i));
-    size += (listsize - 1)*n; // number of delimiter chars
+    long size = getStringSizeOfList(liststr, listsize, n);
+    
     out->size = size;
     out->cstr = malloc(sizeof(char)*(size+1));
     
     StringObject* item0 = List.getitem(liststr, 0);
+    
+    long i, j, k;
     for (i=0; i<item0->size; i++)
         out->cstr[i] = item0->cstr[i];
     for (k=1; k<listsize; k++) {
@@ -131,7 +142,7 @@ static StringObject* join(char* cstr, long n, ListObject* liststr, MemoryObject*
         for (j=0; j<item->size; j++)
             out->cstr[i++] = item->cstr[j];
     }
-    out->cstr[size] = '\0';
+    out->cstr[i] = '\0';
     out->hash = calculateHash(out);
     return out;
 }
