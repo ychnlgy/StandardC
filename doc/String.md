@@ -2,6 +2,31 @@
 
 String class for the ease of string manipulation.
 
+## Methods chart
+| Interface | Method |
+|-----------|--------|
+| Object | ```Ptr String.new();``` |
+|        | ```bool String.equals(StringObject* this, StringObject* other);``` |
+|        | ```CStr String.cstr(StringObject* this);``` |
+|        | ```StringObject* String.copy(StringObject* this, MemoryObject* mem);``` |
+| Hashable | ```long String.hash(StringObject* this);``` |
+| Numeric | ```StringObject* String.add(StringObject* this, StringObject* other, MemoryObject* mem);``` |
+| Container | ```long String.size(StringObject* this);``` |
+|           | ```bool String.contains(StringObject* this, StringObject* substring);``` |
+| Accessor | ```char* String.getitem(StringObject* this, long i);``` |
+|          | ```char* String.at(StringObject* this, long i);``` |
+|          | ```void String.set(StringObject* this, CStr cstr);``` |
+|          | ```StringObject* String.slice(StringObject* this, MemoryObject* mem, long i, long j);``` |
+|          | ```long String.index(StringObject* this, StringObject* substring);``` |
+| String | ```StringObject* String.format(StringObject* this, MemoryObject* mem, ...);``` |
+|        | ```StringObject* String.rstrip(StringObject* this, MemoryObject* mem);``` |
+|        | ```StringObject* String.lstrip(StringObject* this, MemoryObject* mem);``` |
+|        | ```StringObject* String.strip(StringObject* this, MemoryObject* mem);``` |
+|        | ```List* String.split(StringObject* this, char delimiter, MemoryObject* mem);``` |
+|        | ```List* String.splitstr(StringObject* this, StringObject* delimiter, MemoryObject* mem);``` |
+|        | ```bool String.startswith(StringObject* this, StringObject* substring);``` |
+|        | ```bool String.endswith(StringObject* this, StringObject* substring);``` |
+
 ## Files
  * [stdc/util/String/String.h](../stdc/util/String/String.h)
  * [stdc/util/String/String_protected.h](../stdc/util/String/String_protected.h)
@@ -34,21 +59,30 @@ int main() {
     return 0;
 }
 ```
-
-## String.set(_this_, _cstr_)
+## Object
+#### String.new()
 ```c
-void String.set(StringObject* this, CStr cstr);
+Ptr String.new();
 ```
-Sets the value of this string to **cstr**. 
-See [types](../stdc/util/types.h) for the declaration of ```CStr```.
+Returns a pointer to the newly allocated memory for a string.
 
-## String.copy(_this_, _mem_)
+#### String.equals(_this_, _other_)
+```c
+bool String.equals(StringObject* this, StringObject* other);
+```
+Returns ```true``` if **this** string equals the **other** string.
+
+#### String.cstr(_this_)
+```c
+CStr String.cstr(StringObject* this);
+```
+Returns the [CStr](../stdc/util/types.h) data of **this** string.
+
+#### String.copy(_this_, _mem_)
 ```c
 StringObject* String.copy(StringObject* this, MemoryObject* mem);
 ```
-Allocates a copy of this string on heap memory and returns the pointer to it.
-
-
+Allocates a copy of **this** string on heap memory and returns the pointer to it.
 ```c
 #include "stdc/lib.h"
 
@@ -62,25 +96,84 @@ int main() {
 }
 ```
 
-## String.equals(_this_, _other_)
+## Hashable
+#### String.hash(_this_)
 ```c
-bool String.equals(StringObject* this, StringObject* other);
+long String.hash(StringObject* this);
 ```
-Returns ```true``` if this string equals the other string.
+Returns the hash number of **this** string.
 
-## String.size(_this_)
+## Numeric
+#### String.add(_this_, _other_, _mem_)
+```c
+StringObject* String.add(StringObject* this, StringObject* other, MemoryObject* mem);
+```
+Appends the **other** string to the end of **this** string. 
+
+Returns the pointer to the memory of the new string.
+
+## Container
+#### String.size(_this_)
 ```c
 long String.size(StringObject* this);
 ```
 Returns the number of characters in this string.
 
-## String.cstr(_this_)
+#### String.contains(_this_, _substring_)
 ```c
-CStr String.cstr(StringObject* this);
+bool String.contains(StringObject* this, StringObject* substring);
 ```
-Returns the [CStr](../stdc/util/types.h) data of this string.
+Returns true if **substring** can be located within **this** string.
 
-## String.format(_this_, MemoryObject*, ...)
+## Accessor
+#### String.getitem(_this_, _i_)
+```c
+char* String.getitem(StringObject* this, long i);
+```
+Returns the pointer to the character at index **i** for **this** string.
+
+Does not check for boundaries, so this method should only be used within loops for safety.
+
+#### String.at(_this_, _i_)
+```c
+char* String.at(StringObject* this, long i);
+```
+Returns the pointer to the character at index **i** for **this** string.
+
+It functions as a safer version of ```String.getitem``` because it returns ``NULL`` if **i** is out of string bounds.
+
+Accepts negative indexing (i.e. ```i = -1``` returns the character at the back of the string).
+
+#### String.set(_this_, _cstr_)
+```c
+void String.set(StringObject* this, CStr cstr);
+```
+Sets the value of this string to **cstr**. 
+See [types](../stdc/util/types.h) for the declaration of ```CStr```.
+
+#### String.slice(_this_, _mem_, _i_, _j_)
+```c
+StringObject* String.slice(StringObject* this, MemoryObject* mem, long i, long j);
+```
+Returns the substring consisting of characters
+at index **i** up to but not including **j** in **this** string.
+
+If **j** is less than **i**
+or **i** is negative or **j** exceeds the length of the string,
+the method will return ```NULL```.
+
+If **i** equals **j**, the method will return an empty string.
+
+#### String.index(_this_, _substring_)
+```c
+long String.index(StringObject* this, StringObject* substring);
+```
+Returns the index at which **substring** appears in **this** string. 
+
+If **substring** is not found in **this** string, ```-1``` is returned.
+
+## String
+#### String.format(_this_, _mem_, ...)
 ```c
 StringObject* String.format(StringObject* this, MemoryObject* mem, ...);
 ```
@@ -104,3 +197,29 @@ int main() {
     decref(mem);
 }
 ```
+#### String.rstrip(_this_, _mem_)
+TODO
+
+#### String.lstrip(_this_, _mem_)
+TODO
+
+#### String.strip(_this_, _mem_)
+TODO
+
+#### String.split(_this_, _c_, _mem_)
+TODO
+
+#### String.splitstr(_this_, _substring_, _mem_)
+TODO
+
+#### String.startswith(_this_, _substring_)
+```c
+bool String.startswith(StringObject* this, StringObject* substring);
+```
+Returns true if **this** string starts with **substring**.
+
+#### String.endswith(_this_, _substring_)
+```c
+bool String.endswith(StringObject* this, StringObject* substring);
+```
+Returns true if **this** string ends with **substring**.
