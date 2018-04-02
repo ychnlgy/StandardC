@@ -13,4 +13,6 @@
 #include "util/List/List.h"
 #include "util/String/String.h"
 
+#include "filesys/Path/Path.h"
+
 #endif

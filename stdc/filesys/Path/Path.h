@@ -10,7 +10,20 @@ typedef struct {
     void    (*init) (PathObject*);
     void    (*del)  (Ptr);
     
+    // Object
+    CStr            (*cstr)         (PathObject*);
+    StringObject*   (*str)          (PathObject*);
+    void            (*set)          (PathObject*, CStr);
     
+    // Numeric
+    PathObject*     (*add)          (PathObject*, PathObject*, MemoryObject*);
+    PathObject*     (*abs)          (PathObject*, MemoryObject*);
+    PathObject*     (*norm)         (PathObject*, MemoryObject*);
+
+    // Methods
+    bool            (*isfile)       (PathObject*);
+    bool            (*isdir)        (PathObject*);
+    ListObject*     (*listdir)      (PathObject*, MemoryObject*);
 
 } PathVtable;
 
