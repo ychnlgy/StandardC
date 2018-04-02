@@ -231,6 +231,8 @@ ListObject* String.splitstr(StringObject* this, StringObject* substring, MemoryO
 ```
 Returns a list of substrings that result when you split **this** string by the **substring**.
 
+Returns ```NULL``` if **substring** is an empty string.
+
 #### String.startswith(_this_, _substring_)
 ```c
 bool String.startswith(StringObject* this, StringObject* substring);
@@ -253,7 +255,9 @@ Makes a new string with character **oldc** of **this** string replaced with **ne
 ```c
 StringObject* String.replacestr(StringObject* this, StringObject* oldSubstr, StringObject* newSubstr, MemoryObject* mem);
 ```
-Makes a new string with substring **oldSubstr** of **this** string replaced with **newSubstr**.
+Makes a new string with substring **oldSubstr** of **this** string replaced with **newSubstr**. 
+
+Returns ```NULL``` if **oldSubstr** is an empty string.
 
 #### String.join(_c_, _liststr_, _mem_)
 ```c
