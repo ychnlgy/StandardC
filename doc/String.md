@@ -10,12 +10,14 @@ String class for the ease of string manipulation.
 |        | ```CStr String.cstr(StringObject* this);``` |
 |        | ```StringObject* String.copy(StringObject* this, MemoryObject* mem);``` |
 | Hashable | ```long String.hash(StringObject* this);``` |
+| Numeric | ```StringObject* String.add(StringObject* this, StringObject* other, MemoryObject* mem);``` |
 | Container | ```long String.size(StringObject* this);``` |
 |           | ```bool String.contains(StringObject* this, StringObject* substring);``` |
 | Accessor | ```char* String.getitem(StringObject* this, long i);``` |
 |          | ```char* String.at(StringObject* this, long i);``` |
 |          | ```void String.set(StringObject* this, CStr cstr);``` |
 |          | ```StringObject* String.slice(StringObject* this, MemoryObject* mem, long i, long j);``` |
+|          | ```long String.index(StringObject* this, StringObject* substring);``` |
 | String | ```StringObject* String.format(StringObject* this, MemoryObject* mem, ...);``` |
 |        | ```StringObject* String.rstrip(StringObject* this, MemoryObject* mem);``` |
 |        | ```StringObject* String.lstrip(StringObject* this, MemoryObject* mem);``` |
@@ -68,19 +70,19 @@ Returns a pointer to the newly allocated memory for a string.
 ```c
 bool String.equals(StringObject* this, StringObject* other);
 ```
-Returns ```true``` if this string equals the other string.
+Returns ```true``` if **this** string equals the **other** string.
 
 #### String.cstr(_this_)
 ```c
 CStr String.cstr(StringObject* this);
 ```
-Returns the [CStr](../stdc/util/types.h) data of this string.
+Returns the [CStr](../stdc/util/types.h) data of **this** string.
 
 #### String.copy(_this_, _mem_)
 ```c
 StringObject* String.copy(StringObject* this, MemoryObject* mem);
 ```
-Allocates a copy of this string on heap memory and returns the pointer to it.
+Allocates a copy of **this** string on heap memory and returns the pointer to it.
 ```c
 #include "stdc/lib.h"
 
@@ -96,7 +98,19 @@ int main() {
 
 ## Hashable
 #### String.hash(_this_)
-TODO
+```c
+long String.hash(StringObject* this);
+```
+Returns the hash number of **this** string.
+
+## Numeric
+#### String.add(_this_, _other_, _mem_)
+```c
+StringObject* String.add(StringObject* this, StringObject* other, MemoryObject* mem);
+```
+Appends the **other** string to the end of **this** string. 
+
+Returns the pointer to the memory of the new string.
 
 ## Container
 #### String.size(_this_)
@@ -105,15 +119,28 @@ long String.size(StringObject* this);
 ```
 Returns the number of characters in this string.
 
-#### String.contains(_this_, _other_)
-TODO
+#### String.contains(_this_, _substring_)
+```bool String.contains(StringObject* this, StringObject* substring);```
+Returns true if **substring** can be located within **this** string.
 
 ## Accessor
 #### String.getitem(_this_, _i_)
-TODO
+```c
+char* String.getitem(StringObject* this, long i);
+```
+Returns the pointer to the character at index **i** for **this** string.
+
+Does not check for boundaries, so this method should only be used within loops for safety.
 
 #### String.at(_this_, _i_)
-TODO
+```c
+char* String.at(StringObject* this, long i);
+```
+Returns the pointer to the character at index **i** for **this** string.
+
+Safer version of ```String.getitem``` because it checks for boundaries.
+
+Accepts negative indexing (i.e. ```i = -1``` returns the character at the back of the string).
 
 #### String.set(_this_, _cstr_)
 ```c
@@ -123,7 +150,17 @@ Sets the value of this string to **cstr**.
 See [types](../stdc/util/types.h) for the declaration of ```CStr```.
 
 #### String.slice(_this_, _mem_, _i_, _j_)
-TODO
+```c
+StringObject* String.slice(StringObject* this, MemoryObject* mem, long i, long j);
+```
+Returns the substring consisting of characters
+at index **i** up to but not including **j** in **this** string.
+
+If **j** is less than **i**
+or **i** is negative or **j** exceeds the length of the string,
+the method will return ```NULL```.
+
+If **i** equals **j**, the method will return an empty string.
 
 ## String
 #### String.format(_this_, _mem_, ...)
