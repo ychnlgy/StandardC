@@ -26,6 +26,10 @@ String class for the ease of string manipulation.
 |        | ```List* String.splitstr(StringObject* this, StringObject* delimiter, MemoryObject* mem);``` |
 |        | ```bool String.startswith(StringObject* this, StringObject* substring);``` |
 |        | ```bool String.endswith(StringObject* this, StringObject* substring);``` |
+|        | ```StringObject* String.replace(StringObject* this, char oldc, char newc, MemoryObject* mem);``` |
+|        | ```StringObject* String.replacestr(StringObject* this, StringObject* oldSubstr, StringObject* newSubstr, MemoryObject* mem);``` |
+|        | ```StringObject* String.join(char c, ListObject* liststr, MemoryObject* mem);``` |
+|        | ```StringObject* String.joinstr(StringObject* this, ListObject* liststr, MemoryObject* mem);``` |
 
 ## Files
  * [stdc/util/String/String.h](../stdc/util/String/String.h)
@@ -238,3 +242,27 @@ Returns true if **this** string starts with **substring**.
 bool String.endswith(StringObject* this, StringObject* substring);
 ```
 Returns true if **this** string ends with **substring**.
+
+#### String.replace(_this_, _oldc_, _newc_, _mem_)
+```c
+StringObject* String.replace(StringObject* this, char oldc, char newc, MemoryObject* mem);
+```
+Makes a new string with character **oldc** of **this** string replaced with **newc**.
+
+#### String.replacestr(_this_, _oldSubstr_, _newSubstr_, _mem_)
+```c
+StringObject* String.replacestr(StringObject* this, StringObject* oldSubstr, StringObject* newSubstr, MemoryObject* mem);
+```
+Makes a new string with substring **oldSubstr** of **this** string replaced with **newSubstr**.
+
+#### String.join(_c_, _liststr_, _mem_)
+```c
+StringObject* String.join(char c, ListObject* liststr, MemoryObject* mem);
+```
+Makes a new string by joining **liststr** with **c**. **Notice how the first argument is not "this".**
+
+#### String.joinstr(_this_, _liststr_, _mem_)
+```c
+StringObject* String.joinstr(StringObject* this, ListObject* liststr, MemoryObject* mem);
+```
+Makes a new string by joining **liststr** with **this** string.
