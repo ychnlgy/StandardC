@@ -16,7 +16,7 @@ String class for the ease of string manipulation.
 | Accessor | ```char* String.getitem(StringObject* this, long i);``` |
 |          | ```char* String.at(StringObject* this, long i);``` |
 |          | ```void String.set(StringObject* this, CStr cstr);``` |
-|          | ```StringObject* String.slice(StringObject* this, MemoryObject* mem, long i, long j);``` |
+|          | ```StringObject* String.slice(StringObject* this, long i, long j, MemoryObject* mem);``` |
 |          | ```long String.index(StringObject* this, StringObject* substring);``` |
 | String | ```StringObject* String.format(StringObject* this, MemoryObject* mem, ...);``` |
 |        | ```StringObject* String.rstrip(StringObject* this, MemoryObject* mem);``` |
@@ -117,7 +117,7 @@ Returns the pointer to the memory of the new string.
 ```c
 long String.size(StringObject* this);
 ```
-Returns the number of characters in this string.
+Returns the number of characters in **this** string.
 
 #### String.contains(_this_, _substring_)
 ```c
@@ -148,12 +148,12 @@ Accepts negative indexing (i.e. ```i = -1``` returns the character at the back o
 ```c
 void String.set(StringObject* this, CStr cstr);
 ```
-Sets the value of this string to **cstr**. 
+Sets the value of **this** string to **cstr**. 
 See [types](../stdc/util/types.h) for the declaration of ```CStr```.
 
-#### String.slice(_this_, _mem_, _i_, _j_)
+#### String.slice(_this_, _i_, _j_, _mem_)
 ```c
-StringObject* String.slice(StringObject* this, MemoryObject* mem, long i, long j);
+StringObject* String.slice(StringObject* this, long i, long j, MemoryObject* mem);
 ```
 Returns the substring consisting of characters
 at index **i** up to but not including **j** in **this** string.
@@ -177,7 +177,7 @@ If **substring** is not found in **this** string, ```-1``` is returned.
 ```c
 StringObject* String.format(StringObject* this, MemoryObject* mem, ...);
 ```
-Formats this string with variable arguments and returns a new string. 
+Formats **this** string with variable arguments and returns a new string. 
 
 ```c
 #include "stdc/lib.h"
@@ -198,19 +198,34 @@ int main() {
 }
 ```
 #### String.rstrip(_this_, _mem_)
-TODO
+```c
+StringObject* String.rstrip(StringObject* this, MemoryObject* mem);
+```
+Returns a new string with whitespace characters removed from the right of **this** string.
 
 #### String.lstrip(_this_, _mem_)
-TODO
+```c
+StringObject* String.lstrip(StringObject* this, MemoryObject* mem);
+```
+Returns a new string with whitespace characters removed from the left of **this** string.
 
 #### String.strip(_this_, _mem_)
-TODO
+```c
+StringObject* String.strip(StringObject* this, MemoryObject* mem);
+```
+Returns a new string with whitespace characters removed from both ends of **this** string.
 
-#### String.split(_this_, _c_, _mem_)
-TODO
+#### String.split(_this_, _delimiter_, _mem_)
+```c
+ListObject* String.split(StringObject* this, char delimiter, MemoryObject* mem);
+```
+Returns a list of substrings that result when you split **this** string by the **delimiter**.
 
 #### String.splitstr(_this_, _substring_, _mem_)
-TODO
+```c
+ListObject* String.splitstr(StringObject* this, StringObject* substring, MemoryObject* mem);
+```
+Returns a list of substrings that result when you split **this** string by the **substring**.
 
 #### String.startswith(_this_, _substring_)
 ```c
