@@ -8,7 +8,8 @@ PathVtable Path = {
     // Object
     .cstr       = &cstr_Path,
     .str        = &str_Path,
-    .set        = &set_Path,
+    .equals     = &equals_Path,
+    .copy       = &copy_Path,
     
     // Numeric
     .add        = &add_Path,
@@ -18,5 +19,9 @@ PathVtable Path = {
     // Path
     .isfile     = &isfile_Path,
     .isdir      = &isdir_Path,
-    .listdir    = &listdir_Path
+    .listdir    = &listdir_Path,
+    .setrel     = &setrel_Path,
+    .setabs     = &setabs_Path,
+    .setrelstr  = &setrelstr_Path,
+    .setabsstr  = &setabsstr_Path
 };

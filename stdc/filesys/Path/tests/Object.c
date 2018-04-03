@@ -7,7 +7,7 @@ PathObject* p2;
 SETUP {
     mem = Memory.new();
     p1 = Memory.make(mem, Path.new);
-    Path.set(p1, "folder/subfolder\\file.py");
+    Path.setrel(p1, "folder/subfolder\\file.py");
     p2 = Memory.make(mem, Path.new);
 }
 
@@ -29,10 +29,21 @@ RUN
     END
     
     CASE("set empty")
-        Path.set(p1, "");
+        Path.setrel(p1, "");
         StringObject* s = Memory.make(mem, String.new);
         String.set(s, "");
         ASSERT(String.equals(s, Path.str(p1)));
+    END
+    
+    CASE("copy")
+        PathObject* p3 = Path.copy(p1, mem);
+        ASSERT(Path.equals(p3, p1));
+        ASSERT(!Path.equals(p3, p2));
+        ASSERT(!Path.equals(p1, p2));
+        p3 = Path.copy(p2, mem);
+        ASSERT(!Path.equals(p3, p1));
+        ASSERT(Path.equals(p3, p2));
+        ASSERT(!Path.equals(p1, p2));
     END
 
 STOP

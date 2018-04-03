@@ -1,10 +1,19 @@
 #ifdef STDC_UTIL_STRING_PRIVATE
 
 #include <string.h>
-// strncpy
+// strncpy, strlen, strcmp
 
 #include <stdio.h>
 // vsnprintf
+
+static bool compareCStr(bool a0, bool b0, CStr a, CStr b) {
+    if (a0 & b0)
+        return true;
+    else if (a0 ^ b0)
+        return false;
+    else
+        return strcmp(a, b) == 0;
+}
 
 static char* copyCStr(CStr src, int len) {
     char* cstrPtr = malloc(sizeof(char)*(len+1));

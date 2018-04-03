@@ -5,7 +5,8 @@
 
 static void set_String(StringObject* this, CStr cstr) {
     free(this->cstr);
-    this->size = strlen(cstr);
+    this->size = cstr? strlen(cstr) : 0;
+        
     if (this->size <= 0) {
         init_String(this);
     } else {

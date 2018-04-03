@@ -30,6 +30,7 @@ StringVtable String = {
     .index      = &index_String,
     
     // String
+    .eqCStr     = &eqCStr_String,
     .format     = &format_String,
     .startswith = &startswith_String,
     .endswith   = &endswith_String,

@@ -6,6 +6,7 @@ static void             del_Path     (Ptr);
 
 static CStr             cstr_Path   (PathObject*);
 static StringObject*    str_Path    (PathObject*);
-static void             set_Path    (PathObject*, CStr);
+static bool             equals_Path (PathObject*, PathObject*);
+static PathObject*      copy_Path   (PathObject*, MemoryObject*);
 
 #endif

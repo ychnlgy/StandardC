@@ -31,4 +31,10 @@ static bool equals_List(ListObject* this, ListObject* other) {
     return true;
 }
 
+static ListObject* copy_List(ListObject* this, MemoryObject* mem) {
+    ListObject* out = Memory.make(mem, &new_List);
+    extend_List(out, this);
+    return out;
+}
+
 #endif

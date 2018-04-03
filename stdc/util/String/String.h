@@ -36,6 +36,7 @@ typedef struct {
     long            (*index)        (StringObject*, StringObject*);
     
     // Methods
+    bool            (*eqCStr)       (StringObject*, CStr);
     StringObject*   (*format)       (StringObject*, MemoryObject*, ...);
     bool            (*startswith)   (StringObject*, StringObject*);
     bool            (*endswith)     (StringObject*, StringObject*);

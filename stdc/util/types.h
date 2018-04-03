@@ -11,5 +11,6 @@ typedef int bool;
 // Function types
 typedef void    (*Destructor)   (Ptr);
 typedef Ptr     (*Maker)        ();
+typedef bool    (*FilterFunc)   (Ptr);
 
 #endif

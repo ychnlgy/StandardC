@@ -3,6 +3,12 @@
 #include <stdarg.h>
 // va_list, va_start, va_end
 
+#include <assert.h>
+
+static bool eqCStr_String(StringObject* this, CStr cstr) {
+    return compareCStr(this->size == 0, cstr == NULL, this->cstr, cstr);
+}
+
 static StringObject* format_String(StringObject* this, MemoryObject* mem, ...) {
     va_list args;
     
@@ -15,6 +21,7 @@ static StringObject* format_String(StringObject* this, MemoryObject* mem, ...) {
     // I don't know how to test this in a portable way.
     // if (size < 0) // encoding error
     //    return NULL;
+    assert(size >= 0);
     
     s->size = size;
     

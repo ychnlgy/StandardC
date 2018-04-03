@@ -3,6 +3,8 @@
 
 static char PATH_SEP = '/';
 static char BAD_SEP = '\\';
+static const char* SKIP_PATH = ".";
+static const char* BACK_PATH = "..";
 
 #include "stdc/lib.h"
 #include "../protected.h"

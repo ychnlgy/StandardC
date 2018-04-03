@@ -21,6 +21,8 @@ RUN
     CASE("set empty")
         String.set(s1, "");
         ASSERT(String.size(s1) == 0);
+        String.set(s1, NULL);
+        ASSERT(String.size(s1) == 0);
     END
 
     CASE("re-set")

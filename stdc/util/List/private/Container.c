@@ -9,4 +9,8 @@ static void clear_List(ListObject* this) {
     init_List(this);
 }
 
+static bool isEmpty_List(ListObject* this) {
+    return this->size == 0;
+}
+
 #endif

@@ -21,6 +21,13 @@ TEARDOWN {
 
 RUN
 
+    CASE("eqCStr")
+        ASSERT(String.eqCStr(s1, "Hello world!"));
+        ASSERT(String.eqCStr(s2, "Evil bunny"));
+        ASSERT(!String.eqCStr(s1, NULL));
+        ASSERT(!String.eqCStr(s1, ""));
+    END
+
     CASE("format")
         String.set(s1, "%d - %d + %d = %s");
         
@@ -288,7 +295,7 @@ RUN
     
     CASE("join empty")
         String.set(s1, "");
-        ListObject* ss1 = String.split(s1, ' ', mem);
+        ListObject* ss1 = Memory.make(mem, List.new);
         
         StringObject* s3 = String.join(' ', ss1, mem);
         ASSERT(String.equals(s1, s3));

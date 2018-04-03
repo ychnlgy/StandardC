@@ -13,7 +13,8 @@ typedef struct {
     // Object
     CStr            (*cstr)         (PathObject*);
     StringObject*   (*str)          (PathObject*);
-    void            (*set)          (PathObject*, CStr);
+    bool            (*equals)       (PathObject*, PathObject*);
+    PathObject*     (*copy)         (PathObject*, MemoryObject*);
     
     // Numeric
     PathObject*     (*add)          (PathObject*, PathObject*, MemoryObject*);
@@ -24,6 +25,10 @@ typedef struct {
     bool            (*isfile)       (PathObject*);
     bool            (*isdir)        (PathObject*);
     ListObject*     (*listdir)      (PathObject*, MemoryObject*);
+    void            (*setrel)       (PathObject*, CStr);
+    void            (*setabs)       (PathObject*, CStr);
+    void            (*setrelstr)    (PathObject*, StringObject*);
+    void            (*setabsstr)    (PathObject*, StringObject*);
 
 } PathVtable;
 

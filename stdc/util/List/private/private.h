@@ -13,6 +13,7 @@
 #include "Accessor.h"
 #include "Stack.h"
 #include "Numeric.h"
+#include "Iterable.h"
 
 #include "helpers.c"
 #include "Object.c"
@@ -20,5 +21,6 @@
 #include "Accessor.c"
 #include "Stack.c"
 #include "Numeric.c"
+#include "Iterable.c"
 
 #endif

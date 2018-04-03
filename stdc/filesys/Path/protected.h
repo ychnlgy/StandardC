@@ -4,6 +4,7 @@
 #include "stdc/lib.h"
 
 struct PathObject {
+    bool isAbs;
     StringObject* name;
     ListObject* list;
 };

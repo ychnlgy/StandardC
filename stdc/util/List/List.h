@@ -11,31 +11,35 @@ typedef struct {
     Ptr         (*new)      ();
     void        (*init)     (ListObject*);
     void        (*del)      (Ptr);
-    //ListObject* (*copy)     (ListObject*);
     
     // Numeric
     ListObject* (*add)      (ListObject*, ListObject*, MemoryObject*);
 
-    // Object interface
+    // Object
     bool        (*equals)   (ListObject*, ListObject*);
+    ListObject* (*copy)     (ListObject*, MemoryObject*);
 
-    // Container interface
+    // Container
     long        (*size)     (ListObject*);
     void        (*clear)    (ListObject*);
+    bool        (*isEmpty)  (ListObject*);
 
-    // Stack interface
+    // Stack
     void        (*push)     (ListObject*, Ptr);
     void        (*pushes)   (ListObject*, long, ...);
     Ptr         (*pop)      (ListObject*, MemoryObject*);
     Ptr         (*back)     (ListObject*);
     void        (*extend)   (ListObject*, ListObject*);
 
-    // Accessor interface
+    // Accessor
     Ptr         (*getitem)  (ListObject*, long);
     void        (*setitem)  (ListObject*, long, Ptr);
     Ptr         (*at)       (ListObject*, long);
     bool        (*set)      (ListObject*, long, Ptr);
     ListObject* (*slice)    (ListObject*, MemoryObject*, long, long);
+    
+    // Iterable
+    ListObject* (*filter)   (ListObject*, FilterFunc, MemoryObject*);
 
     // Iteration
     // TODO: implement them!
