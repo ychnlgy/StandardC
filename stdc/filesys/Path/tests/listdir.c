@@ -1,9 +1,6 @@
 #include "stdc/unittest.h"
 
 MemoryObject* mem;
-PathObject* p1;
-PathObject* p2;
-
 PathObject* dir;
 PathObject* fname;
 PathObject* dataDir;
@@ -17,14 +14,8 @@ char* filenrn = "cannotRead.txt";
 char* filenwn = "cannotWrite.txt";
 char* filenrwn = "cannotReadOrWrite.txt";
 
-
-
 SETUP {
     mem = Memory.new();
-    p1 = Memory.make(mem, Path.new);
-    Path.setrel(p1, "folder/subfolder\\file.py");
-    p2 = Memory.make(mem, Path.new);
-    
     fname = Memory.make(mem, Path.new);
     
     Path.setrel(fname, __FILE__);
@@ -37,44 +28,27 @@ SETUP {
 }
 
 TEARDOWN {
+    Os.chmod(Path.cstr(fileNoRead), "+rw");
+    Os.chmod(Path.cstr(fileNoWrite), "+rw");
+    Os.chmod(Path.cstr(fileNoReadOrWrite), "+rw");
     decref(mem);
 }
 
 RUN
-
-    CASE("addcstr")
-        Path.setrel(p1, "folder");
-        p2 = Path.addcstr(p1, "sub1\\gook/./sup", mem);
-        p2 = Path.addcstr(p2, "../foo.py", mem);
-        ASSERT(String.eqCStr(Path.str(p2), "folder/sub1/gook/foo.py"));
-    END
-
-    CASE("dirname")
-        p2 = Path.dirname(p1, mem);
-        ASSERT(String.eqCStr(Path.str(p2), "folder/subfolder"));
-        p2 = Path.dirname(p2, mem);
-        ASSERT(String.eqCStr(Path.str(p2), "folder"));
-        p2 = Path.dirname(p2, mem);
-        ASSERT(String.eqCStr(Path.str(p2), NULL));
-        p2 = Path.dirname(p2, mem);
-        ASSERT(String.eqCStr(Path.str(p2), ""));
-    END
-    
     CASE("listdir")
-        ListObject* dirs = Path.listdir(dataDir, mem);//Os.listdir(Path.cstr(dataDir), mem);
-        ASSERT(dirs != NULL);
+        ListObject* dirs = Os.listdir(Path.cstr(dataDir), mem);
         long size = List.size(dirs);
         ASSERT(size == 4);
         ListObject* realDirs = Memory.make(mem, List.new);
         List.pushes(realDirs, size, filep, fileNoRead, fileNoWrite, fileNoReadOrWrite);
         long i;
         for (i=0; i<size; i++) {
-            PathObject* s = List.getitem(dirs, i);
+            StringObject* s = List.getitem(dirs, i);
             bool matched = false;
             long j;
             for (j=0; j<size; j++) {
                 PathObject* p = List.getitem(realDirs, j);
-                if (Path.equals(p, s)) {
+                if (String.endswith(Path.str(p), s)) {
                     matched = true;
                     break;
                 }
@@ -84,8 +58,23 @@ RUN
     END
     
     CASE("bad listdir")
-        ListObject* dirs = Path.listdir(filep, mem);
+        ListObject* dirs = Os.listdir("ksjdfks", mem);
         ASSERT(dirs == NULL);
+        dirs = Os.listdir(Path.cstr(filep), mem);
+        ASSERT(dirs == NULL);
+    END
+
+    CASE("listdir folder")
+        ListObject* dirs = Os.listdir(Path.cstr(dir), mem);
+        ASSERT(List.size(dirs) > 3); // at least more than three items in this folder.
+        long i;
+        bool matched = false;
+        for (i=0; i<List.size(dirs); i++) {
+            StringObject* s = List.getitem(dirs, i);
+            if (String.eqCStr(s, "data"))
+                matched = true;
+        }
+        ASSERT(matched);
     END
 
 STOP

@@ -20,7 +20,18 @@ static bool isdir_Path(PathObject* this) {
 }
 
 static ListObject* listdir_Path(PathObject* this, MemoryObject* mem) {
-    return NULL;
+    ListObject* dir = Os.listdir(Path.cstr(this), mem);
+    if (dir == NULL)
+        return NULL;
+    
+    ListObject* out = Memory.make(mem, List.new);
+    long i;
+    for (i=0; i<List.size(dir); i++) {
+        StringObject* f = List.getitem(dir, i);
+        PathObject* p = addcstr_Path(this, String.cstr(f), mem);
+        List.push(out, p);
+    }
+    return out;
 }
 
 static void setrel_Path(PathObject* this, CStr name) {
