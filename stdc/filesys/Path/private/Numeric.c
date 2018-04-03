@@ -24,17 +24,19 @@ static PathObject* abs_Path(PathObject* this, MemoryObject* mem) {
     
     // Outer scope
     out = norm_Path(out, mem);
-    
+
     decref(submem);
     return out;
 }
 
 static PathObject* norm_Path(PathObject* this, MemoryObject* mem) {
-    ListObject* normed = removePathRedundancy(this->list, mem);
-    StringObject* abspath = String.join(PATH_SEP, normed, mem);
+    MemoryObject* submem = Memory.new();
+    ListObject* normed = removePathRedundancy(this->list, submem);
+    StringObject* abspath = String.join(PATH_SEP, normed, submem);
     PathObject* newp = Memory.make(mem, &new_Path);
     String.set(newp->name, String.cstr(abspath));
     List.extend(newp->list, this->list);
+    decref(submem);
     return newp;
 }
 

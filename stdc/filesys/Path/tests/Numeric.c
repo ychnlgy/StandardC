@@ -52,6 +52,8 @@ RUN
         StringObject* cwd = Memory.make(mem, String.new);
         String.set(cwd, "/usr/c");
         ASSERT(String.equals(cwd, Path.str(p1)));
+        Path.setabsstr(p1, cwd);
+        ASSERT(String.equals(cwd, Path.str(p1)));
     END
     
     CASE("norm")

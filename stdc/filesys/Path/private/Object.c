@@ -30,7 +30,7 @@ static PathObject* copy_Path(PathObject* this, MemoryObject* mem) {
     PathObject* out = Memory.make(mem, &new_Path);
     if (List.isEmpty(this->list))
         return out;
-    out->isAbs = true;
+    out->isAbs = this->isAbs;
     String.set(out->name, String.cstr(this->name));
     List.extend(out->list, this->list);
     return out;
@@ -40,22 +40,7 @@ static bool equals_Path(PathObject* this, PathObject* other) {
     MemoryObject* mem = Memory.new();
     PathObject* path1 = abs_Path(this, mem);
     PathObject* path2 = abs_Path(other, mem);
-    
-    bool result;
-    if (List.size(path1->list) != List.size(path2->list)) {
-        result = false;
-    } else {
-        result = true;
-        long i;
-        for (i=0; i<List.size(path1->list); i++) {
-            StringObject* i1 = List.getitem(path1->list, i);
-            StringObject* i2 = List.getitem(path2->list, i);
-            if (!String.equals(i1, i2)) {
-                result = false;
-                break;
-            }
-        }
-    }
+    bool result = String.equals(str_Path(path1), str_Path(path2));
     decref(mem);
     return result;
 }
