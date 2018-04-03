@@ -20,8 +20,6 @@ SETUP {
     fileNoRead = Path.addcstr(dataDir, "cannotRead.txt", mem);
     fileNoWrite = Path.addcstr(dataDir, "cannotWrite.txt", mem);
     fileNoReadOrWrite = Path.addcstr(dataDir, "cannotReadOrWrite.txt", mem);
-    
-    
 }
 
 TEARDOWN {

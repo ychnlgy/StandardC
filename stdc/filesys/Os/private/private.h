@@ -2,6 +2,8 @@
 #define STDC_FILESYS_OS_PRIVATE
 
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
 
 #ifdef _WIN32
     #include <direct.h>
@@ -12,7 +14,9 @@
 
 #include "stdc/lib.h"
 
-#define BUFSIZE 1024
+static int BUFSIZE = 1024;
+static CStr SKIP_PATH = ".";
+static CStr BACK_PATH = "..";
 
 #include "cwd.h"
 #include "path.h"

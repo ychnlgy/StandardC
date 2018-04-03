@@ -14,7 +14,7 @@ typedef struct {
     bool        (*isdir)        (CStr);
     
     // listdir
-    ListObject* (*listdir)      (CStr);
+    ListObject* (*listdir)      (CStr, MemoryObject*);
     
     // chmod
     int         (*chmod)        (CStr, CStr);
