@@ -3,23 +3,38 @@
 // depends on access function from
 // unistd.h (and hopefully direct.h)
 
-static bool canRead_Os(CStr fname) {
+static bool readable_Os(CStr fname) {
     return access(fname, R_OK) != -1;
 }
 
-static bool canWrite_Os(CStr fname) {
+static bool writable_Os(CStr fname) {
     return access(fname, W_OK) != -1;
 }
 
+/*
+ * Adapted from:
+ * "Portable way to check if directory exists [Windows/Linux, C]"
+ * https://stackoverflow.com/questions/18100097/
+ */
 
 static bool isfile_Os(CStr pname) {
     struct stat buf;
-    return (stat(pname, &buf) == 0);
-/*    return access(fname, F_OK) != -1;*/
+    if(stat(pname, &buf) != 0)
+        return false;
+    else if(buf.st_mode & S_IFDIR)
+        return false;
+    else
+        return true;
 }
 
 static bool isdir_Os(CStr pname) {
-    return false;
+    struct stat buf;
+    if(stat(pname, &buf) != 0)
+        return false;
+    else if(buf.st_mode & S_IFDIR)
+        return true;
+    else
+        return false;
 }
 
 #endif

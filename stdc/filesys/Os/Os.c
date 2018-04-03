@@ -5,8 +5,8 @@ OsVtable Os = {
     .cwd        = &cwd_Os,
     
     // path
-    .canRead    = &canRead_Os,
-    .canWrite   = &canWrite_Os,
+    .readable   = &readable_Os,
+    .writable   = &writable_Os,
     .isfile     = &isfile_Os,
     .isdir      = &isdir_Os
 };
