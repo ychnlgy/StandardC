@@ -139,6 +139,8 @@ ListObject* Path.listdir(PathObject* this, MemoryObject* mem);
 ```
 Returns the ListObject of PathObjects representing the filesystem components in **this** directory.
 
+Returns ```NULL``` if **this** is not a directory.
+
 #### Path.setrel(_this_, _relativePathName_)
 ```c
 void Path.setrel(PathObject* this, CStr relativePathName);
