@@ -14,7 +14,7 @@ Collection of low-level operating system calls.
 |    | ```int Os.chmod(CStr fname, CStr cmd);``` |
 
 ## Files
- * [stdc/filesys/Os/Os.h](stdc/filesys/Os/Os.h)
+ * [stdc/filesys/Os/Os.h](../stdc/filesys/Os/Os.h)
 
 ## Demonstration
 ```c
