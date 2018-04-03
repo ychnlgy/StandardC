@@ -64,4 +64,17 @@ RUN
         ASSERT(dirs == NULL);
     END
 
+    CASE("listdir folder")
+        ListObject* dirs = Os.listdir(Path.cstr(dir), mem);
+        ASSERT(List.size(dirs) > 3); // at least more than three items in this folder.
+        long i;
+        bool matched = false;
+        for (i=0; i<List.size(dirs)) {
+            StringObject* s = List.getitem(dirs, i);
+            if (String.eqCStr(s, "data"))
+                matched = true;
+        }
+        ASSERT(matched);
+    END
+
 STOP
