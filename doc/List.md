@@ -9,6 +9,7 @@ All elements of the list are pointers to the original data.
 |-----------|--------|
 | Object | ```Ptr List.new();``` |
 |        | ```bool List.equals(ListObject* this, ListObject* other);``` |
+|        | ```ListObject* List.copy(ListObject* this, MemoryObject* mem);``` |
 | Container | ```long List.size(ListObject* this);``` |
 |           | ```void List.clear(ListObject* this);``` |
 | Stack | ```void List.push(ListObject* this, Ptr ptr);``` |
@@ -83,6 +84,12 @@ bool List.equals(ListObject* this, ListObject* other);
 ```
 Returns true if the two lists have the same length and 
 corresponding elements are equal.
+
+#### List.copy(_this_, _mem_)
+```c
+ListObject* List.copy(ListObject* this, MemoryObject* mem);
+```
+Makes a copy of **this** list on heap memory.
 
 ## Container
 
