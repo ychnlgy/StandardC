@@ -69,7 +69,7 @@ RUN
         ASSERT(List.size(dirs) > 3); // at least more than three items in this folder.
         long i;
         bool matched = false;
-        for (i=0; i<List.size(dirs)) {
+        for (i=0; i<List.size(dirs); i++) {
             StringObject* s = List.getitem(dirs, i);
             if (String.eqCStr(s, "data"))
                 matched = true;
