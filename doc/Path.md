@@ -23,6 +23,10 @@ For navigating and examining the properties of elements in filesystems.
 |      | ```void Path.setabsstr(PathObject* this, StringObject* absolutePathString);``` |
 |      | ```PathObject* Path.dirname(PathObject* this, MemoryObject* mem);``` |
 
+## Files
+ * [stdc/filesys/Path/Path.h](../stdc/filesys/Path/Path.h)
+ * [stdc/filesys/Path/protected.h](../stdc/filesys/Path/protected.h)
+
 ## Demonstration
 ```c
 #include "stdc/lib.h"
