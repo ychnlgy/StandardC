@@ -16,8 +16,12 @@
 
 #include "cwd.h"
 #include "path.h"
+#include "listdir.h"
+#include "chmod.h"
 
 #include "cwd.c"
 #include "path.c"
+#include "listdir.c"
+#include "chmod.c"
 
 #endif

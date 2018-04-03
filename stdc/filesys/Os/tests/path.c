@@ -20,9 +20,16 @@ SETUP {
     fileNoRead = Path.addcstr(dataDir, "cannotRead.txt", mem);
     fileNoWrite = Path.addcstr(dataDir, "cannotWrite.txt", mem);
     fileNoReadOrWrite = Path.addcstr(dataDir, "cannotReadOrWrite.txt", mem);
+    
+    Os.chmod(Path.cstr(fileNoRead), "-r");
+    Os.chmod(Path.cstr(fileNoWrite), "-w");
+    Os.chmod(Path.cstr(fileNoReadOrWrite), "-rw");
 }
 
 TEARDOWN {
+    Os.chmod(Path.cstr(fileNoRead), "+r");
+    Os.chmod(Path.cstr(fileNoWrite), "+w");
+    Os.chmod(Path.cstr(fileNoReadOrWrite), "+rw");
     decref(mem);
 }
 

@@ -8,5 +8,11 @@ OsVtable Os = {
     .readable   = &readable_Os,
     .writable   = &writable_Os,
     .isfile     = &isfile_Os,
-    .isdir      = &isdir_Os
+    .isdir      = &isdir_Os,
+    
+    // listdir
+    .listdir    = &listdir_Os,
+    
+    // chmod
+    .chmod      = &chmod_Os
 };
