@@ -9,8 +9,11 @@ All elements of the list are pointers to the original data.
 |-----------|--------|
 | Object | ```Ptr List.new();``` |
 |        | ```bool List.equals(ListObject* this, ListObject* other);``` |
+|        | ```ListObject* List.copy(ListObject* this, MemoryObject* mem);``` |
+| Numeric | ```ListObject* List.add(ListObject* this, ListObject* other, MemoryObject* mem);``` |
 | Container | ```long List.size(ListObject* this);``` |
 |           | ```void List.clear(ListObject* this);``` |
+|           | ```bool List.isEmpty(ListObject* this);``` |
 | Stack | ```void List.push(ListObject* this, Ptr ptr);``` |
 |       | ```void List.pushes(ListObject* this, long n, ...);``` |
 |       | ```Ptr List.pop(ListObject* this, MemoryObject* mem);``` |
@@ -21,7 +24,7 @@ All elements of the list are pointers to the original data.
 |          | ```Ptr List.at(ListObject* this, long i);``` |
 |          | ```void List.set(ListObject* this, long i, Ptr ptr);``` |
 |          | ```ListObject* List.slice(ListObject* this, MemoryObject* mem, long i, long j);``` |
-| List | ```ListObject* List.concat(ListObject* this, ListObject* other, MemoryObject* mem);``` |
+| Iterable | ```ListObject* List.filter(ListObject* this, FilterFunc fn, MemoryObject* mem);``` |
 
 ## Files
  * [stdc/util/List/List.h](../stdc/util/List/List.h)
@@ -84,6 +87,52 @@ bool List.equals(ListObject* this, ListObject* other);
 Returns true if the two lists have the same length and 
 corresponding elements are equal.
 
+#### List.copy(_this_, _mem_)
+```c
+ListObject* List.copy(ListObject* this, MemoryObject* mem);
+```
+Makes a copy of **this** list on heap memory.
+
+## Numeric
+#### List.add(_this_, _otherlist_, _mem_)
+```c
+ListObject* List.add(ListObject* this, ListObject* otherlist, MemoryObject* mem);
+```
+Makes a new list consisting of elements of this list followed by the elements of the other list.
+```c
+#include "stdc/lib.h"
+
+int main() {
+    MemoryObject* mem = Memory.new();
+    
+    int* i1 = Memory.alloc(mem, sizeof(int));
+    int* i2 = Memory.alloc(mem, sizeof(int));
+    int* i3 = Memory.alloc(mem, sizeof(int));
+    int* i4 = Memory.alloc(mem, sizeof(int));
+    
+    *i1 = 1;
+    *i2 = 2;
+    *i3 = 3;
+    *i4 = 4;
+    
+    ListObject* l1 = Memory.make(mem, List.new);
+    ListObject* l2 = Memory.make(mem, List.new);
+    
+    List.push(l1, i1);
+    List.push(l1, i2);
+    // l1 contains [1, 2]
+    
+    List.push(l2, i3);
+    List.push(l2, i4);
+    // l2 contains [3, 4]
+    
+    ListObject* l3 = List.add(l1, l2, mem);
+    // l3 contains [1, 2, 3, 4]
+
+    decref(mem); // all memory is free'd
+}
+```
+
 ## Container
 
 #### List.size(_this_)
@@ -97,6 +146,12 @@ Returns the number of elements in the list.
 void List.clear(ListObject* this);
 ```
 Removes all elements in the list.
+
+#### List.isEmpty(_this_)
+```c
+bool List.isEmpty(ListObject* this);
+```
+Returns true if **this** list is empty.
 
 ## Stack
 
@@ -269,42 +324,11 @@ int main() {
 }
 ```
 
-## List
-#### List.concat(_this_, _otherlist_, _mem_)
+## Iterable
+#### List.filter(_this_, _fn_, _mem_)
 ```c
-ListObject* List.concat(ListObject* this, ListObject* otherlist, MemoryObject* mem);
-```
-Makes a new list consisting of elements of this list followed by the elements of the other list.
-```c
-#include "stdc/lib.h"
+ListObject* List.filter(ListObject* this, FilterFunc fn, MemoryObject* mem);
+``` 
+Collects elements of **this** list that return true for **fn**(_element_) in a new list.
 
-int main() {
-    MemoryObject* mem = Memory.new();
-    
-    int* i1 = Memory.alloc(mem, sizeof(int));
-    int* i2 = Memory.alloc(mem, sizeof(int));
-    int* i3 = Memory.alloc(mem, sizeof(int));
-    int* i4 = Memory.alloc(mem, sizeof(int));
-    
-    *i1 = 1;
-    *i2 = 2;
-    *i3 = 3;
-    *i4 = 4;
-    
-    ListObject* l1 = Memory.make(mem, List.new);
-    ListObject* l2 = Memory.make(mem, List.new);
-    
-    List.push(l1, i1);
-    List.push(l1, i2);
-    // l1 contains [1, 2]
-    
-    List.push(l2, i3);
-    List.push(l2, i4);
-    // l2 contains [3, 4]
-    
-    ListObject* l3 = List.concat(l1, l2, mem);
-    // l3 contains [1, 2, 3, 4]
-
-    decref(mem); // all memory is free'd
-}
-```
+See [types](../stdc/util/types.h) for the declaration of ```FilterFunc```.

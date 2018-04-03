@@ -19,6 +19,7 @@ String class for the ease of string manipulation.
 |          | ```StringObject* String.slice(StringObject* this, long i, long j, MemoryObject* mem);``` |
 |          | ```long String.index(StringObject* this, StringObject* substring);``` |
 | String | ```StringObject* String.format(StringObject* this, MemoryObject* mem, ...);``` |
+|        | ```bool String.eqCStr(StringObject* this, CStr cstr);``` |
 |        | ```StringObject* String.rstrip(StringObject* this, MemoryObject* mem);``` |
 |        | ```StringObject* String.lstrip(StringObject* this, MemoryObject* mem);``` |
 |        | ```StringObject* String.strip(StringObject* this, MemoryObject* mem);``` |
@@ -177,6 +178,12 @@ Returns the index at which **substring** appears in **this** string.
 If **substring** is not found in **this** string, ```-1``` is returned.
 
 ## String
+#### String.eqCStr(_this_, _cstr_)
+```c
+bool String.eqCStr(StringObject* this, CStr cstr);
+```
+Returns true if **this** string equals **cstr**.
+
 #### String.format(_this_, _mem_, ...)
 ```c
 StringObject* String.format(StringObject* this, MemoryObject* mem, ...);
