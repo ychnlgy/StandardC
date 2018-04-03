@@ -5,6 +5,7 @@ int main() {
     printBlue("cwd: ");
     printBold("%s\n", Os.cwd(mem));
     decref(mem);
+    return 0;
 }
 
 

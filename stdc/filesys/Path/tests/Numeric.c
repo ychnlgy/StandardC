@@ -47,6 +47,13 @@ RUN
         ASSERT(String.equals(cwd, Path.str(absp2)));
     END
     
+    CASE("abs-already")
+        Path.setabs(p1, "/usr/c");
+        StringObject* cwd = Memory.make(mem, String.new);
+        String.set(cwd, "/usr/c");
+        ASSERT(String.equals(cwd, Path.str(p1)));
+    END
+    
     CASE("norm")
         StringObject* s1 = Memory.make(mem, String.new);
         String.set(s1, "folder/subfolder/file.py");
