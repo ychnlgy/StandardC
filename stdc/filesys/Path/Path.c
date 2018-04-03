@@ -17,11 +17,13 @@ PathVtable Path = {
     .norm       = &norm_Path,
     
     // Path
+    .addcstr    = &addcstr_Path,
     .isfile     = &isfile_Path,
     .isdir      = &isdir_Path,
     .listdir    = &listdir_Path,
     .setrel     = &setrel_Path,
     .setabs     = &setabs_Path,
     .setrelstr  = &setrelstr_Path,
-    .setabsstr  = &setabsstr_Path
+    .setabsstr  = &setabsstr_Path,
+    .dirname    = &dirname_Path
 };

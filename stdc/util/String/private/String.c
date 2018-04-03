@@ -6,7 +6,7 @@
 #include <assert.h>
 
 static bool eqCStr_String(StringObject* this, CStr cstr) {
-    return compareCStr(this->size == 0, cstr == NULL, this->cstr, cstr);
+    return compareCStr(this->size == 0, (cstr == NULL || *cstr == '\0'), this->cstr, cstr);
 }
 
 static StringObject* format_String(StringObject* this, MemoryObject* mem, ...) {

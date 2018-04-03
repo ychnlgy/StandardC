@@ -57,4 +57,21 @@ static ListObject* removePathRedundancy(ListObject* list, MemoryObject* mem) {
     return result;
 }
 
+static PathObject* normalize(ListObject* newl, bool isAbs, MemoryObject* mem) {
+    MemoryObject* scope = Memory.new();
+    Memory.track(scope, newl);
+    
+    PathObject* newp = new(sizeof(PathObject), &del_Path);
+    Memory.track(mem, newp);
+    
+    newp->isAbs = isAbs;
+    newp->list = removePathRedundancy(newl, scope);
+    newp->name = String.join(PATH_SEP, newp->list, scope);
+    incref(newp->name);
+    incref(newp->list);
+    
+    decref(scope);
+    return newp;
+}
+
 #endif

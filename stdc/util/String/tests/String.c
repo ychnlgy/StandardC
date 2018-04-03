@@ -26,6 +26,9 @@ RUN
         ASSERT(String.eqCStr(s2, "Evil bunny"));
         ASSERT(!String.eqCStr(s1, NULL));
         ASSERT(!String.eqCStr(s1, ""));
+        String.set(s1, NULL);
+        ASSERT(String.eqCStr(s1, ""));
+        ASSERT(String.eqCStr(s1, NULL));
     END
 
     CASE("format")

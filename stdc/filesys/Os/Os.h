@@ -4,7 +4,11 @@
 #include "stdc/lib.h"
 
 typedef struct {
-    CStr (*cwd)(MemoryObject*);
+    char*   (*cwd)      (MemoryObject*);
+    bool    (*canRead)  (CStr);
+    bool    (*canWrite) (CStr);
+    bool    (*isfile)   (CStr);
+    bool    (*isdir)    (CStr);
 } OsVtable;
 
 extern OsVtable Os;

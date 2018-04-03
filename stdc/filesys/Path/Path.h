@@ -22,6 +22,7 @@ typedef struct {
     PathObject*     (*norm)         (PathObject*, MemoryObject*);
 
     // Methods
+    PathObject*     (*addcstr)      (PathObject*, CStr, MemoryObject*);
     bool            (*isfile)       (PathObject*);
     bool            (*isdir)        (PathObject*);
     ListObject*     (*listdir)      (PathObject*, MemoryObject*);
@@ -29,6 +30,9 @@ typedef struct {
     void            (*setabs)       (PathObject*, CStr);
     void            (*setrelstr)    (PathObject*, StringObject*);
     void            (*setabsstr)    (PathObject*, StringObject*);
+    PathObject*     (*dirname)      (PathObject*, MemoryObject*);
+//    StringObject*   (*ext)          (PathObject*);
+//    StringObject*   (*basename)     (PathObject*);
 
 } PathVtable;
 

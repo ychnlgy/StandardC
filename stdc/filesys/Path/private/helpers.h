@@ -5,5 +5,6 @@ static void         setpath             (PathObject*, CStr, bool);
 static bool         isSkipPath          (Ptr);
 static ListObject*  removeBack          (ListObject*, MemoryObject*);
 static ListObject*  removePathRedundancy(ListObject*, MemoryObject*);
+static PathObject*  normalize           (ListObject*, bool, MemoryObject*);
 
 #endif
