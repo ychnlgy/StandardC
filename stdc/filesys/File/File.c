@@ -9,6 +9,8 @@ static Ptr new_File();
 static void init_File(FileObject*);
 static void del_File(Ptr);
 
+static CStr cstr_File(FileObject*);
+
 static void name_File(FileObject*, CStr);
 static void namestr_File(FileObject*, StringObject*);
 static void namepath_File(FileObject*, PathObject*);
@@ -26,6 +28,8 @@ FileVtable File = {
     .new = &new_File,
     .init = &init_File,
     .del = &del_File,
+    
+    .cstr = &cstr_File,
     
     .name = &name_File,
     .namestr = &namestr_File,
@@ -56,6 +60,10 @@ static void del_File(Ptr ptr) {
     FileObject* this = ptr;
     decref(this->path);
     decref(this->list);
+}
+
+static CStr cstr_File(FileObject* this) {
+    return Path.cstr(this->path);
 }
 
 static void name_File(FileObject* this, CStr name) {

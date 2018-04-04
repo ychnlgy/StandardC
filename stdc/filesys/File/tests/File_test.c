@@ -60,12 +60,15 @@ RUN
         ASSERT(!File.exists(f1));
     
         File.name(f1, "foo.c");
+        ASSERT(strcmp("foo.c", File.cstr(f1)) == 0);
+        
         ASSERT(!File.exists(f1));
         File.name(f1, Path.cstr(filep));
         ASSERT(File.exists(f1));
         
         StringObject* s1 = Memory.make(mem, String.new);
         String.set(s1, "goo.c");
+        
         File.namestr(f1, s1);
         ASSERT(!File.exists(f1));
         File.namestr(f1, Path.str(filep));

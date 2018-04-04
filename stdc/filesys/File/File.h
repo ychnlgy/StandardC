@@ -6,7 +6,7 @@
 typedef struct FileObject FileObject;
 
 typedef struct {
-    long n;
+    long n; // number of elements in d
     char* d;
 } FileData;
 
@@ -14,6 +14,8 @@ typedef struct {
     Ptr             (*new)      ();
     void            (*init)     (FileObject*);
     void            (*del)      (Ptr);
+    
+    CStr            (*cstr)     (FileObject*);
     
     // Methods
     void            (*name)     (FileObject*, CStr);
