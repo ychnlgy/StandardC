@@ -155,7 +155,7 @@ RUN
         File.namepath(f1, filep);
         CStr msg = "123456789";
         long len = 10;
-        long loop = 100;
+        long loop = 10000;
         long i, j;
         for (i=0; i<loop; i++)
             File.write(f1, len, msg);
