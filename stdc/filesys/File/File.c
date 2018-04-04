@@ -19,7 +19,7 @@ static bool writable_File(FileObject*);
 
 static void write_File(FileObject*, long, CStr);
 static void writestr_File(FileObject*, StringObject*);
-static StringObject* read_File(FileObject*, MemoryObject*);
+static FileData* read_File(FileObject*, MemoryObject*);
 static long flush_File(FileObject*);
 
 FileVtable File = {
@@ -40,11 +40,6 @@ FileVtable File = {
     .read = &read_File,
     .flush = &flush_File
 };
-
-typedef struct {
-    long n;
-    char* d;
-} _FileData;
 
 static Ptr new_File() {
     FileObject* this = new(sizeof(FileObject), &del_File);
@@ -90,18 +85,18 @@ static bool writable_File(FileObject* this) {
 }
 
 static void del_FileData(Ptr ptr) {
-    free(((_FileData*) ptr)->d);
+    free(((FileData*) ptr)->d);
 }
 
-static _FileData* new_FileData(long n) {
-    _FileData* d = new(sizeof(_FileData), &del_FileData);
+static FileData* new_FileData(long n) {
+    FileData* d = new(sizeof(FileData), &del_FileData);
     d->n = n;
     d->d = malloc(n);
     return d;
 }
 
-static _FileData* allocFileData(long n, CStr data) {
-    _FileData* s = new_FileData(n);
+static FileData* allocFileData(long n, CStr data) {
+    FileData* s = new_FileData(n);
     long i;
     for (i=0; i<n; i++)
         s->d[i] = data[i];
@@ -110,7 +105,7 @@ static _FileData* allocFileData(long n, CStr data) {
 
 static void write_File(FileObject* this, long n, CStr data) {
     if (n > 0 && data != NULL) {
-        _FileData* fd = allocFileData(n, data);
+        FileData* fd = allocFileData(n, data);
         List.push(this->list, fd);
         decref(fd);
     }
@@ -126,7 +121,7 @@ static void writestr_File(FileObject* this, StringObject* data) {
  * "C library function - fread()"
  */
 
-static StringObject* read_File(FileObject* this, MemoryObject* mem) {
+static FileData* read_File(FileObject* this, MemoryObject* mem) {
     // NOTE: String.merge is not used for this algorithm
     // because there may be early '\0' in the file.
     CStr name = Path.cstr(this->path);
@@ -143,7 +138,7 @@ static StringObject* read_File(FileObject* this, MemoryObject* mem) {
     long totalchars = 0;
     long numchars = fread(buf, 1, BUFSIZE, f);
     while (numchars == BUFSIZE) {
-        _FileData* fd = allocFileData(BUFSIZE, buf);
+        FileData* fd = allocFileData(BUFSIZE, buf);
         List.push(datalist, fd);
         decref(fd);
         totalchars += numchars;
@@ -152,25 +147,24 @@ static StringObject* read_File(FileObject* this, MemoryObject* mem) {
     fclose(f);
     
     if (numchars > 0) {
-        _FileData* fd = allocFileData(numchars, buf);
+        FileData* fd = allocFileData(numchars, buf);
         List.push(datalist, fd);
         decref(fd);
         totalchars += numchars;
     }
     
-    char goodBuf[totalchars+1];
+    char goodBuf[totalchars];
     long i, j;
     long k = 0;
     for (i=0; i<List.size(datalist); i++) {
-        _FileData* fd = List.getitem(datalist, i);
+        FileData* fd = List.getitem(datalist, i);
         for (j=0; j<fd->n; j++)
             goodBuf[k++] = fd->d[j];
     }
     decref(datalist);
-    goodBuf[totalchars] = '\0';
     
-    StringObject* out = Memory.make(mem, String.new);
-    String.set(out, goodBuf);
+    FileData* out = allocFileData(totalchars, goodBuf); 
+    Memory.track(mem, out);
     
     return out;
 }
@@ -192,7 +186,7 @@ static long flush_File(FileObject* this) {
     long total = 0;
     long i;
     for (i=0; i<List.size(this->list); i++) {
-        _FileData* d = List.getitem(this->list, i);
+        FileData* d = List.getitem(this->list, i);
         fwrite(d->d, 1, d->n, f);
         total += d->n;
     }

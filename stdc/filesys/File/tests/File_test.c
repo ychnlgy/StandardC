@@ -2,6 +2,9 @@
 #include <string.h>
 // strlen
 
+#include <stdio.h>
+// remove
+
 MemoryObject* mem;
 FileObject* f1;
 
@@ -35,12 +38,19 @@ SETUP {
     Os.chmod(Path.cstr(fileNoWrite), "-w");
     Os.chmod(Path.cstr(fileNoReadOrWrite), "-rw");
 
+    
 }
 
 TEARDOWN {
     Os.chmod(Path.cstr(fileNoRead), "+r");
     Os.chmod(Path.cstr(fileNoWrite), "+w");
     Os.chmod(Path.cstr(fileNoReadOrWrite), "+rw");
+    
+    remove(Path.cstr(filep));
+    f1 = Memory.make(mem, File.new);
+    File.namepath(f1, filep);
+    File.flush(f1);
+    
     decref(mem);
 }
 
@@ -90,6 +100,10 @@ RUN
         ASSERT(File.read(f1, mem) == NULL);
         ASSERT(File.flush(f1) == -1);
         
+        File.namepath(f1, fileNoReadOrWrite);
+        ASSERT(File.read(f1, mem) == NULL);
+        ASSERT(File.flush(f1) == -1);
+        
         // Try flushing bad input
         File.namepath(f1, filep);
         File.write(f1, 0, "skdfjlsd");
@@ -102,18 +116,36 @@ RUN
         ASSERT(File.flush(f1) == 0);
         
         // read an empty file
-        StringObject* ss = File.read(f1, mem);
-        ASSERT(String.size(ss) == 0);
+        FileData* ss = File.read(f1, mem);
+        ASSERT(ss->n == 0);
     END
     
     CASE("write-read")
-        File.write(f1, strlen(filepn), filepn);
+        File.write(f1, 2, "01");
         File.write(f1, 5, "abcde");
         ASSERT(File.flush(f1) == -1);
+        File.namepath(f1, filep);
+        long size = 7;
+        ASSERT(File.flush(f1) == size);
+        FileData* fd1 = File.read(f1, mem);
+        ASSERT(fd1->n == size);
+        
+        CStr answer = "01abcde";
+        long i;
+        for (i=0; i<size; i++)
+            ASSERT(answer[i] == fd1->d[i]);
         
         StringObject* s = Memory.make(mem, String.new);
-        String.set(s, "Hello world!");
+        CStr answer2 = "Hello world!";
+        String.set(s, answer2);
         File.writestr(f1, s);
+        size = 12;
+        ASSERT(File.flush(f1) == size);
+        fd1 = File.read(f1, mem);
+        ASSERT(fd1->n == size);
+
+        for (i=0; i<size; i++)
+            ASSERT(answer2[i] == fd1->d[i]);
     END
 
 STOP

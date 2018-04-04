@@ -6,6 +6,11 @@
 typedef struct FileObject FileObject;
 
 typedef struct {
+    long n;
+    char* d;
+} FileData;
+
+typedef struct {
     Ptr             (*new)      ();
     void            (*init)     (FileObject*);
     void            (*del)      (Ptr);
@@ -21,7 +26,7 @@ typedef struct {
     
     void            (*write)    (FileObject*, long, CStr);
     void            (*writestr) (FileObject*, StringObject*);
-    StringObject*   (*read)     (FileObject*, MemoryObject*);
+    FileData*       (*read)     (FileObject*, MemoryObject*);
     long            (*flush)    (FileObject*);
 } FileVtable;
 
