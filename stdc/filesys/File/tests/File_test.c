@@ -156,7 +156,7 @@ RUN
         CStr msg = "123456789";
         long len = 10;
         long loop = 100;
-        long i;
+        long i, j;
         for (i=0; i<loop; i++)
             File.write(f1, len, msg);
         ASSERT(File.flush(f1) == len*loop);
@@ -164,6 +164,15 @@ RUN
         ASSERT(fd->n == len*loop);
         for (i=0; i<loop; i++)
             ASSERT(msg[MOD(i, len)] == fd->d[i]);
+        
+        ListObject* segments = File.segment(f1, mem);
+        long total = 0;
+        for (i=0; i<List.size(segments); i++) {
+            FileData* fd = List.getitem(segments, i);
+            for (j=0; j<fd->n; j++)
+                ASSERT(msg[MOD(total++, len)] == fd->d[j]);
+        }
+        ASSERT(total == len*loop);
     END
 
 STOP

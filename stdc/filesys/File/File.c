@@ -23,6 +23,7 @@ static void write_File(FileObject*, long, CStr);
 static void writestr_File(FileObject*, StringObject*);
 static FileData* read_File(FileObject*, MemoryObject*);
 static long flush_File(FileObject*);
+static ListObject* segment_File(FileObject*, MemoryObject*);
 
 FileVtable File = {
     .new = &new_File,
@@ -42,7 +43,8 @@ FileVtable File = {
     .write = &write_File,
     .writestr = &writestr_File,
     .read = &read_File,
-    .flush = &flush_File
+    .flush = &flush_File,
+    .segment = &segment_File
 };
 
 static Ptr new_File() {
@@ -128,10 +130,8 @@ static void writestr_File(FileObject* this, StringObject* data) {
  * https://www.tutorialspoint.com/c_standard_library/c_function_fread.htm
  * "C library function - fread()"
  */
-
-static FileData* read_File(FileObject* this, MemoryObject* mem) {
-    // NOTE: String.merge is not used for this algorithm
-    // because there may be early '\0' in the file.
+ 
+static ListObject* _segment_File(FileObject* this, MemoryObject* mem, long* count) {
     CStr name = Path.cstr(this->path);
     if (name == NULL)
         return NULL;
@@ -140,7 +140,7 @@ static FileData* read_File(FileObject* this, MemoryObject* mem) {
     if (f == NULL)
         return NULL;
     
-    ListObject* datalist = List.new();
+    ListObject* datalist = Memory.make(mem, List.new);
     char buf[BUFSIZE];
     fseek(f, 0, SEEK_SET);
     long totalchars = 0;
@@ -161,6 +161,27 @@ static FileData* read_File(FileObject* this, MemoryObject* mem) {
         totalchars += numchars;
     }
     
+    if (count)
+        *count = totalchars;
+    return datalist;
+}
+
+static ListObject* segment_File(FileObject* this, MemoryObject* mem) {
+    return _segment_File(this, mem, NULL);
+}
+
+static FileData* read_File(FileObject* this, MemoryObject* mem) {
+    // NOTE: String.merge is not used for this algorithm
+    // because there may be early '\0' in the file.
+    MemoryObject* scope = Memory.new();
+    
+    long totalchars;
+    ListObject* datalist = _segment_File(this, scope, &totalchars);
+    if (datalist == NULL) {
+        decref(scope);
+        return NULL;
+    }
+    
     char goodBuf[totalchars];
     long i, j;
     long k = 0;
@@ -169,11 +190,11 @@ static FileData* read_File(FileObject* this, MemoryObject* mem) {
         for (j=0; j<fd->n; j++)
             goodBuf[k++] = fd->d[j];
     }
-    decref(datalist);
     
     FileData* out = allocFileData(totalchars, goodBuf); 
     Memory.track(mem, out);
     
+    decref(scope);
     return out;
 }
 

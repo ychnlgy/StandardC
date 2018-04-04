@@ -30,6 +30,8 @@ typedef struct {
     void            (*writestr) (FileObject*, StringObject*);
     FileData*       (*read)     (FileObject*, MemoryObject*);
     long            (*flush)    (FileObject*);
+    ListObject*     (*segment)  (FileObject*, MemoryObject*);
+
 } FileVtable;
 
 extern FileVtable File;
