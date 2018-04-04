@@ -1,6 +1,5 @@
 #include <stdio.h>
 
-#include "File.h"
 #include "protected.h"
 
 static long BUFSIZE = 1024;
@@ -94,6 +93,8 @@ static bool writable_File(FileObject* this) {
     return Os.writable(Path.cstr(this->path));
 }
 
+// NOTE THIS SECTION WAS COPY-PASTED TO TCPSocket OUT OF DESPERATION
+
 static void del_FileData(Ptr ptr) {
     free(((FileData*) ptr)->d);
 }
@@ -112,6 +113,8 @@ static FileData* allocFileData(long n, CStr data) {
         s->d[i] = data[i];
     return s;
 }
+
+// PLEASE REFACTOR THIS ABOVE SECTION.
 
 static void write_File(FileObject* this, long n, CStr data) {
     if (n > 0 && data != NULL) {
@@ -182,7 +185,7 @@ static FileData* read_File(FileObject* this, MemoryObject* mem) {
         return NULL;
     }
     
-    char goodBuf[totalchars];
+    char goodBuf[totalchars+1];
     long i, j;
     long k = 0;
     for (i=0; i<List.size(datalist); i++) {
@@ -190,6 +193,7 @@ static FileData* read_File(FileObject* this, MemoryObject* mem) {
         for (j=0; j<fd->n; j++)
             goodBuf[k++] = fd->d[j];
     }
+    goodBuf[totalchars] = '\0';
     
     FileData* out = allocFileData(totalchars, goodBuf); 
     Memory.track(mem, out);

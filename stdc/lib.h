@@ -17,4 +17,6 @@
 #include "filesys/Path/Path.h"
 #include "filesys/File/File.h"
 
+#include "net/Socket/TCPSocket.h"
+
 #endif
