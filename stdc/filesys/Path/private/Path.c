@@ -59,4 +59,11 @@ static PathObject* dirname_Path(PathObject* this, MemoryObject* mem) {
     return normalize(newl, this->isAbs, mem);
 }
 
+static StringObject* basename_Path(PathObject* this) {
+    if (List.size(this->list) > 0)
+        return List.back(this->list);
+    else
+        return NULL;
+}
+
 #endif

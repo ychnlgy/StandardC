@@ -4,14 +4,21 @@
 typedef struct FileObject FileObject;
 
 typedef struct {
-    Ptr     (*new)      ();
-    void    (*init)     (FileObject*);
-    void    (*del)      (Ptr);
+    Ptr             (*new)      ();
+    void            (*init)     (FileObject*);
+    void            (*del)      (Ptr);
     
-    void    (*set)      
+    // Methods
+    void            (*name)     (FileObject*, CStr);
+    void            (*namestr)  (FileObject*, StringObject*);
     
+    bool            (*exists)   (FileObject*);
+    bool            (*readable) (FileObject*);
+    bool            (*writable) (FileObject*);
     
-    bool    (*exists)   
+    void            (*write)    (FileObject*, CStr);
+    void            (*writestr) (FileObject*, StringObject*);
+    StringObject*   (*read)     (FileObject*, MemoryObject*);
 
 } FileVtable;
 

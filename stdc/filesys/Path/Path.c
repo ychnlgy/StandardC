@@ -25,5 +25,6 @@ PathVtable Path = {
     .setabs     = &setabs_Path,
     .setrelstr  = &setrelstr_Path,
     .setabsstr  = &setabsstr_Path,
-    .dirname    = &dirname_Path
+    .dirname    = &dirname_Path,
+    .basename   = &basename_Path
 };

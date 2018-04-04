@@ -32,7 +32,7 @@ typedef struct {
     void            (*setabsstr)    (PathObject*, StringObject*);
     PathObject*     (*dirname)      (PathObject*, MemoryObject*);
 //    StringObject*   (*ext)          (PathObject*);
-//    StringObject*   (*basename)     (PathObject*);
+    StringObject*   (*basename)     (PathObject*);
 
 } PathVtable;
 

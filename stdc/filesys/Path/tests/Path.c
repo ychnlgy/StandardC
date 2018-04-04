@@ -42,6 +42,19 @@ TEARDOWN {
 
 RUN
 
+    CASE("isfile-isdir")
+        ASSERT(Path.isfile(fname));
+        ASSERT(Path.isfile(filep));
+        ASSERT(Path.isdir(dir));
+        ASSERT(Path.isdir(dataDir));
+        
+        ASSERT(!Path.isdir(fname));
+        ASSERT(!Path.isdir(filep));
+        ASSERT(!Path.isfile(dir));
+        ASSERT(!Path.isfile(dataDir));
+        
+    END
+
     CASE("addcstr")
         Path.setrel(p1, "folder");
         p2 = Path.addcstr(p1, "sub1\\gook/./sup", mem);
@@ -86,6 +99,11 @@ RUN
     CASE("bad listdir")
         ListObject* dirs = Path.listdir(filep, mem);
         ASSERT(dirs == NULL);
+    END
+    
+    CASE("basename")
+        ASSERT(Path.basename(p2) == NULL);
+        ASSERT(String.eqCStr(Path.basename(p1), "file.py"));
     END
 
 STOP
