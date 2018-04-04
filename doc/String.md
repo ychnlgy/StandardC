@@ -31,6 +31,7 @@ String class for the ease of string manipulation.
 |        | ```StringObject* String.replacestr(StringObject* this, StringObject* oldSubstr, StringObject* newSubstr, MemoryObject* mem);``` |
 |        | ```StringObject* String.join(char c, ListObject* liststr, MemoryObject* mem);``` |
 |        | ```StringObject* String.joinstr(StringObject* this, ListObject* liststr, MemoryObject* mem);``` |
+|        | ```StringObject* String.merge(ListObject* liststr, MemoryObject* mem);``` |
 
 ## Files
  * [stdc/util/String/String.h](../stdc/util/String/String.h)
@@ -277,3 +278,9 @@ Makes a new string by joining **liststr** with **c**. **Notice how the first arg
 StringObject* String.joinstr(StringObject* this, ListObject* liststr, MemoryObject* mem);
 ```
 Makes a new string by joining **liststr** with **this** string.
+
+#### String.merge(_liststr_, _mem_)
+ ```c
+ StringObject* String.merge(ListObject* liststr, MemoryObject* mem);
+ ```
+ Makes a new string by joining **liststr** with the empty string. **Notice how the first argument is not this.**

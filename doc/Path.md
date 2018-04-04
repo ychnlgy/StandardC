@@ -22,6 +22,7 @@ For navigating and examining the properties of elements in filesystems.
 |      | ```void Path.setrelstr(PathObject* this, StringObject* relativePathString);``` |
 |      | ```void Path.setabsstr(PathObject* this, StringObject* absolutePathString);``` |
 |      | ```PathObject* Path.dirname(PathObject* this, MemoryObject* mem);``` |
+|      | ```StringObject* Path.basename(PathObject* this);``` |
 
 ## Files
  * [stdc/filesys/Path/Path.h](../stdc/filesys/Path/Path.h)
@@ -174,3 +175,9 @@ Sets this path to the **absolutePathString**. Labels the path as absolute.
 PathObject* Path.dirname(PathObject* this, MemoryObject* mem);
 ```
 Returns the directory that **this** path resides in.
+
+#### Path.basename(_this_)
+```c
+StringObject* Path.basename(PathObject* this);
+```
+Returns the last component of this path (i.e. the file or directory name).
