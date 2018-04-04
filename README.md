@@ -5,6 +5,24 @@
 
 C Standard Library. Synergizes with [CakeBaker](https://github.com/ychnlgy/CakeBaker).
 
+## Documentation
+| Class                            | Description                                                  |
+|----------------------------------|--------------------------------------------------------------|
+| [Memory](doc/Memory.md)          | Acts like a memory stack to reduce use of free and decref.   |
+| [List](doc/List.md)              | Dynamically-resizing arraylist.                              |
+| [String](doc/String.md)          | String class for easy and safe string manipulation.          |
+| [Path](doc/Path.md)              | Navigation and tools for filesystems. Wrapper around Os.     |
+| [Os](doc/Os.md)                  | Various low-level operating system commands.                 |
+| [File](doc/File.md)              | Easy parsing and writing files.                              |
+| [Socket](doc/Socket.md)          | Wrapper class for C socket calls.                            |
+
+| Feature                          | Description                                                  |
+|----------------------------------|--------------------------------------------------------------|
+| [Garbage Collection](doc/gc.md)  | Reference-counting for dynamically allocated objects.        |
+| [Utility](doc/util.md)           | Collection of useful functions for dealing with C.           |
+| [Types](stdc/util/types.h)       | Several predefined types wrapped in typedef for ease of use. |
+| [Unittest](doc/unittest.md)      | Small set of functions for nice looking unittests.           |
+
 ## Installation using [```git-install```](https://github.com/ychnlgy/GitInstaller)
 ```bash
 git-install.py ychnlgy/StdC
@@ -40,20 +58,6 @@ TEST_OMIT          = cake .git
 ```bash
 bakecake.py main.c app.exe
 ```
-
-## Documentation
-| Class                            | Description                                                  |
-|----------------------------------|--------------------------------------------------------------|
-| [Memory](doc/Memory.md)          | Acts like a memory stack to reduce use of free and decref.   |
-| [List](doc/List.md)              | Dynamically-resizing arraylist.                              |
-| [String](doc/String.md)          | String class for easy and safe string manipulation.          |
-
-| Feature                          | Description                                                  |
-|----------------------------------|--------------------------------------------------------------|
-| [Garbage Collection](doc/gc.md)  | Reference-counting for dynamically allocated objects.        |
-| [Utility](doc/util.md)           | Collection of useful functions for dealing with C.           |
-| [Types](stdc/util/types.h)       | Several predefined types wrapped in typedef for ease of use. |
-| [Unittest](doc/unittest.md)      | Small set of functions for nice looking unittests.           |
 
 ## Examples
 | Feature | Description |
