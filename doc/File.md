@@ -17,6 +17,7 @@ For simple parsing and writing bytes in files.
 |      | ```void File.writestr(FileObject* this, StringObject* data);``` |
 |      | ```long File.flush(FileObject* this);``` |
 |      | ```FileData* File.read(FileObject* this, MemoryObject* mem);``` |
+|      | ```ListObject* File.segment(FileObject* this, MemoryObject* mem);``` |
 
 ## Files
  * [stdc/filesys/File/File.h](../stdc/filesys/File/File.h)
@@ -42,6 +43,14 @@ int main() {
   
   decref(mem);
 }
+```
+## Struct
+#### FileData
+```c
+typdef struct {
+  long n; // number of bytes
+  char* d; // data in bytes
+} FileData;
 ```
 
 ## Object
@@ -126,3 +135,9 @@ FileData* File.read(FileObject* this, MemoryObject* mem);
 ```
 Parses and returns all data in **this** file.
 If the files does not exist or cannot be read, it returns ```NULL```.
+
+#### File.segment(_this_, _mem_)
+```c
+ListObject* File.segment(FileObject* this, MemoryObject* mem);
+```
+Returns a list of FileData representing the bytes of **this** file segmented into a maximum size of 1 KB.
