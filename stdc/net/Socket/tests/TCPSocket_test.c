@@ -20,5 +20,9 @@ RUN
         ASSERT(TCPSocket.bind(sock1, "127.0.0.1", 8080) == 0);
         ASSERT(TCPSocket.bind(sock1, "100.0.0.1", 8080) == -1);
     END
+    
+    CASE("copy")
+        
+    END
 
 STOP

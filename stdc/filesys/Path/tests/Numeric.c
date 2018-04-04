@@ -32,6 +32,28 @@ RUN
         ASSERT(String.equals(s1, Path.str(p3)));
     END
     
+    CASE("strip-terminating folder sep")
+        Path.setrel(p2, "folder/with/sep/");
+        Path.setrel(p1, "folder/with/sep");
+        ASSERT(Path.equals(p1, p2));
+        
+        Path.setrel(p1, "subfolder/pop/");
+        p2 = Path.add(p2, p1, mem);
+        PathObject* p3 = Memory.make(mem, Path.new);
+        Path.setrel(p3, "folder/with/sep/subfolder/pop");
+        ASSERT(Path.equals(p2, p3));
+        
+        Path.setrel(p1, "file.py");
+        p1 = Path.add(p2, p1, mem);
+        Path.setrel(p3, "folder/with/sep/subfolder/pop/file.py");
+        ASSERT(Path.equals(p1, p3));
+        
+        Path.setrel(p1, "joke/inner\\outer\\");
+        p1 = Path.add(p2, p1, mem);
+        Path.setrel(p3, "folder/with/sep/subfolder/pop/joke/inner/outer");
+        ASSERT(Path.equals(p1, p3));
+    END
+    
     CASE("abs")
         StringObject* cwd = Memory.make(mem, String.new);
         String.set(cwd, Os.cwd(mem));
@@ -102,7 +124,7 @@ RUN
         ASSERT(String.equals(Path.str(p2), s2));
         
         String.set(s1, "../../../../");
-        String.set(s2, "../../../../");
+        String.set(s2, "../../../..");
         Path.setrelstr(p1, s1);
         p2 = Path.norm(p1, mem);
         ASSERT(String.equals(Path.str(p2), s2));

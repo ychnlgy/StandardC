@@ -5,6 +5,14 @@ static void breakCStrPath(ListObject* pathlist, CStr name) {
 
     StringObject* sname = Memory.make(mem, String.new);
     String.set(sname, name);
+
+    // remove terminating PATH_SEP if necessary
+    if (String.size(sname) > 0) {
+        char* c = String.at(sname, -1);
+        if (*c == PATH_SEP || *c == BAD_SEP)
+            sname = String.slice(sname, 0, String.size(sname)-1, mem);
+    }
+
     StringObject* normalized = String.replace(sname, BAD_SEP, PATH_SEP, mem);
     ListObject* list = String.split(normalized, PATH_SEP, mem);
     

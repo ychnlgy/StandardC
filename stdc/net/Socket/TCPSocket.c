@@ -20,20 +20,24 @@ static Ptr new_TCPSocket();
 static void init_TCPSocket(TCPSocketObject*);
 static void del_TCPSocket(Ptr);
 
+static TCPSocketObject* copy_TCPSocket(TCPSocketObject*, int, MemoryObject*);
+
 static int bind_TCPSocket(TCPSocketObject*, CStr, long);
 static int listen_TCPSocket(TCPSocketObject*, long);
-static int accept_TCPSocket(TCPSocketObject*);
+static TCPSocketObject* accept_TCPSocket(TCPSocketObject*, MemoryObject*);
 
 static FileData* read_TCPSocket(TCPSocketObject*, MemoryObject*);
 static FileObject* readfile_TCPSocket(TCPSocketObject*, MemoryObject*);
-static void write_TCPSocket(TCPSocketObject*, CStr);
-static void writestr_TCPSocket(TCPSocketObject*, StringObject*);
-static void writefile_TCPSocket(TCPSocketObject*, FileObject*);
+static int write_TCPSocket(TCPSocketObject*, CStr);
+static int writestr_TCPSocket(TCPSocketObject*, StringObject*);
+static int writefile_TCPSocket(TCPSocketObject*, FileObject*);
 
 TCPSocketVtable TCPSocket = {
     .new = &new_TCPSocket,
     .init = &init_TCPSocket,
     .del = &del_TCPSocket,
+    
+    .copy = &copy_TCPSocket,
     
     .bind = &bind_TCPSocket,
     .listen = &listen_TCPSocket,
@@ -59,6 +63,15 @@ static void init_TCPSocket(TCPSocketObject* this) {
 
 static void del_TCPSocket(Ptr ptr) {
     // do nothing.
+}
+
+static TCPSocketObject* copy_TCPSocket(TCPSocketObject* this, int filedesciptor, MemoryObject* mem) {
+    TCPSocketObject* copy = Memory.make(mem, &new_TCPSocket);
+    copy->filedesciptor = filedesciptor;
+    copy->address = this->address;
+    copy->addrlen = this->addrlen;
+    // do not copy buffer
+    return copy;
 }
 
 static int bind_TCPSocket(TCPSocketObject* this, CStr ip, long port) {
@@ -91,12 +104,13 @@ static int listen_TCPSocket(TCPSocketObject* this, long maxClients) {
 // TODO: Accept returns a filedesciptor for the new recieving socket
 // but it needs to have its own buffer, same address
 
-static int accept_TCPSocket(TCPSocketObject* this) {
-    return accept(
+static TCPSocketObject* accept_TCPSocket(TCPSocketObject* this, MemoryObject* mem) {
+    int newFileDescriptor = accept(
         this->filedesciptor,
         (struct sockaddr*) &this->address,
         (socklen_t*) &this->addrlen
     );
+    return copy_TCPSocket(this, newFileDescriptor, mem);
 }
 
 /*static void del_FileData(Ptr ptr) {*/
@@ -131,14 +145,14 @@ static FileObject* readfile_TCPSocket(TCPSocketObject* this, MemoryObject* mem) 
     return NULL;
 }
 
-static void write_TCPSocket(TCPSocketObject* this, CStr msg) {
-
+static int write_TCPSocket(TCPSocketObject* this, CStr msg) {
+    return 0;
 }
 
-static void writestr_TCPSocket(TCPSocketObject* this, StringObject* msg) {
-
+static int writestr_TCPSocket(TCPSocketObject* this, StringObject* msg) {
+    return 0;
 }
 
-static void writefile_TCPSocket(TCPSocketObject* this, FileObject* file) {
-
+static int writefile_TCPSocket(TCPSocketObject* this, FileObject* file) {
+    return 0;
 }
