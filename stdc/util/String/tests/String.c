@@ -334,6 +334,17 @@ RUN
         ASSERT(String.equals(s1, s2));
     END
     
+    CASE("merge")
+        ListObject* list = Memory.make(mem, List.new);
+        String.set(s1, "%d");
+        long i;
+        for (i=0; i<10; i++)
+            List.push(list, String.format(s1, mem, i));
+        String.set(s2, "0123456789");
+        s1 = String.merge(list, mem);
+        ASSERT(String.equals(s1, s2));
+    END
+    
     CASE("replace")
         String.set(s1, " Hello world evil bunny. ");
         StringObject* s3 = String.replace(s1, ' ', '.', mem);

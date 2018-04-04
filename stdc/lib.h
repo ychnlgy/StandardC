@@ -15,5 +15,6 @@
 
 #include "filesys/Os/Os.h"
 #include "filesys/Path/Path.h"
+#include "filesys/File/File.h"
 
 #endif

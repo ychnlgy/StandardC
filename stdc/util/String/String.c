@@ -42,7 +42,8 @@ StringVtable String = {
     .replace    = &replace_String,
     .replacestr = &replacestr_String,
     .join       = &join_String,
-    .joinstr    = &joinstr_String
+    .joinstr    = &joinstr_String,
+    .merge      = &merge_String
 
 };
 

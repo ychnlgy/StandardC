@@ -13,5 +13,6 @@ static StringObject*    replace_String      (StringObject*, char, char, MemoryOb
 static StringObject*    replacestr_String   (StringObject*, StringObject*, StringObject*, MemoryObject*);
 static StringObject*    join_String         (char, ListObject*, MemoryObject*);
 static StringObject*    joinstr_String      (StringObject*, ListObject*, MemoryObject*);
+static StringObject*    merge_String        (ListObject*, MemoryObject*);
 
 #endif

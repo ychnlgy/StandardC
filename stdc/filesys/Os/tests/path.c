@@ -69,5 +69,12 @@ RUN
         ASSERT(!Os.readable(Path.cstr(fileNoReadOrWrite)));
         ASSERT(!Os.writable(Path.cstr(fileNoReadOrWrite)));
     END
+    
+    CASE("null names")
+        ASSERT(!Os.isfile(NULL));
+        ASSERT(!Os.isdir(NULL));
+        ASSERT(!Os.readable(NULL));
+        ASSERT(!Os.writable(NULL));
+    END
 
 STOP

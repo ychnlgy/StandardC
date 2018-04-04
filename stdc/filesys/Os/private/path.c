@@ -4,10 +4,14 @@
 // unistd.h (and hopefully direct.h)
 
 static bool readable_Os(CStr fname) {
+    if (fname == NULL)
+        return false;
     return access(fname, R_OK) != -1;
 }
 
 static bool writable_Os(CStr fname) {
+    if (fname == NULL)
+        return false;
     return access(fname, W_OK) != -1;
 }
 
@@ -18,6 +22,8 @@ static bool writable_Os(CStr fname) {
  */
 
 static bool isfile_Os(CStr pname) {
+    if (pname == NULL)
+        return false;
     struct stat buf;
     if(stat(pname, &buf) != 0)
         return false;
@@ -28,6 +34,8 @@ static bool isfile_Os(CStr pname) {
 }
 
 static bool isdir_Os(CStr pname) {
+    if (pname == NULL)
+        return false;
     struct stat buf;
     if(stat(pname, &buf) != 0)
         return false;

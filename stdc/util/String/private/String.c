@@ -95,5 +95,9 @@ static StringObject* joinstr_String(StringObject* this, ListObject* liststr, Mem
     return join(this->cstr, this->size, liststr, mem);
 }
 
+static StringObject* merge_String(ListObject* liststr, MemoryObject* mem) {
+    return join(NULL, 0, liststr, mem);
+}
+
 #endif
 

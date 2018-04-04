@@ -49,7 +49,7 @@ typedef struct {
     StringObject*   (*replacestr)   (StringObject*, StringObject*, StringObject*, MemoryObject*);
     StringObject*   (*join)         (char, ListObject*, MemoryObject*);
     StringObject*   (*joinstr)      (StringObject*, ListObject*, MemoryObject*);
-
+    StringObject*   (*merge)        (ListObject*, MemoryObject*);
 } StringVtable;
 
 extern StringVtable String;

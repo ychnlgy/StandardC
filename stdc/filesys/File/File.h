@@ -1,6 +1,8 @@
 #ifndef STDC_FILESYS_FILE_FILE
 #define STDC_FILESYS_FILE_FILE
 
+#include "stdc/lib.h"
+
 typedef struct FileObject FileObject;
 
 typedef struct {
@@ -11,15 +13,16 @@ typedef struct {
     // Methods
     void            (*name)     (FileObject*, CStr);
     void            (*namestr)  (FileObject*, StringObject*);
+    void            (*namepath) (FileObject*, PathObject*);
     
     bool            (*exists)   (FileObject*);
     bool            (*readable) (FileObject*);
     bool            (*writable) (FileObject*);
     
-    void            (*write)    (FileObject*, CStr);
+    void            (*write)    (FileObject*, long, CStr);
     void            (*writestr) (FileObject*, StringObject*);
     StringObject*   (*read)     (FileObject*, MemoryObject*);
-
+    long            (*flush)    (FileObject*);
 } FileVtable;
 
 extern FileVtable File;
