@@ -173,7 +173,7 @@ static ListObject* segmentRead(TCPSocketObject* this, MemoryObject* mem, long* s
     
     ListObject* segments = Memory.make(mem, List.new);
     
-    long bytesread, totalbytes;
+    long bytesread, totalbytes = 0;
     while ((bytesread = read(this->filedesciptor, this->buffer, BUFSIZE)) == BUFSIZE) {
         totalbytes += bytesread;
         FileData* fd = allocFileData(bytesread, this->buffer, scope);
