@@ -11,10 +11,14 @@ typedef struct {
     void                (*del)      (Ptr);
     TCPSocketObject*    (*copy)     (TCPSocketObject*, int, MemoryObject*);
     
-    // Methods
+    // Server methods
     int                 (*bind)     (TCPSocketObject*, CStr, long);
+    int                 (*bindany)  (TCPSocketObject*, long);
     int                 (*listen)   (TCPSocketObject*, long);
     TCPSocketObject*    (*accept)   (TCPSocketObject*, MemoryObject*);
+    
+    // Client methods
+    int                 (*connect)  (TCPSocketObject*);
     
     // File
     FileData*           (*read)     (TCPSocketObject*, MemoryObject*);

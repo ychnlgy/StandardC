@@ -16,13 +16,16 @@ TEARDOWN {
 
 RUN
 
-    CASE("constructor")
-        ASSERT(TCPSocket.bind(sock1, "127.0.0.1", 8080) == 0);
+    CASE("bad ip")
         ASSERT(TCPSocket.bind(sock1, "100.0.0.1", 8080) == -1);
     END
     
-    CASE("copy")
-        
+    CASE("interaction-cstr")
+        ASSERT(TCPSocket.bind(sock1, "127.0.0.1", 8080) == 0);
+/*        ASSERT*/
+        // No idea how to test without implementing 
+        // threads
+        // Manual testing for now.
     END
 
 STOP

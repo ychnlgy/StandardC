@@ -12,7 +12,7 @@
 #include <arpa/inet.h>
 // inet_addr
 
-#include <assert.h>
+#include <string.h>
 
 #include "protected.h"
 
@@ -23,8 +23,11 @@ static void del_TCPSocket(Ptr);
 static TCPSocketObject* copy_TCPSocket(TCPSocketObject*, int, MemoryObject*);
 
 static int bind_TCPSocket(TCPSocketObject*, CStr, long);
+static int bindany_TCPSocket(TCPSocketObject*, long);
 static int listen_TCPSocket(TCPSocketObject*, long);
 static TCPSocketObject* accept_TCPSocket(TCPSocketObject*, MemoryObject*);
+
+static int connect_TCPSocket(TCPSocketObject*);
 
 static FileData* read_TCPSocket(TCPSocketObject*, MemoryObject*);
 static FileObject* readfile_TCPSocket(TCPSocketObject*, MemoryObject*);
@@ -40,8 +43,11 @@ TCPSocketVtable TCPSocket = {
     .copy = &copy_TCPSocket,
     
     .bind = &bind_TCPSocket,
+    .bindany = &bindany_TCPSocket,
     .listen = &listen_TCPSocket,
     .accept = &accept_TCPSocket,
+    
+    .connect = &connect_TCPSocket,
     
     .read = &read_TCPSocket,
     .readfile = &readfile_TCPSocket,
@@ -62,7 +68,14 @@ static void init_TCPSocket(TCPSocketObject* this) {
 }
 
 static void del_TCPSocket(Ptr ptr) {
-    // do nothing.
+    TCPSocketObject* this = ptr;
+    if (this->filedesciptor != 0)
+        close(this->filedesciptor);
+}
+
+static void resetFileDescriptor(TCPSocketObject* this) {
+    del_TCPSocket(this);
+    this->filedesciptor = socket(AF_INET, SOCK_STREAM, 0);
 }
 
 static TCPSocketObject* copy_TCPSocket(TCPSocketObject* this, int filedesciptor, MemoryObject* mem) {
@@ -74,15 +87,16 @@ static TCPSocketObject* copy_TCPSocket(TCPSocketObject* this, int filedesciptor,
     return copy;
 }
 
-static int bind_TCPSocket(TCPSocketObject* this, CStr ip, long port) {
-    if (this->filedesciptor > 0)
-        close(this->filedesciptor);
-    
-    this->filedesciptor = socket(AF_INET, SOCK_STREAM, 0);
-    assert(this->filedesciptor != 0); // don't know how to test.
+static int bindTCPSocket(TCPSocketObject* this, CStr ip, long port) {
+    resetFileDescriptor(this);
     
     this->address.sin_family = AF_INET;
-    this->address.sin_addr.s_addr = inet_addr(ip);
+    
+    if (ip == NULL)
+        this->address.sin_addr.s_addr = INADDR_ANY;
+    else
+        this->address.sin_addr.s_addr = inet_addr(ip);
+    
     this->address.sin_port = htons(port);
     
     int bindCode = bind(
@@ -97,12 +111,17 @@ static int bind_TCPSocket(TCPSocketObject* this, CStr ip, long port) {
     return 0;
 }
 
+static int bind_TCPSocket(TCPSocketObject* this, CStr ip, long port) {
+    return bindTCPSocket(this, ip, port);
+}
+
+static int bindany_TCPSocket(TCPSocketObject* this, long port) {
+    return bindTCPSocket(this, NULL, port);
+}
+
 static int listen_TCPSocket(TCPSocketObject* this, long maxClients) {
     return listen(this->filedesciptor, maxClients);
 }
-
-// TODO: Accept returns a filedesciptor for the new recieving socket
-// but it needs to have its own buffer, same address
 
 static TCPSocketObject* accept_TCPSocket(TCPSocketObject* this, MemoryObject* mem) {
     int newFileDescriptor = accept(
@@ -113,46 +132,127 @@ static TCPSocketObject* accept_TCPSocket(TCPSocketObject* this, MemoryObject* me
     return copy_TCPSocket(this, newFileDescriptor, mem);
 }
 
-/*static void del_FileData(Ptr ptr) {*/
-/*    free(((FileData*) ptr)->d);*/
-/*}*/
+// TODO: refactor this because it is copied from File
 
-/*static FileData* new_FileData(long n) {*/
-/*    FileData* d = new(sizeof(FileData), &del_FileData);*/
-/*    d->n = n;*/
-/*    d->d = malloc(n);*/
-/*    return d;*/
-/*}*/
+static void del_FileData(Ptr ptr) {
+    free(((FileData*) ptr)->d);
+}
 
-/*static FileData* allocFileData(long n, CStr data) {*/
-/*    FileData* s = new_FileData(n);*/
-/*    long i;*/
-/*    for (i=0; i<n; i++)*/
-/*        s->d[i] = data[i];*/
-/*    return s;*/
-/*}*/
+static FileData* new_FileData(long n) {
+    FileData* d = new(sizeof(FileData), &del_FileData);
+    d->n = n;
+    d->d = malloc(n);
+    return d;
+}
 
-/*static ListObject* segmentInput(TCPSocketObject* this, MemoryObject* mem) {*/
-/*    long numchars;*/
-/*    while((numchars = read(*/
-/*}*/
+static FileData* allocFileData(long n, CStr data, MemoryObject* mem) {
+    FileData* s = new_FileData(n);
+    Memory.track(mem, s);
+    long i;
+    for (i=0; i<n; i++)
+        s->d[i] = data[i];
+    return s;
+}
+
+// the above needs to be treated
+
+static int connect_TCPSocket(TCPSocketObject* this) {
+    return connect(
+        this->filedesciptor,
+        (struct sockaddr*) &this->address,
+        this->addrlen
+    );
+}
+
+static ListObject* segmentRead(TCPSocketObject* this, MemoryObject* mem, long* size) {
+    MemoryObject* scope = Memory.new();
+    
+    ListObject* segments = Memory.make(mem, List.new);
+    
+    long bytesread, totalbytes;
+    while ((bytesread = read(this->filedesciptor, this->buffer, BUFSIZE)) > 0) {
+        totalbytes += bytesread;
+        FileData* fd = allocFileData(bytesread, this->buffer, scope);
+        List.push(segments, fd);
+    }
+    decref(scope);
+    if (size != NULL)
+        *size = totalbytes;
+    if (bytesread < 0)
+        return NULL;
+    return segments;
+}
 
 static FileData* read_TCPSocket(TCPSocketObject* this, MemoryObject* mem) {
-    return NULL;
+    MemoryObject* scope = Memory.new();
+    
+    long totalbytes;
+    ListObject* segments = segmentRead(this, scope, &totalbytes);
+    
+    FileData* alldata;
+    if (segments == NULL) {
+        alldata = NULL;
+    } else {
+        alldata = new_FileData(totalbytes);
+        Memory.track(mem, alldata);
+        long i, j;
+        long k = 0;
+        for (i=0; i<List.size(segments); i++) {
+            FileData* fd = List.getitem(segments, i);
+            for (j=0; j<fd->n; j++)
+                alldata->d[k++] = fd->d[j];
+        }
+        alldata->n = k;
+    }
+    
+    decref(scope);
+    return alldata;
 }
 
 static FileObject* readfile_TCPSocket(TCPSocketObject* this, MemoryObject* mem) {
-    return NULL;
+    FileObject* out;
+    
+    MemoryObject* scope = Memory.new();
+    
+    ListObject* segments = segmentRead(this, scope, NULL);
+    if (segments == NULL) {
+        out = NULL;
+    } else {
+        out = Memory.make(mem, File.new);
+        long i;
+        for (i=0; i<List.size(segments); i++) {
+            FileData* fd = List.getitem(segments, i);
+            File.write(out, fd->n, fd->d);
+        }
+    }
+    
+    decref(scope);
+    return out;
 }
 
 static int write_TCPSocket(TCPSocketObject* this, CStr msg) {
-    return 0;
+    return send(this->filedesciptor, msg, strlen(msg), 0);
 }
 
 static int writestr_TCPSocket(TCPSocketObject* this, StringObject* msg) {
-    return 0;
+    return send(this->filedesciptor, String.cstr(msg), String.size(msg), 0);
 }
 
 static int writefile_TCPSocket(TCPSocketObject* this, FileObject* file) {
-    return 0;
+    MemoryObject* scope = Memory.new();
+    ListObject* segments = File.segment(file, scope);
+    long i, totalbytes;
+    for (i=0; i<List.size(segments); i++) {
+        FileData* fd = List.getitem(segments, i);
+        int result = send(this->filedesciptor, fd->d, fd->n, 0);
+        
+        if (result < 0) {
+            decref(scope);
+            return -1;
+        }
+
+        totalbytes += fd->n;
+    }
+    decref(scope);
+    return totalbytes;
 }
