@@ -27,7 +27,7 @@ static int bindany_TCPSocket(TCPSocketObject*, long);
 static int listen_TCPSocket(TCPSocketObject*, long);
 static TCPSocketObject* accept_TCPSocket(TCPSocketObject*, MemoryObject*);
 
-static int connect_TCPSocket(TCPSocketObject*);
+static int connect_TCPSocket(TCPSocketObject*, CStr, long);
 
 static FileData* read_TCPSocket(TCPSocketObject*, MemoryObject*);
 static FileObject* readfile_TCPSocket(TCPSocketObject*, MemoryObject*);
@@ -87,7 +87,7 @@ static TCPSocketObject* copy_TCPSocket(TCPSocketObject* this, int filedesciptor,
     return copy;
 }
 
-static int bindTCPSocket(TCPSocketObject* this, CStr ip, long port) {
+static void setTCPSocket(TCPSocketObject* this, CStr ip, long port) {
     resetFileDescriptor(this);
     
     this->address.sin_family = AF_INET;
@@ -98,7 +98,10 @@ static int bindTCPSocket(TCPSocketObject* this, CStr ip, long port) {
         this->address.sin_addr.s_addr = inet_addr(ip);
     
     this->address.sin_port = htons(port);
-    
+}
+
+static int bindTCPSocket(TCPSocketObject* this, CStr ip, long port) {
+    setTCPSocket(this, ip, port);
     int bindCode = bind(
         this->filedesciptor,
         (struct sockaddr*) &this->address,
@@ -141,7 +144,7 @@ static void del_FileData(Ptr ptr) {
 static FileData* new_FileData(long n) {
     FileData* d = new(sizeof(FileData), &del_FileData);
     d->n = n;
-    d->d = malloc(n);
+    d->d = malloc(n+1);
     return d;
 }
 
@@ -156,7 +159,8 @@ static FileData* allocFileData(long n, CStr data, MemoryObject* mem) {
 
 // the above needs to be treated
 
-static int connect_TCPSocket(TCPSocketObject* this) {
+static int connect_TCPSocket(TCPSocketObject* this, CStr ip, long port) {
+    setTCPSocket(this, ip, port);
     return connect(
         this->filedesciptor,
         (struct sockaddr*) &this->address,
@@ -202,6 +206,7 @@ static FileData* read_TCPSocket(TCPSocketObject* this, MemoryObject* mem) {
             for (j=0; j<fd->n; j++)
                 alldata->d[k++] = fd->d[j];
         }
+        alldata->d[k] = '\0';
         alldata->n = k;
     }
     

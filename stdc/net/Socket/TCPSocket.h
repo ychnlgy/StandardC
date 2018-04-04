@@ -18,7 +18,7 @@ typedef struct {
     TCPSocketObject*    (*accept)   (TCPSocketObject*, MemoryObject*);
     
     // Client methods
-    int                 (*connect)  (TCPSocketObject*);
+    int                 (*connect)  (TCPSocketObject*, CStr, long);
     
     // File
     FileData*           (*read)     (TCPSocketObject*, MemoryObject*);
