@@ -150,5 +150,20 @@ RUN
         for (i=0; i<size; i++)
             ASSERT(answer2[i] == fd1->d[i]);
     END
+    
+    CASE("write-read long")
+        File.namepath(f1, filep);
+        CStr msg = "123456789";
+        long len = 10;
+        long loop = 100;
+        long i;
+        for (i=0; i<loop; i++)
+            File.write(f1, len, msg);
+        ASSERT(File.flush(f1) == len*loop);
+        FileData* fd = File.read(f1, mem);
+        ASSERT(fd->n == len*loop);
+        for (i=0; i<loop; i++)
+            ASSERT(msg[MOD(i, len)] == fd->d[i]);
+    END
 
 STOP
