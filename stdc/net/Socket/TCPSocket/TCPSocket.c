@@ -163,8 +163,6 @@ static ListObject* segmentRead(TCPSocketObject* this, MemoryObject* mem, long* s
     decref(scope);
     if (size != NULL)
         *size = totalbytes;
-    if (bytesread < 0)
-        return NULL;
     return segments;
 }
 
@@ -174,22 +172,17 @@ static FileData* read_TCPSocket(TCPSocketObject* this, MemoryObject* mem) {
     long totalbytes;
     ListObject* segments = segmentRead(this, scope, &totalbytes);
     
-    FileData* alldata;
-    if (segments == NULL) {
-        alldata = NULL;
-    } else {
-        alldata = new_FileData(totalbytes);
-        Memory.track(mem, alldata);
-        long i, j;
-        long k = 0;
-        for (i=0; i<List.size(segments); i++) {
-            FileData* fd = List.getitem(segments, i);
-            for (j=0; j<fd->n; j++)
-                alldata->d[k++] = fd->d[j];
-        }
-        alldata->d[k] = '\0';
-        alldata->n = k;
+    FileData* alldata = new_FileData(totalbytes);
+    Memory.track(mem, alldata);
+    long i, j;
+    long k = 0;
+    for (i=0; i<List.size(segments); i++) {
+        FileData* fd = List.getitem(segments, i);
+        for (j=0; j<fd->n; j++)
+            alldata->d[k++] = fd->d[j];
     }
+    alldata->d[k] = '\0';
+    alldata->n = k;
     
     decref(scope);
     return alldata;
@@ -201,15 +194,11 @@ static FileObject* readfile_TCPSocket(TCPSocketObject* this, MemoryObject* mem) 
     MemoryObject* scope = Memory.new();
     
     ListObject* segments = segmentRead(this, scope, NULL);
-    if (segments == NULL) {
-        out = NULL;
-    } else {
-        out = Memory.make(mem, File.new);
-        long i;
-        for (i=0; i<List.size(segments); i++) {
-            FileData* fd = List.getitem(segments, i);
-            File.write(out, fd->n, fd->d);
-        }
+    out = Memory.make(mem, File.new);
+    long i;
+    for (i=0; i<List.size(segments); i++) {
+        FileData* fd = List.getitem(segments, i);
+        File.write(out, fd->n, fd->d);
     }
     
     decref(scope);
@@ -227,26 +216,7 @@ static long writestr_TCPSocket(TCPSocketObject* this, StringObject* msg) {
 static long writefile_TCPSocket(TCPSocketObject* this, FileObject* file) {
     MemoryObject* scope = Memory.new();
     FileData* fd = File.read(file, scope);
-    long result;
-    if (fd == NULL)
-        result = -1;
-    else
-        result = send(this->filedesciptor, fd->d, fd->n, 0);
+    long result = send(this->filedesciptor, fd->d, fd->n, 0);
     decref(scope);
     return result;
-/*    ListObject* segments = File.segment(file, scope);*/
-/*    long i, totalbytes;*/
-/*    for (i=0; i<List.size(segments); i++) {*/
-/*        FileData* fd = List.getitem(segments, i);*/
-/*        int result = send(this->filedesciptor, fd->d, fd->n, 0);*/
-/*        */
-/*        if (result == -1) {*/
-/*            decref(scope);*/
-/*            return 0;*/
-/*        }*/
-
-/*        totalbytes += fd->n;*/
-/*    }*/
-/*    decref(scope);*/
-/*    return totalbytes;*/
 }

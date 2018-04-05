@@ -230,6 +230,9 @@ RUN
         
         File.namepath(f2, fileNoWrite);
         ASSERT(File.equals(f1, f2));
+        
+        File.namepath(f2, textfile);
+        ASSERT(!File.equals(f1, f2));
     END
 
 STOP

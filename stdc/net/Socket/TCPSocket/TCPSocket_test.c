@@ -235,10 +235,7 @@ Ptr clientTxtFile(Ptr args) {
     
     _TestCase* _testCase = args;
     
-    pthread_mutex_lock(&mutex);
-    if (!started)
-        pthread_cond_wait(&cond, &mutex);
-    pthread_mutex_unlock(&mutex);
+    lockClient();
     
     while(!TCPSocket.connect(clientSock, LOCAL_IP, PORT)) {
         sched_yield();
@@ -293,10 +290,7 @@ Ptr clientBinFile(Ptr args) {
     
     _TestCase* _testCase = args;
     
-    pthread_mutex_lock(&mutex);
-    if (!started)
-        pthread_cond_wait(&cond, &mutex);
-    pthread_mutex_unlock(&mutex);
+    lockClient();
     
     while(!TCPSocket.connect(clientSock, LOCAL_IP, PORT)) {
         sched_yield();
@@ -313,6 +307,31 @@ Ptr clientBinFile(Ptr args) {
     ASSERT(!File.equals(fileData, textfile));
     
     ASSERT(9 == TCPSocket.writefile(clientSock, textfile));
+    return NULL;
+}
+
+// Failed file transfer
+
+Ptr serverDirTransfer(Ptr args) {
+    _TestCase* _testCase = args;
+
+    ASSERT(TCPSocket.bindany(serverSock, PORT));
+    ASSERT(TCPSocket.listen(serverSock, 5));
+    
+    lockServer();
+    
+    TCPSocketObject* connectedSock = TCPSocket.accept(serverSock, mem);
+    File.namepath(textfile, dir); // textfile has name of directory
+    ASSERT(0 == TCPSocket.writefile(connectedSock, textfile));
+    return NULL;
+}
+
+Ptr clientDirTransfer(Ptr args) {
+    lockClient();
+    
+    while(!TCPSocket.connect(clientSock, LOCAL_IP, PORT)) {
+        sched_yield();
+    }
     return NULL;
 }
 
@@ -407,6 +426,10 @@ RUN
         ASSERT(File.exists(binfile));
         ASSERT(File.exists(binfile2));
         ASSERT(File.remove(binfile2));
+    END
+    
+    CASE("dir transfer")
+        runServerAndClient(&serverDirTransfer, &clientDirTransfer, _testCase);
     END
 
 STOP

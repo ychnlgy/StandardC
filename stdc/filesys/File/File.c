@@ -138,19 +138,13 @@ static bool equals_File(FileObject* this, FileObject* other) {
         for (i=0; i<List.size(file1); i++) {
             FileData* fd1 = List.getitem(file1, i);
             FileData* fd2 = List.getitem(file2, i);
-            if (fd1->n != fd2->n) {
-                decref(scope);
-                return false;
-            } else {
-                for (j=0; j<fd1->n; j++) {
-                    if (fd1->d[j] != fd2->d[j]) {
-                        decref(scope);
-                        return false;
-                    }
+            for (j=0; j<fd1->n; j++) {
+                if (fd1->d[j] != fd2->d[j]) {
+                    decref(scope);
+                    return false;
                 }
             }
         }
-
     }
     
     decref(scope);
