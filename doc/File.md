@@ -8,6 +8,7 @@ For simple parsing and writing bytes in files.
 | Object | ```Ptr File.new();``` |
 |        | ```CStr File.cstr(FileObject* this);``` |
 |        | ```CStr File.equals(FileObject* this, FileObject* other);``` |
+| Container | ```long File.size(FileObject* this);``` |
 | File | ```void File.name(FileObject* this, CStr filename);``` |
 |      | ```void File.namestr(FileObject* this, StringObject* filename);``` |
 |      | ```void File.namepath(FileObject* this, PathObject* filename);``` |
@@ -73,6 +74,13 @@ Returns the CStr representation of **this** file.
 CStr File.equals(FileObject* this, FileObject* other);
 ```
 Returns true if the bytes of **this** file match the sequence and length of bytes in **other**.
+
+## Container
+#### File.size(_this_)
+```c
+long File.size(FileObject* this);
+``` 
+Returns the number of bytes in **this** file.
 
 ## File
 #### File.name(_this_, _filename_)
