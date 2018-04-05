@@ -234,6 +234,7 @@ RUN
         File.namepath(f2, fileNoWrite);
         ASSERT(File.equals(f1, f2));
         
+        File.namepath(f1, textfile);
         File.namepath(f2, textfile3);
         ASSERT(!File.equals(f1, f2));
     END
