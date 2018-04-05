@@ -220,9 +220,13 @@ Ptr serverTxtFile(Ptr args) {
     TCPSocketObject* connectedSock = TCPSocket.accept(serverSock, mem);
     ASSERT(9 == TCPSocket.writefile(connectedSock, textfile));
     
-    FileData* fd = TCPSocket.read(connectedSock, mem);
-    ASSERT(fd->n == strlen(clientGoodbye));
-    ASSERT(strcmp(fd->d, clientGoodbye) == 0);
+    FileObject* fd = TCPSocket.readfile(connectedSock, mem);
+    File.namepath(fd, binfilep2);
+    
+    ASSERT(!File.equals(fd, binfile));
+    File.flush(fd);
+    
+    ASSERT(File.equals(fd, binfile));
     
     return NULL;
 }
@@ -250,11 +254,68 @@ Ptr clientTxtFile(Ptr args) {
     ASSERT(File.equals(textfile2, textfile));
     ASSERT(!File.equals(fileData, binfile));
     
-    ASSERT(strlen(clientGoodbye) == TCPSocket.write(clientSock, clientGoodbye));
+    ASSERT(33744 == TCPSocket.writefile(clientSock, binfile));
     return NULL;
 }
 
 // Large bin file
+
+Ptr serverBinFile(Ptr args) {
+    _TestCase* _testCase = args;
+
+    ASSERT(TCPSocket.bindany(serverSock, PORT));
+    ASSERT(TCPSocket.listen(serverSock, 5));
+    
+    lockServer();
+    
+    ASSERT(File.exists(binfile));
+    TCPSocketObject* connectedSock = TCPSocket.accept(serverSock, mem);
+    ASSERT(33744 == TCPSocket.writefile(connectedSock, binfile));
+    
+    FileObject* fd = TCPSocket.readfile(connectedSock, mem);
+    File.namepath(fd, textfilep2);
+
+    ASSERT(!File.equals(fd, textfile));
+    ASSERT(!File.equals(textfile2, textfile));
+    ASSERT(File.exists(binfile));
+    ASSERT(!File.equals(textfile2, binfile));
+    
+    File.flush(fd);
+    
+    ASSERT(File.equals(fd, textfile));
+    ASSERT(File.equals(textfile2, textfile));
+    ASSERT(File.exists(binfile));
+    ASSERT(!File.equals(textfile2, binfile));
+    return NULL;
+}
+
+Ptr clientBinFile(Ptr args) {
+    
+    _TestCase* _testCase = args;
+    
+    pthread_mutex_lock(&mutex);
+    if (!started)
+        pthread_cond_wait(&cond, &mutex);
+    pthread_mutex_unlock(&mutex);
+    
+    while(!TCPSocket.connect(clientSock, LOCAL_IP, PORT)) {
+        sched_yield();
+    }
+    
+    ASSERT(!File.equals(binfile2, binfile));
+    
+    FileObject* fileData = TCPSocket.readfile(clientSock, mem);
+    File.namepath(fileData, binfilep2);
+    File.flush(fileData);
+    
+    ASSERT(File.equals(fileData, binfile));
+    ASSERT(File.equals(binfile2, binfile));
+    ASSERT(!File.equals(fileData, textfile));
+    
+    ASSERT(9 == TCPSocket.writefile(clientSock, textfile));
+    return NULL;
+}
+
 
 void runServerAndClient(ThreadFunc server, ThreadFunc client, Ptr args) {
     pthread_create(&serverThread, NULL, server, args);
@@ -317,20 +378,35 @@ RUN
     END
     
     CASE("read-write txtfile")
+        ASSERT(File.exists(binfile));
+        ASSERT(!File.exists(binfile2));
+    
         ASSERT(File.exists(textfile));
         ASSERT(!File.exists(textfile2));
         runServerAndClient(&serverTxtFile, &clientTxtFile, _testCase);
         ASSERT(File.exists(textfile));
         ASSERT(File.exists(textfile2));
+        ASSERT(File.remove(textfile2));
+        
+        ASSERT(File.exists(binfile));
+        ASSERT(File.exists(binfile2));
+        ASSERT(File.remove(binfile2));
     END
     
     CASE("read-write binfile")
         ASSERT(File.exists(binfile));
         ASSERT(!File.exists(binfile2));
-/*        runServerAndClient(&serverTxtFile, &clientTxtFile, _testCase);*/
-/*        ASSERT(File.exists(binfile));*/
-/*        ASSERT(File.exists(binfile2));*/
-/*        ASSERT(File.remove(binfile2));*/
+    
+        ASSERT(File.exists(textfile));
+        ASSERT(!File.exists(textfile2));
+        runServerAndClient(&serverBinFile, &clientBinFile, _testCase);
+        ASSERT(File.exists(textfile));
+        ASSERT(File.exists(textfile2));
+        ASSERT(File.remove(textfile2));
+        
+        ASSERT(File.exists(binfile));
+        ASSERT(File.exists(binfile2));
+        ASSERT(File.remove(binfile2));
     END
 
 STOP
