@@ -10,6 +10,7 @@ Collection of low-level operating system calls.
 |    | ```bool Os.writable(CStr fname);``` |
 |    | ```bool Os.isfile(CStr fname);``` |
 |    | ```bool Os.isdir(CStr fname);``` |
+|    | ```long Os.size(CStr fname);``` |
 |    | ```ListObject* Os.listdir(CStr fname, MemoryObject* mem);``` |
 |    | ```int Os.chmod(CStr fname, CStr cmd);``` |
 
@@ -60,6 +61,12 @@ Returns true if **fname** is the name of a file.
 bool Os.isdir(CStr fname);
 ```
 Returns true if **fname** is the name of a directory.
+
+#### Os.size(_fname_)
+```c
+long Os.size(CStr fname);
+```
+Returns the number of bytes in the file at **fname**.
 
 #### Os.listdir(_fname_, _mem_)
 ```c
