@@ -207,6 +207,7 @@ RUN
     END
     
     CASE("file equals")
+        ASSERT(File.equals(f1, f2));
         File.namepath(f1, binfile);
         File.namepath(f2, textfile);
         File.namepath(fc1, binfile2);

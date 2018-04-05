@@ -226,19 +226,27 @@ static long writestr_TCPSocket(TCPSocketObject* this, StringObject* msg) {
 
 static long writefile_TCPSocket(TCPSocketObject* this, FileObject* file) {
     MemoryObject* scope = Memory.new();
-    ListObject* segments = File.segment(file, scope);
-    long i, totalbytes;
-    for (i=0; i<List.size(segments); i++) {
-        FileData* fd = List.getitem(segments, i);
-        int result = send(this->filedesciptor, fd->d, fd->n, 0);
-        
-        if (result == -1) {
-            decref(scope);
-            return 0;
-        }
-
-        totalbytes += fd->n;
-    }
+    FileData* fd = File.read(file, scope);
+    long result;
+    if (fd == NULL)
+        result = -1;
+    else
+        result = send(this->filedesciptor, fd->d, fd->n, 0);
     decref(scope);
-    return totalbytes;
+    return result;
+/*    ListObject* segments = File.segment(file, scope);*/
+/*    long i, totalbytes;*/
+/*    for (i=0; i<List.size(segments); i++) {*/
+/*        FileData* fd = List.getitem(segments, i);*/
+/*        int result = send(this->filedesciptor, fd->d, fd->n, 0);*/
+/*        */
+/*        if (result == -1) {*/
+/*            decref(scope);*/
+/*            return 0;*/
+/*        }*/
+
+/*        totalbytes += fd->n;*/
+/*    }*/
+/*    decref(scope);*/
+/*    return totalbytes;*/
 }

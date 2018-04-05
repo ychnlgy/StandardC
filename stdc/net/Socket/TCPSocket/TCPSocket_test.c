@@ -2,6 +2,8 @@
 
 #include <string.h>
 #include <unistd.h>
+#include <sched.h>
+// sched_yield
 #include <pthread.h>
 pthread_mutex_t mutex;
 pthread_cond_t cond;
@@ -59,7 +61,7 @@ Ptr clientOneMsg(Ptr args) {
     lockClient();
     
     while(!TCPSocket.connect(clientSock, LOCAL_IP, PORT)) {
-        sleep(1);
+        sched_yield();
     }
     
     FileData* fd = TCPSocket.read(clientSock, mem);
@@ -73,7 +75,7 @@ Ptr clientOneMsg(Ptr args) {
 
 // Multiple messages
 
-long MULTIPLE = 20000;
+long MULTIPLE = 2000;
 CStr HELLO_WORLD = "Hello world!";
 CStr FOO_BAZ_BAR = "Foo Baz Bar";
 
@@ -106,7 +108,7 @@ Ptr clientMultipleMsgs(Ptr args) {
     lockClient();
     
     while(!TCPSocket.connect(clientSock, LOCAL_IP, PORT)) {
-        sleep(1);
+        sched_yield();
     }
     
     int i = 0;
@@ -134,8 +136,8 @@ StringObject* multiplyString(CStr cstr, int n, MemoryObject* mem) {
     return out;
 }
 
-int SERVER_REPEAT = 10000;
-int CLIENT_REPEAT = 10000;
+int SERVER_REPEAT = 1000;
+int CLIENT_REPEAT = 1000;
 CStr SERVER_LARGE = "Server";
 CStr CLIENT_LARGE = "Client!";
 
@@ -172,7 +174,7 @@ Ptr clientLargeMsg(Ptr args) {
     lockClient();
     
     while(!TCPSocket.connect(clientSock, LOCAL_IP, PORT)){
-        sleep(1);
+        sched_yield();
     }
     
     FileData* fd = TCPSocket.read(clientSock, mem);
@@ -214,9 +216,9 @@ Ptr serverTxtFile(Ptr args) {
     ASSERT(TCPSocket.listen(serverSock, 5));
     
     lockServer();
-    
+    ASSERT(File.exists(textfile));
     TCPSocketObject* connectedSock = TCPSocket.accept(serverSock, mem);
-    ASSERT(strlen(serverHello) == TCPSocket.write(connectedSock, serverHello));
+    ASSERT(9 == TCPSocket.writefile(connectedSock, textfile));
     
     FileData* fd = TCPSocket.read(connectedSock, mem);
     ASSERT(fd->n == strlen(clientGoodbye));
@@ -235,12 +237,18 @@ Ptr clientTxtFile(Ptr args) {
     pthread_mutex_unlock(&mutex);
     
     while(!TCPSocket.connect(clientSock, LOCAL_IP, PORT)) {
-        sleep(1);
+        sched_yield();
     }
     
-    FileData* fd = TCPSocket.read(clientSock, mem);
-    ASSERT(fd->n == strlen(serverHello));
-    ASSERT(strcmp(fd->d, serverHello) == 0);
+    ASSERT(!File.equals(textfile2, textfile));
+    
+    FileObject* fileData = TCPSocket.readfile(clientSock, mem);
+    File.namepath(fileData, textfilep2);
+    File.flush(fileData);
+    
+    ASSERT(File.equals(fileData, textfile));
+    ASSERT(File.equals(textfile2, textfile));
+    ASSERT(!File.equals(fileData, binfile));
     
     ASSERT(strlen(clientGoodbye) == TCPSocket.write(clientSock, clientGoodbye));
     return NULL;
@@ -308,18 +316,21 @@ RUN
         runServerAndClient(&serverLargeMsg, &clientLargeMsg, _testCase);
     END
     
-    CASE("read-write file")
-        ASSERT(File.exists(binfile));
+    CASE("read-write txtfile")
         ASSERT(File.exists(textfile));
-        ASSERT(!File.exists(binfile2));
         ASSERT(!File.exists(textfile2));
+        runServerAndClient(&serverTxtFile, &clientTxtFile, _testCase);
+        ASSERT(File.exists(textfile));
+        ASSERT(File.exists(textfile2));
+    END
+    
+    CASE("read-write binfile")
+        ASSERT(File.exists(binfile));
+        ASSERT(!File.exists(binfile2));
 /*        runServerAndClient(&serverTxtFile, &clientTxtFile, _testCase);*/
 /*        ASSERT(File.exists(binfile));*/
-/*        ASSERT(File.exists(textfile));*/
 /*        ASSERT(File.exists(binfile2));*/
-/*        ASSERT(File.exists(textfile2));*/
 /*        ASSERT(File.remove(binfile2));*/
-/*        ASSERT(File.remove(textfile2));*/
     END
 
 STOP
