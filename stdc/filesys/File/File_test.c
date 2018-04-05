@@ -79,6 +79,15 @@ TEARDOWN {
 
 RUN
 
+    CASE("size")
+        File.namepath(f1, fileNoRead);
+        ASSERT(File.size(f1) == 0);
+        File.namepath(f1, fileNoWrite);
+        ASSERT(File.size(f1) == 0);
+        File.namepath(f1, binfile);
+        ASSERT(File.size(f1) == 33744);
+    END
+
     CASE("remove")
         File.namepath(f1, temp);
         ASSERT(!File.exists(f1));

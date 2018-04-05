@@ -10,6 +10,8 @@ static void del_File(Ptr);
 static CStr cstr_File(FileObject*);
 static bool equals_File(FileObject*, FileObject*);
 
+static long size_File(FileObject*);
+
 static void name_File(FileObject*, CStr);
 static void namestr_File(FileObject*, StringObject*);
 static void namepath_File(FileObject*, PathObject*);

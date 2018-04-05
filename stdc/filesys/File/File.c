@@ -12,6 +12,8 @@ FileVtable File = {
     .cstr = &cstr_File,
     .equals = &equals_File,
     
+    .size = &size_File,
+    
     .name = &name_File,
     .namestr = &namestr_File,
     .namepath = &namepath_File,
@@ -149,6 +151,10 @@ static bool equals_File(FileObject* this, FileObject* other) {
     
     decref(scope);
     return true;
+}
+
+static long size_File(FileObject* this) {
+    return Path.size(this->path);
 }
 
 static void name_File(FileObject* this, CStr name) {
