@@ -12,7 +12,7 @@ script:
  - bakecake.py --test --valgrind -r
 
 after_success:
- - coveralls --exclude-pattern .*_test.c .*_example
+ - coveralls --exclude-pattern .*_test.c --exclude-pattern .*_example.c
 
 notifications:
  email: false
