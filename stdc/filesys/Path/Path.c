@@ -1,4 +1,4 @@
-#include "private.h"
+#include "Path_private.h"
 
 PathVtable Path = {
     .new        = &new_Path,
@@ -28,6 +28,11 @@ PathVtable Path = {
     .dirname    = &dirname_Path,
     .basename   = &basename_Path
 };
+
+static char PATH_SEP = '/';
+static char BAD_SEP = '\\';
+static CStr SKIP_PATH = ".";
+static CStr BACK_PATH = "..";
 
 // Helpers
 static void breakCStrPath(ListObject* pathlist, CStr name) {

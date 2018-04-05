@@ -1,7 +1,7 @@
 #ifndef STDC_MEMORY_MEMORY_PRIVATE
 #define STDC_MEMORY_MEMORY_PRIVATE
 
-#include "protected.h"
+#include "Memory_protected.h"
 
 // Object
 static Ptr     new_Memory      ();

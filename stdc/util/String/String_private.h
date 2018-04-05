@@ -4,7 +4,7 @@
 #include <stdarg.h>
 // va_list
 
-#include "protected.h"
+#include "String_protected.h"
 
 // Helpers
 static bool             compareCStr         (bool, bool, CStr, CStr);

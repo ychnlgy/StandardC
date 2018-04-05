@@ -1,12 +1,7 @@
 #ifndef STDC_UTIL_LIST_PRIVATE
 #define STDC_UTIL_LIST_PRIVATE
 
-#define MIN_CAPACITY 10
-#define RESIZE_FACTOR 2
-#define PTR_SIZE sizeof(Ptr)
-
-#include "stdc/lib.h"
-#include "protected.h"
+#include "List_protected.h"
 
 // Helpers
 static void         resize   (ListObject*, size_t);

@@ -14,7 +14,7 @@
 
 #include <string.h>
 
-#include "private.h"
+#include "TCPSocket_private.h"
 
 TCPSocketVtable TCPSocket = {
     .new = &new_TCPSocket,

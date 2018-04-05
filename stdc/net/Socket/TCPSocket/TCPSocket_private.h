@@ -1,7 +1,7 @@
 #ifndef STDC_NET_SOCKET_TCPSOCKET_PRIVATE
 #define STDC_NET_SOCKET_TCPSOCKET_PRIVATE
 
-#include "protected.h"
+#include "TCPSocket_protected.h"
 
 static Ptr new_TCPSocket();
 static void init_TCPSocket(TCPSocketObject*);

@@ -1,7 +1,11 @@
 #include <stdarg.h>
 // va_arg, va_start, va_end, va_list
 
-#include "private.h"
+#include "List_private.h"
+
+#define MIN_CAPACITY 10
+#define RESIZE_FACTOR 2
+#define PTR_SIZE sizeof(Ptr)
 
 ListVtable List = {
 

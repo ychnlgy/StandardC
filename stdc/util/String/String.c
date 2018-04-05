@@ -9,7 +9,7 @@
 
 #include <assert.h>
 
-#include "private.h"
+#include "String_private.h"
 
 StringVtable String = {
 

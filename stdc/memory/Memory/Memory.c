@@ -1,4 +1,4 @@
-#include "private.h"
+#include "Memory_private.h"
 
 MemoryVtable Memory = {
 
