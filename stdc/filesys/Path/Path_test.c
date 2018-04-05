@@ -72,6 +72,14 @@ RUN
         ASSERT(Path.equals(p3, p2));
         ASSERT(!Path.equals(p1, p2));
     END
+    
+    CASE("size")
+        ASSERT(Path.size(filep) == 6);
+        ASSERT(Path.size(dir) > 0);
+        ASSERT(Path.size(fileNoReadOrWrite) == 10);
+        ASSERT(Path.size(fileNoRead) == 0);
+        ASSERT(Path.size(fileNoWrite) == 0);
+    END
 
     // listdir
     CASE("listdir")

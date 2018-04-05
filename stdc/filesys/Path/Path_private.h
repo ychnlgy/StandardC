@@ -21,6 +21,9 @@ static StringObject*    str_Path    (PathObject*);
 static bool             equals_Path (PathObject*, PathObject*);
 static PathObject*      copy_Path   (PathObject*, MemoryObject*);
 
+// Container
+static long             size_Path   (PathObject*);
+
 // Numeric
 static PathObject*      add_Path (PathObject*, PathObject*, MemoryObject*);
 static PathObject*      abs_Path (PathObject*, MemoryObject*);

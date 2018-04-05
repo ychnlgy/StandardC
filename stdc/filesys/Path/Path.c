@@ -11,6 +11,9 @@ PathVtable Path = {
     .equals     = &equals_Path,
     .copy       = &copy_Path,
     
+    // Container
+    .size       = &size_Path,
+    
     // Numeric
     .add        = &add_Path,
     .abs        = &abs_Path,
@@ -161,6 +164,11 @@ static bool equals_Path(PathObject* this, PathObject* other) {
     bool result = String.equals(str_Path(path1), str_Path(path2));
     decref(mem);
     return result;
+}
+
+// Container
+static long size_Path(PathObject* this) {
+    return Os.size(cstr_Path(this));
 }
 
 // Numeric

@@ -16,6 +16,9 @@ typedef struct {
     bool            (*equals)       (PathObject*, PathObject*);
     PathObject*     (*copy)         (PathObject*, MemoryObject*);
     
+    // Container
+    long            (*size)         (PathObject*);
+    
     // Numeric
     PathObject*     (*add)          (PathObject*, PathObject*, MemoryObject*);
     PathObject*     (*abs)          (PathObject*, MemoryObject*);

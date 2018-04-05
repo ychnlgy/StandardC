@@ -18,6 +18,7 @@ typedef struct {
     CStr            (*cstr)     (FileObject*);
     bool            (*equals)   (FileObject*, FileObject*);
     
+    
     // Methods
     void            (*name)     (FileObject*, CStr);
     void            (*namestr)  (FileObject*, StringObject*);
