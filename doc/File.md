@@ -72,7 +72,7 @@ Returns the CStr representation of **this** file.
 ```c
 CStr File.equals(FileObject* this, FileObject* other);
 ```
-Returns true if the bytes of **this** file matches the sequence and length of bytes in **other**.
+Returns true if the bytes of **this** file match the sequence and length of bytes in **other**.
 
 ## File
 #### File.name(_this_, _filename_)
