@@ -7,6 +7,7 @@ For simple parsing and writing bytes in files.
 |-----------|--------|
 | Object | ```Ptr File.new();``` |
 |        | ```CStr File.cstr(FileObject* this);``` |
+|        | ```CStr File.equals(FileObject* this, FileObject* other);``` |
 | File | ```void File.name(FileObject* this, CStr filename);``` |
 |      | ```void File.namestr(FileObject* this, StringObject* filename);``` |
 |      | ```void File.namepath(FileObject* this, PathObject* filename);``` |
@@ -18,6 +19,7 @@ For simple parsing and writing bytes in files.
 |      | ```long File.flush(FileObject* this);``` |
 |      | ```FileData* File.read(FileObject* this, MemoryObject* mem);``` |
 |      | ```ListObject* File.segment(FileObject* this, MemoryObject* mem);``` |
+|      | ```bool File.remove(FileObject* this);``` |
 
 ## Files
  * [stdc/filesys/File/File.h](../stdc/filesys/File/File.h)
@@ -65,6 +67,12 @@ Returns pointer to new File.
 CStr File.cstr(FileObject* this);
 ```
 Returns the CStr representation of **this** file.
+
+#### File.equals(_this_, _other_)
+```c
+CStr File.equals(FileObject* this, FileObject* other);
+```
+Returns true if the bytes of **this** file matches the sequence and length of bytes in **other**.
 
 ## File
 #### File.name(_this_, _filename_)
@@ -141,3 +149,9 @@ If the files does not exist or cannot be read, it returns ```NULL```.
 ListObject* File.segment(FileObject* this, MemoryObject* mem);
 ```
 Returns a list of FileData representing the bytes of **this** file segmented into a maximum size of 1 KB.
+
+#### File.remove(_this_)
+```c
+bool File.remove(FileObject* this);
+```
+Returns true if **this** file is successfully deleted.
