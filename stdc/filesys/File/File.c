@@ -10,6 +10,7 @@ FileVtable File = {
     .del = &del_File,
     
     .cstr = &cstr_File,
+    .equals = &equals_File,
     
     .name = &name_File,
     .namestr = &namestr_File,
@@ -25,6 +26,71 @@ FileVtable File = {
     .flush = &flush_File,
     .segment = &segment_File
 };
+
+// NOTE THIS SECTION WAS COPY-PASTED TO TCPSocket OUT OF DESPERATION
+
+static void del_FileData(Ptr ptr) {
+    free(((FileData*) ptr)->d);
+}
+
+static FileData* new_FileData(long n) {
+    FileData* d = new(sizeof(FileData), &del_FileData);
+    d->n = n;
+    d->d = malloc(n);
+    return d;
+}
+
+static FileData* allocFileData(long n, CStr data) {
+    FileData* s = new_FileData(n);
+    long i;
+    for (i=0; i<n; i++)
+        s->d[i] = data[i];
+    return s;
+}
+
+// PLEASE REFACTOR THIS ABOVE SECTION.
+
+/*
+ * Adapted from:
+ * https://www.tutorialspoint.com/c_standard_library/c_function_fread.htm
+ * "C library function - fread()"
+ */
+ 
+static ListObject* _segment_File(FileObject* this, MemoryObject* mem, long* count) {
+    CStr name = Path.cstr(this->path);
+    if (name == NULL)
+        return NULL;
+    
+    FILE* f = fopen(name, "rb");
+    if (f == NULL) {
+        return NULL;
+    }
+    
+    ListObject* datalist = Memory.make(mem, List.new);
+    char buf[BUFSIZE];
+    fseek(f, 0, SEEK_SET);
+    long totalchars = 0;
+    long numchars = fread(buf, 1, BUFSIZE, f);
+    while (numchars == BUFSIZE) {
+        FileData* fd = allocFileData(BUFSIZE, buf);
+        List.push(datalist, fd);
+        decref(fd);
+        totalchars += numchars;
+        numchars = fread(buf, 1, BUFSIZE, f);
+    }
+    fclose(f);
+    
+    if (numchars > 0) {
+        FileData* fd = allocFileData(numchars, buf);
+        List.push(datalist, fd);
+        decref(fd);
+        totalchars += numchars;
+    }
+    
+    if (count)
+        *count = totalchars;
+    return datalist;
+}
 
 static Ptr new_File() {
     FileObject* this = new(sizeof(FileObject), &del_File);
@@ -45,6 +111,48 @@ static void del_File(Ptr ptr) {
 
 static CStr cstr_File(FileObject* this) {
     return Path.cstr(this->path);
+}
+
+static bool equals_File(FileObject* this, FileObject* other) {
+    MemoryObject* scope = Memory.new();
+    
+    long size1, size2;
+    ListObject* file1 = _segment_File(this, scope, &size1);
+    ListObject* file2 = _segment_File(other, scope, &size2);
+    
+    bool null1 = (file1 == NULL);
+    bool null2 = (file2 == NULL);
+    if (null1 & null2) {
+        decref(scope);
+        return true;
+    } else if (null1 ^ null2) {
+        decref(scope);
+        return false;
+    } else if (size1 != size2 || List.size(file1) != List.size(file2)) {
+        decref(scope);
+        return false;
+    } else {
+        long i, j;
+        for (i=0; i<List.size(file1); i++) {
+            FileData* fd1 = List.getitem(file1, i);
+            FileData* fd2 = List.getitem(file2, i);
+            if (fd1->n != fd2->n) {
+                decref(scope);
+                return false;
+            } else {
+                for (j=0; j<fd1->n; j++) {
+                    if (fd1->d[j] != fd2->d[j]) {
+                        decref(scope);
+                        return false;
+                    }
+                }
+            }
+        }
+
+    }
+    
+    decref(scope);
+    return true;
 }
 
 static void name_File(FileObject* this, CStr name) {
@@ -73,29 +181,6 @@ static bool writable_File(FileObject* this) {
     return Os.writable(Path.cstr(this->path));
 }
 
-// NOTE THIS SECTION WAS COPY-PASTED TO TCPSocket OUT OF DESPERATION
-
-static void del_FileData(Ptr ptr) {
-    free(((FileData*) ptr)->d);
-}
-
-static FileData* new_FileData(long n) {
-    FileData* d = new(sizeof(FileData), &del_FileData);
-    d->n = n;
-    d->d = malloc(n);
-    return d;
-}
-
-static FileData* allocFileData(long n, CStr data) {
-    FileData* s = new_FileData(n);
-    long i;
-    for (i=0; i<n; i++)
-        s->d[i] = data[i];
-    return s;
-}
-
-// PLEASE REFACTOR THIS ABOVE SECTION.
-
 static void write_File(FileObject* this, long n, CStr data) {
     if (n > 0 && data != NULL) {
         FileData* fd = allocFileData(n, data);
@@ -106,47 +191,6 @@ static void write_File(FileObject* this, long n, CStr data) {
 
 static void writestr_File(FileObject* this, StringObject* data) {
     write_File(this, String.size(data), String.cstr(data));
-}
-
-/*
- * Adapted from:
- * https://www.tutorialspoint.com/c_standard_library/c_function_fread.htm
- * "C library function - fread()"
- */
- 
-static ListObject* _segment_File(FileObject* this, MemoryObject* mem, long* count) {
-    CStr name = Path.cstr(this->path);
-    if (name == NULL)
-        return NULL;
-    
-    FILE* f = fopen(name, "rb");
-    if (f == NULL)
-        return NULL;
-    
-    ListObject* datalist = Memory.make(mem, List.new);
-    char buf[BUFSIZE];
-    fseek(f, 0, SEEK_SET);
-    long totalchars = 0;
-    long numchars = fread(buf, 1, BUFSIZE, f);
-    while (numchars == BUFSIZE) {
-        FileData* fd = allocFileData(BUFSIZE, buf);
-        List.push(datalist, fd);
-        decref(fd);
-        totalchars += numchars;
-        numchars = fread(buf, 1, BUFSIZE, f);
-    }
-    fclose(f);
-    
-    if (numchars > 0) {
-        FileData* fd = allocFileData(numchars, buf);
-        List.push(datalist, fd);
-        decref(fd);
-        totalchars += numchars;
-    }
-    
-    if (count)
-        *count = totalchars;
-    return datalist;
 }
 
 static ListObject* segment_File(FileObject* this, MemoryObject* mem) {

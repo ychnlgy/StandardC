@@ -16,6 +16,7 @@ typedef struct {
     void            (*del)      (Ptr);
     
     CStr            (*cstr)     (FileObject*);
+    bool            (*equals)   (FileObject*, FileObject*);
     
     // Methods
     void            (*name)     (FileObject*, CStr);

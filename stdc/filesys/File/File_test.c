@@ -7,6 +7,9 @@
 
 MemoryObject* mem;
 FileObject* f1;
+FileObject* f2;
+FileObject* fc1;
+FileObject* fc2;
 
 PathObject* dir;
 PathObject* fname;
@@ -15,15 +18,27 @@ PathObject* filep;
 PathObject* fileNoRead;
 PathObject* fileNoWrite;
 PathObject* fileNoReadOrWrite;
+PathObject* binfile;
+PathObject* textfile;
+PathObject* binfile2;
+PathObject* textfile2;
 
 char* filepn = "file1.txt";
 char* filenrn = "cannotRead.txt";
 char* filenwn = "cannotWrite.txt";
 char* filenrwn = "cannotReadOrWrite.txt";
 
+char* binfilen = "binfile.o";
+char* textfilen = "textfile.txt";
+char* binfilen2 = "binfile2.o";
+char* textfilen2 = "textfile2.txt";
+
 SETUP {
     mem = Memory.new();
     f1 = Memory.make(mem, File.new);
+    f2 = Memory.make(mem, File.new);
+    fc1 = Memory.make(mem, File.new);
+    fc2 = Memory.make(mem, File.new);
     fname = Memory.make(mem, Path.new);
     
     Path.setrel(fname, __FILE__);
@@ -33,12 +48,14 @@ SETUP {
     fileNoRead = Path.addcstr(dataDir, filenrn, mem);
     fileNoWrite = Path.addcstr(dataDir, filenwn, mem);
     fileNoReadOrWrite = Path.addcstr(dataDir, filenrwn, mem);
+    binfile = Path.addcstr(dataDir, binfilen, mem);
+    textfile = Path.addcstr(dataDir, textfilen, mem);
+    binfile2 = Path.addcstr(dataDir, binfilen2, mem);
+    textfile2 = Path.addcstr(dataDir, textfilen2, mem);
 
     Os.chmod(Path.cstr(fileNoRead), "-r");
     Os.chmod(Path.cstr(fileNoWrite), "-w");
     Os.chmod(Path.cstr(fileNoReadOrWrite), "-rw");
-
-    
 }
 
 TEARDOWN {
@@ -173,6 +190,31 @@ RUN
                 ASSERT(msg[MOD(total++, len)] == fd->d[j]);
         }
         ASSERT(total == len*loop);
+    END
+    
+    CASE("file equals")
+        File.namepath(f1, binfile);
+        File.namepath(f2, textfile);
+        File.namepath(fc1, binfile2);
+        File.namepath(fc2, textfile2);
+        
+        ASSERT(File.equals(f2, fc2));
+        ASSERT(File.equals(f1, fc1));
+        ASSERT(!File.equals(f2, fc1));
+        ASSERT(!File.equals(f1, fc2));
+        ASSERT(!File.equals(f2, f1));
+        ASSERT(!File.equals(fc2, fc1));
+        
+        File.namepath(f1, filep);
+        ASSERT(!File.equals(f1, fc2));
+        ASSERT(!File.equals(f1, fc1));
+        ASSERT(!File.equals(f1, f2));
+
+        File.namepath(f2, fileNoRead);
+        ASSERT(!File.equals(f1, f2));
+        
+        File.namepath(f2, fileNoWrite);
+        ASSERT(File.equals(f1, f2));
     END
 
 STOP

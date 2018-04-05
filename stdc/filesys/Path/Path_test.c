@@ -358,5 +358,11 @@ RUN
         ASSERT(Path.basename(p2) == NULL);
         ASSERT(String.eqCStr(Path.basename(p1), "file.py"));
     END
+    
+    CASE("abspath")
+        Path.setabs(p1, "c:\\usr/folder");
+        Path.setabs(p2, "c:/usr/folder");
+        ASSERT(Path.equals(p1, p2));
+    END
 
 STOP

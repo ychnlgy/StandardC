@@ -252,9 +252,13 @@ RUN
     CASE("multiple interactions")
         runServerAndClient(&serverMultipleMsgs, &clientMultipleMsgs, _testCase);
     END
-/*    */
-/*    CASE("large data")*/
-/*        runServerAndClient(&serverLargeMsg, &clientLargeMsg, _testCase);*/
-/*    END*/
+    
+    CASE("large data")
+        runServerAndClient(&serverLargeMsg, &clientLargeMsg, _testCase);
+    END
+    
+    CASE("read-write file")
+        runServerAndClient(&serverLargeMsg, &clientLargeMsg, _testCase);
+    END
 
 STOP
