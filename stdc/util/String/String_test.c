@@ -1,6 +1,5 @@
-#include <string.h>
-
 #include "stdc/unittest.h"
+#include <string.h>
 
 StringObject* s1;
 StringObject* s2;
@@ -10,7 +9,6 @@ SETUP {
     mem = Memory.new();
     s1 = Memory.make(mem, String.new);
     String.set(s1, "Hello world!");
-
     s2 = Memory.make(mem, String.new);
     String.set(s2, "Evil bunny");
 }
@@ -21,6 +19,208 @@ TEARDOWN {
 
 RUN
 
+    // Accessor
+    
+    CASE("set empty")
+        String.set(s1, "");
+        ASSERT(String.size(s1) == 0);
+        String.set(s1, NULL);
+        ASSERT(String.size(s1) == 0);
+    END
+
+    CASE("re-set")
+        String.set(s1, "No memory leaks!");
+        ASSERT(String.size(s1) == 16);
+        String.set(s1, "Half");
+        ASSERT(!(String.equals(s1, s2)));
+    
+        StringObject* s3 = Memory.make(mem, String.new);
+        String.set(s3, "Half");
+        ASSERT(String.equals(s1, s3));
+        ASSERT(String.hash(s1) == String.hash(s3));
+    END
+    
+    CASE("getitem-at")
+        ASSERT(*String.getitem(s1, 0) == 'H');
+        ASSERT(*String.at(s1, 0) == 'H');
+        ASSERT(*String.getitem(s1, 4) == 'o');
+        ASSERT(*String.at(s1, 4) == 'o');
+        ASSERT(*String.getitem(s1, 5) == ' ');
+        ASSERT(*String.at(s1, 5) == ' ');
+        ASSERT(String.at(s1, 12) == NULL);
+        ASSERT(*String.at(s1, -1) == '!');
+    END
+    
+    CASE("slice")
+        StringObject* substr1 = String.slice(s1, 0, 5, mem);
+        ASSERT(!String.equals(substr1, s1));
+        StringObject* match1 = Memory.make(mem, String.new);
+        String.set(match1, "Hello");
+        ASSERT(String.equals(match1, substr1));
+        ASSERT(String.hash(match1) == String.hash(substr1));
+        ASSERT(!String.equals(match1, s1));
+        
+        substr1 = String.slice(s1, 0, String.size(s1), mem);
+        ASSERT(String.equals(s1, substr1));
+        ASSERT(String.hash(s1) == String.hash(substr1));
+        ASSERT(!String.equals(s1, match1));
+    END
+    
+    CASE("NULL slice")
+        StringObject* substr = String.slice(s1, -1, 5, mem);
+        ASSERT(substr == NULL);
+        substr = String.slice(s1, 0, String.size(s1)+1, mem);
+        ASSERT(substr == NULL);
+        substr = String.slice(s1, 5, 0, mem);
+        ASSERT(substr == NULL);
+    END
+    
+    CASE("Empty slice")
+        StringObject* substr = String.slice(s1, 0, 0, mem);
+        ASSERT(String.size(substr) == 0);
+        long size = String.size(s1);
+        substr = String.slice(s1, size, size, mem);
+        ASSERT(String.size(substr) == 0);
+    END
+    
+    CASE("Index string")
+        ASSERT(String.index(s1, s2) == -1);
+        ASSERT(String.index(s2, s1) == -1);
+        String.set(s2, "world");
+        ASSERT(String.index(s1, s2) == 6);
+        ASSERT(String.index(s2, s1) == -1);
+        
+        String.set(s2, "!");
+        ASSERT(String.index(s1, s2) == 11);
+        ASSERT(String.index(s2, s1) == -1);
+        
+        String.set(s2, String.cstr(s1));
+        ASSERT(String.index(s1, s2) == 0);
+        ASSERT(String.index(s2, s1) == 0);
+    END
+    
+    CASE("empty index")
+        StringObject* s3 = Memory.make(mem, String.new);
+        ASSERT(String.index(s3, s1) == -1);
+        ASSERT(String.index(s3, s1) == -1);
+        ASSERT(String.index(s1, s3) == 0);
+        ASSERT(String.index(s2, s3) == 0);
+    END
+    
+    // Container
+    
+    CASE("size")
+        ASSERT(String.size(s1) == 12);
+        ASSERT(String.size(s2) == 10);
+    END
+    
+    CASE("contains")
+        ASSERT(!String.contains(s1, s2));
+        ASSERT(!String.contains(s2, s1));
+        String.set(s2, "world");
+        ASSERT(String.contains(s1, s2));
+        ASSERT(!String.contains(s2, s1));
+        
+        String.set(s2, "!");
+        ASSERT(String.contains(s1, s2));
+        ASSERT(!String.contains(s2, s1));
+        
+        String.set(s2, String.cstr(s1));
+        ASSERT(String.contains(s1, s2));
+        ASSERT(String.contains(s2, s1));
+    END
+    
+    CASE("empty contains")
+        StringObject* s3 = Memory.make(mem, String.new);
+        ASSERT(!String.contains(s3, s1));
+        ASSERT(!String.contains(s3, s1));
+        ASSERT(String.contains(s1, s3));
+        ASSERT(String.contains(s2, s3));
+    END
+    
+    // Hashable
+    
+    CASE("hash")
+        long size = 10;
+        long hash1 = MOD(String.hash(s1), size);
+        long hash2 = MOD(String.hash(s2), size);
+        
+        StringObject* s3 = Memory.make(mem, String.new);
+        long hash3 = MOD(String.hash(s3), size);
+        
+        ASSERT(hash1 != hash2);
+        ASSERT(hash2 != hash3);
+        ASSERT(hash3 != hash1);
+    END
+    
+    // Numeric
+    
+    CASE("add")
+        StringObject* space = Memory.make(mem, String.new);
+        String.set(space, " ");
+        StringObject* s3 = String.add(s1, space, mem);
+        StringObject* s4 = String.add(s3, s2, mem);
+        
+        String.set(s3, "Hello world! Evil bunny");
+        ASSERT(String.equals(s3, s4));
+        ASSERT(String.hash(s3) == String.hash(s4));
+        ASSERT(!String.equals(s1, s4));
+    END
+    
+    CASE("empty add")
+        StringObject* mt1 = Memory.make(mem, String.new);
+        StringObject* mt2 = Memory.make(mem, String.new);
+        
+        StringObject* mt3 = String.add(mt1, mt2, mem);
+        ASSERT(String.size(mt3) == 0);
+    END
+    
+    // Object
+    
+    CASE("empty equals")
+        String.set(s1, "");
+        ASSERT(!String.equals(s1, s2));
+        ASSERT(!String.equals(s2, s1));
+        String.set(s2, "");
+        ASSERT(String.equals(s1, s2));
+    END
+
+    CASE("copy")
+        StringObject* s3 = String.copy(s1, mem);
+        StringObject* s4 = String.copy(s3, mem);
+        ASSERT(String.size(s3) == 12);
+        ASSERT(String.size(s4) == 12);
+        ASSERT(String.equals(s3, s1));
+        ASSERT(String.hash(s3) == String.hash(s1));
+        ASSERT(String.equals(s4, s1));
+        ASSERT(String.hash(s4) == String.hash(s1));
+
+        String.set(s2, "Hello world!");
+        ASSERT(String.equals(s2, s3));
+        ASSERT(String.hash(s2) == String.hash(s3));
+        ASSERT(String.equals(s2, s1));
+        ASSERT(String.hash(s2) == String.hash(s1));
+        ASSERT(String.equals(s2, s4));
+        ASSERT(String.hash(s2) == String.hash(s4));
+
+        String.set(s2, "Hello world");
+        ASSERT(!(String.equals(s2, s3)));
+        ASSERT(!(String.equals(s2, s1)));
+        ASSERT(!(String.equals(s2, s4)));
+
+        String.set(s3, "Superman1234");
+        ASSERT(String.size(s3) == 12);
+        ASSERT(String.size(s4) == 12);
+        ASSERT(!String.equals(s3, s4));
+
+    END
+
+    CASE("get-cstr")
+        ASSERT(strcmp(String.cstr(s2), String.cstr(s1)) != 0);
+        String.set(s2, "Hello world!");
+        ASSERT(strcmp(String.cstr(s2), String.cstr(s1)) == 0);
+    END
+    
     CASE("eqCStr")
         ASSERT(String.eqCStr(s1, "Hello world!"));
         ASSERT(String.eqCStr(s2, "Evil bunny"));
