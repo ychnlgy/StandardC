@@ -59,7 +59,7 @@ static void resetFileDescriptor(TCPSocketObject* this) {
     this->filedesciptor = socket(AF_INET, SOCK_STREAM, 0);
 }
 
-static TCPSocketObject* copy_TCPSocket(TCPSocketObject* this, int filedesciptor, MemoryObject* mem) {
+static TCPSocketObject* copy_TCPSocket(TCPSocketObject* this, long filedesciptor, MemoryObject* mem) {
     TCPSocketObject* copy = Memory.make(mem, &new_TCPSocket);
     copy->filedesciptor = filedesciptor;
     copy->address = this->address;
