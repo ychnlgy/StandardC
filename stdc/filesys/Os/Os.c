@@ -3,6 +3,17 @@
 #include <string.h>
 // strlen
 
+#include <dirent.h>
+
+#ifdef _WIN32
+    #include <direct.h>
+    #define getcwd _getcwd
+#else
+    #include <unistd.h>
+#endif
+
+#include <sys/stat.h>
+
 #include "Os_private.h"
 
 OsVtable Os = {
@@ -15,12 +26,19 @@ OsVtable Os = {
     .isfile     = &isfile_Os,
     .isdir      = &isdir_Os,
     
+    .size       = &size_Os,
+    
     // listdir
     .listdir    = &listdir_Os,
     
     // chmod
     .chmod      = &chmod_Os
 };
+
+
+static int BUFSIZE = 1024;
+static CStr SKIP_PATH = ".";
+static CStr BACK_PATH = "..";
 
 // depends on access function from
 // unistd.h (and hopefully direct.h)
@@ -35,6 +53,17 @@ static bool writable_Os(CStr fname) {
     if (fname == NULL)
         return false;
     return access(fname, W_OK) != -1;
+}
+
+/* Copied from:
+ * "How do you determine the size of a file in C?"
+ * https://stackoverflow.com/questions/8236/
+ */
+static long size_Os(CStr fname) {
+    struct stat st;
+    if (stat(fname, &st) == 0)
+        return st.st_size;
+    return -1;
 }
 
 /*

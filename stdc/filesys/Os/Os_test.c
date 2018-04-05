@@ -45,6 +45,13 @@ RUN
         printBlue(" %s:", Os.cwd(mem));
     END
     
+    CASE("size")
+        ASSERT(Os.size(Path.cstr(dataDir)) > 0);
+        ASSERT(Os.size(Path.cstr(fileNoRead)) == 0);
+        ASSERT(Os.size(Path.cstr(fileNoWrite)) == 0);
+        ASSERT(Os.size(Path.cstr(filep)) == 10);
+    END
+    
     CASE("listdir")
         ListObject* dirs = Os.listdir(Path.cstr(dataDir), mem);
         long size = List.size(dirs);

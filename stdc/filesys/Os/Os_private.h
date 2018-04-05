@@ -1,22 +1,9 @@
 #ifndef STDC_FILESYS_OS_PRIVATE
 #define STDC_FILESYS_OS_PRIVATE
 
-#include <sys/stat.h>
 #include <sys/types.h>
-#include <dirent.h>
-
-#ifdef _WIN32
-    #include <direct.h>
-    #define getcwd _getcwd
-#else
-    #include <unistd.h>
-#endif
 
 #include "stdc/lib.h"
-
-static int BUFSIZE = 1024;
-static CStr SKIP_PATH = ".";
-static CStr BACK_PATH = "..";
 
 // Helpers
 typedef void (*_ChPermissionFn)(mode_t*, mode_t);
@@ -35,5 +22,6 @@ static bool isfile_Os   (CStr);
 static bool isdir_Os    (CStr);
 static ListObject* listdir_Os(CStr, MemoryObject*);
 static int  chmod_Os        (CStr, CStr);
+static long size_Os(CStr);
 
 #endif

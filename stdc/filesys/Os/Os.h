@@ -13,6 +13,9 @@ typedef struct {
     bool        (*isfile)       (CStr);
     bool        (*isdir)        (CStr);
     
+    // size
+    long        (*size)         (CStr);
+    
     // listdir
     ListObject* (*listdir)      (CStr, MemoryObject*);
     
