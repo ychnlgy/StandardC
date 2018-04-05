@@ -220,6 +220,8 @@ Writes **msg** to the TCP buffer of **this**.
 
 Returns the number of bytes sent.
 
+If you send a ```NULL``` or a message of size 0, the returned number of bytes is 0 and no message is sent.
+
 #### TCPSocket.writestr(_this_, _msg_)
 ```c
 long TCPSocket.writestr(TCPSocketObject* this, StringObject* msg);
@@ -228,6 +230,8 @@ Writes the StringObject **msg** to the TCP buffer of **this**.
 
 Returns the number of bytes sent.
 
+If you send a ```NULL``` or a message of size 0, the returned number of bytes is 0 and no message is sent.
+
 #### TCPSocket.writefile(_this_, _file_)
 ```c
 long TCPSocket.writefile(TCPSocketObject* this, FileObject* file);
@@ -235,3 +239,5 @@ long TCPSocket.writefile(TCPSocketObject* this, FileObject* file);
 Writes the bytes of **file** to the TCP buffer of **this**.
 
 Returns the number of bytes sent.
+
+If you send a ```NULL``` or a file of size 0, the returned number of bytes is 0 and no message is sent.
