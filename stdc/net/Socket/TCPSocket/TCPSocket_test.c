@@ -18,72 +18,73 @@ CStr clientGoodbye = "Goodbye (from Grook)";
 CStr LOCAL_IP = "127.0.0.1";
 int PORT = 8080;
 
+void lockClient() {
+    pthread_mutex_lock(&mutex);
+    while (!started)
+        pthread_cond_wait(&cond, &mutex);
+    pthread_mutex_unlock(&mutex);
+}
+
+void lockServer() {
+    pthread_mutex_lock(&mutex);
+    started = true;
+    pthread_cond_signal(&cond);
+    pthread_mutex_unlock(&mutex);
+}
+
 // One message
 
 Ptr serverOneMsg(Ptr args) {
-    pthread_mutex_lock(&mutex);
+    
     _TestCase* _testCase = args;
 
     ASSERT(TCPSocket.bindany(serverSock, PORT));
-    ASSERT(TCPSocket.listen(serverSock, 1));
+    ASSERT(TCPSocket.listen(serverSock, 5));
     
-    started = true;
-    pthread_cond_signal(&cond);
-    pthread_cond_wait(&cond, &mutex);
+    lockServer();
     
     TCPSocketObject* connectedSock = TCPSocket.accept(serverSock, mem);
     ASSERT(strlen(serverHello) == TCPSocket.write(connectedSock, serverHello));
-    
-    pthread_cond_signal(&cond);
-    pthread_cond_wait(&cond, &mutex);
     
     FileData* fd = TCPSocket.read(connectedSock, mem);
     ASSERT(fd->n == strlen(clientGoodbye));
     ASSERT(strcmp(fd->d, clientGoodbye) == 0);
 
-    pthread_mutex_unlock(&mutex);
     return NULL;
 }
 
 Ptr clientOneMsg(Ptr args) {
-    pthread_mutex_lock(&mutex);
     _TestCase* _testCase = args;
     
-    if (!started)
-        pthread_cond_wait(&cond, &mutex);
+    lockClient();
     
-    ASSERT(TCPSocket.connect(clientSock, LOCAL_IP, PORT));
-    
-    pthread_cond_signal(&cond);
-    pthread_cond_wait(&cond, &mutex);
+    while(!TCPSocket.connect(clientSock, LOCAL_IP, PORT)) {
+        sleep(1);
+    }
     
     FileData* fd = TCPSocket.read(clientSock, mem);
     ASSERT(fd->n == strlen(serverHello));
     ASSERT(strcmp(fd->d, serverHello) == 0);
     
     ASSERT(strlen(clientGoodbye) == TCPSocket.write(clientSock, clientGoodbye));
-    pthread_cond_signal(&cond);
-    
-    pthread_mutex_unlock(&mutex);
+
     return NULL;
 }
 
 // Multiple messages
 
-long MULTIPLE = 100;
+long MULTIPLE = 20000;
 CStr HELLO_WORLD = "Hello world!";
 CStr FOO_BAZ_BAR = "Foo Baz Bar";
 
 Ptr serverMultipleMsgs(Ptr args) {
-    pthread_mutex_lock(&mutex);
+    
     _TestCase* _testCase = args;
 
     ASSERT(TCPSocket.bindany(serverSock, PORT));
-    ASSERT(TCPSocket.listen(serverSock, 1));
+    ASSERT(TCPSocket.listen(serverSock, 5));
     
-    started = true;
-    pthread_cond_signal(&cond);
-    pthread_cond_wait(&cond, &mutex);
+    lockServer();
     
     TCPSocketObject* connectedSock = TCPSocket.accept(serverSock, mem);
     
@@ -91,45 +92,30 @@ Ptr serverMultipleMsgs(Ptr args) {
     for (i=0; i<MULTIPLE; i++) {
         ASSERT(strlen(HELLO_WORLD) == TCPSocket.write(connectedSock, HELLO_WORLD));
         
-        pthread_cond_signal(&cond);
-        pthread_cond_wait(&cond, &mutex);
-        
-        FileData* fd;
-        while((fd = TCPSocket.read(connectedSock, mem)) == NULL) {
-            sleep(1);
-        }
+        FileData* fd = TCPSocket.read(connectedSock, mem);
         ASSERT(fd->n == strlen(FOO_BAZ_BAR));
         ASSERT(strcmp(fd->d, FOO_BAZ_BAR) == 0);
     }
 
-    pthread_mutex_unlock(&mutex);
     return NULL;
 }
 
 Ptr clientMultipleMsgs(Ptr args) {
-    pthread_mutex_lock(&mutex);
     _TestCase* _testCase = args;
     
-    if (!started)
-        pthread_cond_wait(&cond, &mutex);
+    lockClient();
     
-    ASSERT(TCPSocket.connect(clientSock, LOCAL_IP, PORT));
+    while(!TCPSocket.connect(clientSock, LOCAL_IP, PORT)) {
+        sleep(1);
+    }
     
     int i = 0;
     for (i=0; i<MULTIPLE; i++) {
-        pthread_cond_signal(&cond);
-        pthread_cond_wait(&cond, &mutex);
-        
-        FileData* fd;
-        while((fd = TCPSocket.read(clientSock, mem)) == NULL) {
-            sleep(1);
-        }
+        FileData* fd = TCPSocket.read(clientSock, mem);
         ASSERT(fd->n == strlen(HELLO_WORLD));
         ASSERT(strcmp(fd->d, HELLO_WORLD) == 0);
         ASSERT(strlen(FOO_BAZ_BAR) == TCPSocket.write(clientSock, FOO_BAZ_BAR));
     }
-    pthread_cond_signal(&cond);
-    pthread_mutex_unlock(&mutex);
     return NULL;
 }
 
@@ -148,62 +134,48 @@ StringObject* multiplyString(CStr cstr, int n, MemoryObject* mem) {
     return out;
 }
 
-int SERVER_REPEAT = 1000;
-int CLIENT_REPEAT = 1000;
+int SERVER_REPEAT = 10000;
+int CLIENT_REPEAT = 10000;
 CStr SERVER_LARGE = "Server";
 CStr CLIENT_LARGE = "Client!";
 
 Ptr serverLargeMsg(Ptr args) {
-    pthread_mutex_lock(&mutex);
+    
     _TestCase* _testCase = args;
 
     StringObject* serverMsg = multiplyString(SERVER_LARGE, SERVER_REPEAT, mem);
 
     ASSERT(TCPSocket.bindany(serverSock, PORT));
-    ASSERT(TCPSocket.listen(serverSock, 1));
+    ASSERT(TCPSocket.listen(serverSock, 5));
     
-    started = true;
-    pthread_cond_signal(&cond);
-    pthread_cond_wait(&cond, &mutex);
+    lockServer();
     
     TCPSocketObject* connectedSock = TCPSocket.accept(serverSock, mem);
     ASSERT(String.size(serverMsg) == TCPSocket.writestr(connectedSock, serverMsg));
     
-    pthread_cond_signal(&cond);
-    pthread_cond_wait(&cond, &mutex);
-    
-    FileData* fd;
-    while((fd = TCPSocket.read(connectedSock, mem)) == NULL) {
-        sleep(1);
-    }
+    FileData* fd = TCPSocket.read(connectedSock, mem);
     ASSERT(fd->n == CLIENT_REPEAT*strlen(CLIENT_LARGE));
     
     int i;
     for (i=0; i<fd->n; i++)
         ASSERT(fd->d[i] == CLIENT_LARGE[MOD(i, strlen(CLIENT_LARGE))]);
 
-    pthread_mutex_unlock(&mutex);
+    
     return NULL;
 }
 
 Ptr clientLargeMsg(Ptr args) {
-    pthread_mutex_lock(&mutex);
     _TestCase* _testCase = args;
     
     StringObject* clientMsg = multiplyString(CLIENT_LARGE, CLIENT_REPEAT, mem);
     
-    if (!started)
-        pthread_cond_wait(&cond, &mutex);
+    lockClient();
     
-    ASSERT(TCPSocket.connect(clientSock, LOCAL_IP, PORT));
-    
-    pthread_cond_signal(&cond);
-    pthread_cond_wait(&cond, &mutex);
-    
-    FileData* fd;
-    while((fd = TCPSocket.read(clientSock, mem)) == NULL) {
+    while(!TCPSocket.connect(clientSock, LOCAL_IP, PORT)){
         sleep(1);
     }
+    
+    FileData* fd = TCPSocket.read(clientSock, mem);
     ASSERT(fd->n == strlen(SERVER_LARGE)*SERVER_REPEAT);
     
     int i;
@@ -211,9 +183,6 @@ Ptr clientLargeMsg(Ptr args) {
         ASSERT(fd->d[i] == SERVER_LARGE[MOD(i, strlen(SERVER_LARGE))]);
     
     ASSERT(String.size(clientMsg) == TCPSocket.writestr(clientSock, clientMsg));
-    pthread_cond_signal(&cond);
-    
-    pthread_mutex_unlock(&mutex);
     return NULL;
 }
 
@@ -221,54 +190,59 @@ Ptr clientLargeMsg(Ptr args) {
 
 char* binfilen = "data/binfile.o";
 char* textfilen = "data/textfile.txt";
-PathObject* binfile;
-PathObject* textfile;
+
+char* binfilen2 = "data/binfile2.o";
+char* textfilen2 = "data/textfile2.txt";
+
+PathObject* filex;
+PathObject* dir;
+
+PathObject* binfilep;
+PathObject* textfilep;
+PathObject* binfilep2;
+PathObject* textfilep2;
+
+FileObject* binfile;
+FileObject* textfile;
+FileObject* binfile2;
+FileObject* textfile2;
 
 Ptr serverTxtFile(Ptr args) {
-    pthread_mutex_lock(&mutex);
     _TestCase* _testCase = args;
 
     ASSERT(TCPSocket.bindany(serverSock, PORT));
-    ASSERT(TCPSocket.listen(serverSock, 1));
+    ASSERT(TCPSocket.listen(serverSock, 5));
     
-    started = true;
-    pthread_cond_signal(&cond);
-    pthread_cond_wait(&cond, &mutex);
+    lockServer();
     
     TCPSocketObject* connectedSock = TCPSocket.accept(serverSock, mem);
     ASSERT(strlen(serverHello) == TCPSocket.write(connectedSock, serverHello));
     
-    pthread_cond_signal(&cond);
-    pthread_cond_wait(&cond, &mutex);
-    
     FileData* fd = TCPSocket.read(connectedSock, mem);
     ASSERT(fd->n == strlen(clientGoodbye));
     ASSERT(strcmp(fd->d, clientGoodbye) == 0);
-
-    pthread_mutex_unlock(&mutex);
+    
     return NULL;
 }
 
 Ptr clientTxtFile(Ptr args) {
-    pthread_mutex_lock(&mutex);
+    
     _TestCase* _testCase = args;
     
+    pthread_mutex_lock(&mutex);
     if (!started)
         pthread_cond_wait(&cond, &mutex);
+    pthread_mutex_unlock(&mutex);
     
-    ASSERT(TCPSocket.connect(clientSock, LOCAL_IP, PORT));
-    
-    pthread_cond_signal(&cond);
-    pthread_cond_wait(&cond, &mutex);
+    while(!TCPSocket.connect(clientSock, LOCAL_IP, PORT)) {
+        sleep(1);
+    }
     
     FileData* fd = TCPSocket.read(clientSock, mem);
     ASSERT(fd->n == strlen(serverHello));
     ASSERT(strcmp(fd->d, serverHello) == 0);
     
     ASSERT(strlen(clientGoodbye) == TCPSocket.write(clientSock, clientGoodbye));
-    pthread_cond_signal(&cond);
-    
-    pthread_mutex_unlock(&mutex);
     return NULL;
 }
 
@@ -287,6 +261,26 @@ SETUP {
     mem = Memory.new();
     serverSock = Memory.make(mem, TCPSocket.new);
     clientSock = Memory.make(mem, TCPSocket.new);
+    
+    filex = Memory.make(mem, Path.new);
+    Path.setrel(filex, __FILE__);
+    dir = Path.dirname(filex, mem);
+    binfilep = Path.addcstr(dir, binfilen, mem);
+    textfilep = Path.addcstr(dir, textfilen, mem);
+    binfilep2 = Path.addcstr(dir, binfilen2, mem);
+    textfilep2 = Path.addcstr(dir, textfilen2, mem);
+    
+    binfile = Memory.make(mem, File.new);
+    File.namepath(binfile, binfilep);
+    
+    textfile = Memory.make(mem, File.new);
+    File.namepath(textfile, textfilep);
+    
+    binfile2 = Memory.make(mem, File.new);
+    File.namepath(binfile2, binfilep2);
+    
+    textfile2 = Memory.make(mem, File.new);
+    File.namepath(textfile2, textfilep2);
 }
 
 TEARDOWN {
@@ -315,7 +309,17 @@ RUN
     END
     
     CASE("read-write file")
-        runServerAndClient(&serverTxtFile, &clientTxtFile, _testCase);
+        ASSERT(File.exists(binfile));
+        ASSERT(File.exists(textfile));
+        ASSERT(!File.exists(binfile2));
+        ASSERT(!File.exists(textfile2));
+/*        runServerAndClient(&serverTxtFile, &clientTxtFile, _testCase);*/
+/*        ASSERT(File.exists(binfile));*/
+/*        ASSERT(File.exists(textfile));*/
+/*        ASSERT(File.exists(binfile2));*/
+/*        ASSERT(File.exists(textfile2));*/
+/*        ASSERT(File.remove(binfile2));*/
+/*        ASSERT(File.remove(textfile2));*/
     END
 
 STOP
