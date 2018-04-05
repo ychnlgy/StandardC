@@ -10,6 +10,7 @@ For navigating and examining the properties of elements in filesystems.
 |        | ```StringObject* Path.str(PathObject* this);``` |
 |        | ```bool Path.equals(PathObject* this, PathObject* other);``` |
 |        | ```PathObject* Path.copy(PathObject* this, MemoryObject* mem);``` |
+| Container | ```long Path.size(PathObject* this);``` |
 | Numeric | ```PathObject* Path.add(PathObject* this, PathObject* other, MemoryObject* mem);``` |
 |         | ```PathObject* Path.abs(PathObject* this, MemoryObject* mem);``` |
 |         | ```PathObject* Path.norm(PathObject* this, MemoryObject* mem);``` |
@@ -78,6 +79,13 @@ Returns true if the absolute path of **this** equals the absolute path of **othe
 PathObject* Path.copy(PathObject* this, MemoryObject* mem);
 ```
 Returns the pointer to a copy of **this** path made on heap memory.
+
+## Container
+#### Path.size(_this_)
+```c
+long Path.size(PathObject* this);
+```
+Returns the size in bytes of **this**.
 
 ## Numeric
 #### Path.add(_this_, _otherpath_, _mem_)
