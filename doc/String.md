@@ -23,8 +23,8 @@ String class for the ease of string manipulation.
 |        | ```StringObject* String.rstrip(StringObject* this, MemoryObject* mem);``` |
 |        | ```StringObject* String.lstrip(StringObject* this, MemoryObject* mem);``` |
 |        | ```StringObject* String.strip(StringObject* this, MemoryObject* mem);``` |
-|        | ```List* String.split(StringObject* this, char delimiter, MemoryObject* mem);``` |
-|        | ```List* String.splitstr(StringObject* this, StringObject* delimiter, MemoryObject* mem);``` |
+|        | ```ListObject* String.split(StringObject* this, char delimiter, MemoryObject* mem);``` |
+|        | ```ListObject* String.splitstr(StringObject* this, StringObject* delimiter, MemoryObject* mem);``` |
 |        | ```bool String.startswith(StringObject* this, StringObject* substring);``` |
 |        | ```bool String.endswith(StringObject* this, StringObject* substring);``` |
 |        | ```StringObject* String.replace(StringObject* this, char oldc, char newc, MemoryObject* mem);``` |
