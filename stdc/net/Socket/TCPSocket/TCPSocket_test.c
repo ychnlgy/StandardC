@@ -73,6 +73,94 @@ Ptr clientOneMsg(Ptr args) {
     return NULL;
 }
 
+// Null message
+
+Ptr serverNullMsg(Ptr args) {
+    
+    _TestCase* _testCase = args;
+
+    ASSERT(TCPSocket.bindany(serverSock, PORT));
+    ASSERT(TCPSocket.listen(serverSock, 5));
+    
+    lockServer();
+    
+    TCPSocketObject* connectedSock = TCPSocket.accept(serverSock, mem);
+    ASSERT(0 == TCPSocket.write(connectedSock, NULL));
+    ASSERT(0 == TCPSocket.writestr(connectedSock, NULL));
+    
+    // Cannot read empty messages
+/*    FileData* fd = TCPSocket.read(connectedSock, mem);*/
+/*    ASSERT(fd->n == 0);*/
+
+    return NULL;
+}
+
+Ptr clientNullMsg(Ptr args) {
+    _TestCase* _testCase = args;
+    
+    lockClient();
+    
+    while(!TCPSocket.connect(clientSock, LOCAL_IP, PORT)) {
+        sched_yield();
+    }
+    
+    // Cannot read empty message
+/*    FileData* fd = TCPSocket.read(clientSock, mem);*/
+/*    ASSERT(fd->n == 0);*/
+    
+    ASSERT(0 == TCPSocket.write(clientSock, NULL));
+    ASSERT(0 == TCPSocket.writestr(clientSock, NULL));
+
+    return NULL;
+}
+
+// Null message
+
+Ptr serverNonexistentFile(Ptr args) {
+    
+    _TestCase* _testCase = args;
+
+    ASSERT(TCPSocket.bindany(serverSock, PORT));
+    ASSERT(TCPSocket.listen(serverSock, 5));
+    
+    lockServer();
+    
+    TCPSocketObject* connectedSock = TCPSocket.accept(serverSock, mem);
+    
+    FileObject* filenotinit = File.new();
+    ASSERT(0 == TCPSocket.writefile(connectedSock, filenotinit));
+    ASSERT(0 == TCPSocket.writefile(connectedSock, NULL));
+    
+    // Cannot read empty messages
+/*    FileData* fd = TCPSocket.read(connectedSock, mem);*/
+/*    ASSERT(fd->n == 0);*/
+
+    decref(filenotinit);
+    return NULL;
+}
+
+Ptr clientNonexistentFile(Ptr args) {
+    _TestCase* _testCase = args;
+    
+    lockClient();
+    
+    while(!TCPSocket.connect(clientSock, LOCAL_IP, PORT)) {
+        sched_yield();
+    }
+    
+    FileObject* filenonexist = File.new();
+    File.name(filenonexist, "Lasjsddlfks");
+    ASSERT(!File.exists(filenonexist));
+    
+    // Cannot read empty message
+/*    FileData* fd = TCPSocket.read(clientSock, mem);*/
+/*    ASSERT(fd->n == 0);*/
+    
+    ASSERT(0 == TCPSocket.writefile(clientSock, filenonexist));
+    decref(filenonexist);
+    return NULL;
+}
+
 // Multiple messages
 
 long MULTIPLE = 2000;
@@ -382,6 +470,14 @@ RUN
     CASE("bad vs good ip binding")
         ASSERT(!TCPSocket.bind(serverSock, "100.0.0.1", 8080));
         ASSERT(TCPSocket.bind(serverSock, LOCAL_IP, PORT));
+    END
+    
+    CASE("null message")
+        runServerAndClient(&serverNullMsg, &clientNullMsg, _testCase);
+    END
+    
+    CASE("nonexistent file transfer")
+        runServerAndClient(&serverNonexistentFile, &clientNonexistentFile, _testCase);
     END
     
     CASE("interaction-cstr")

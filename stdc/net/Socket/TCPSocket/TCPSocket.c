@@ -206,17 +206,30 @@ static FileObject* readfile_TCPSocket(TCPSocketObject* this, MemoryObject* mem) 
 }
 
 static long write_TCPSocket(TCPSocketObject* this, CStr msg) {
-    return send(this->filedesciptor, msg, strlen(msg), 0);
+    if (msg == NULL)
+        return 0;
+    else
+        return send(this->filedesciptor, msg, strlen(msg), 0);
 }
 
 static long writestr_TCPSocket(TCPSocketObject* this, StringObject* msg) {
-    return send(this->filedesciptor, String.cstr(msg), String.size(msg), 0);
+    if (msg == NULL)
+        return 0;
+    else
+        return send(this->filedesciptor, String.cstr(msg), String.size(msg), 0);
 }
 
 static long writefile_TCPSocket(TCPSocketObject* this, FileObject* file) {
+    if (file == NULL)
+        return 0;
     MemoryObject* scope = Memory.new();
     FileData* fd = File.read(file, scope);
-    long result = send(this->filedesciptor, fd->d, fd->n, 0);
+    long result;
+    if (fd == NULL) {
+        result = 0;
+    } else {
+        result = send(this->filedesciptor, fd->d, fd->n, 0);
+    }
     decref(scope);
     return result;
 }
