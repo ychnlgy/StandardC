@@ -22,6 +22,7 @@ PathObject* binfile;
 PathObject* textfile;
 PathObject* binfile2;
 PathObject* textfile2;
+PathObject* temp;
 
 char* filepn = "file1.txt";
 char* filenrn = "cannotRead.txt";
@@ -32,6 +33,7 @@ char* binfilen = "binfile.o";
 char* textfilen = "textfile.txt";
 char* binfilen2 = "binfile2.o";
 char* textfilen2 = "textfile2.txt";
+char* tempn = "temp.txt";
 
 SETUP {
     mem = Memory.new();
@@ -52,6 +54,7 @@ SETUP {
     textfile = Path.addcstr(dataDir, textfilen, mem);
     binfile2 = Path.addcstr(dataDir, binfilen2, mem);
     textfile2 = Path.addcstr(dataDir, textfilen2, mem);
+    temp = Path.addcstr(dataDir, tempn, mem);
 
     Os.chmod(Path.cstr(fileNoRead), "-r");
     Os.chmod(Path.cstr(fileNoWrite), "-w");
@@ -72,6 +75,17 @@ TEARDOWN {
 }
 
 RUN
+
+    CASE("remove")
+        File.namepath(f1, temp);
+        ASSERT(!File.exists(f1));
+        ASSERT(!File.remove(f1));
+        File.write(f1, 5, "Hello");
+        File.flush(f1);
+        ASSERT(File.exists(f1));
+        ASSERT(File.remove(f1));
+        ASSERT(!File.exists(f1));
+    END
 
     CASE("constructor")
         ASSERT(!File.exists(f1));

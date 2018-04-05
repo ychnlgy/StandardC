@@ -217,6 +217,12 @@ Ptr clientLargeMsg(Ptr args) {
     return NULL;
 }
 
+// Small text file
+
+
+
+// Large bin file
+
 void runServerAndClient(ThreadFunc server, ThreadFunc client, Ptr args) {
     pthread_create(&serverThread, NULL, server, args);
     pthread_create(&clientThread, NULL, client, args);
@@ -258,7 +264,7 @@ RUN
     END
     
     CASE("read-write file")
-        runServerAndClient(&serverLargeMsg, &clientLargeMsg, _testCase);
+        runServerAndClient(&serverTxtFile, &clientTxtFile, _testCase);
     END
 
 STOP

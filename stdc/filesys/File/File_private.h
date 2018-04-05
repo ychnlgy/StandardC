@@ -24,4 +24,6 @@ static FileData* read_File(FileObject*, MemoryObject*);
 static long flush_File(FileObject*);
 static ListObject* segment_File(FileObject*, MemoryObject*);
 
+static bool remove_File(FileObject*);
+
 #endif

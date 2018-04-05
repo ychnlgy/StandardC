@@ -32,6 +32,8 @@ typedef struct {
     FileData*       (*read)     (FileObject*, MemoryObject*);
     long            (*flush)    (FileObject*);
     ListObject*     (*segment)  (FileObject*, MemoryObject*);
+    
+    bool            (*remove)   (FileObject*);
 
 } FileVtable;
 

@@ -24,7 +24,9 @@ FileVtable File = {
     .writestr = &writestr_File,
     .read = &read_File,
     .flush = &flush_File,
-    .segment = &segment_File
+    .segment = &segment_File,
+    
+    .remove = &remove_File
 };
 
 // NOTE THIS SECTION WAS COPY-PASTED TO TCPSocket OUT OF DESPERATION
@@ -250,4 +252,11 @@ static long flush_File(FileObject* this) {
     fclose(f);
     List.clear(this->list);
     return total;
+}
+
+static bool remove_File(FileObject* this) {
+    if (exists_File(this))
+        return remove(Path.cstr(this->path)) == 0;
+    else
+        return false;
 }
