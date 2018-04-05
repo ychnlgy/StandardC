@@ -50,6 +50,7 @@ RUN
         ASSERT(Os.size(Path.cstr(fileNoRead)) == 0);
         ASSERT(Os.size(Path.cstr(fileNoWrite)) == 0);
         ASSERT(Os.size(Path.cstr(filep)) == 10);
+        ASSERT(Os.size("skdjflds") == -1);
     END
     
     CASE("listdir")
