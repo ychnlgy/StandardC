@@ -12,20 +12,20 @@ typedef struct {
     TCPSocketObject*    (*copy)     (TCPSocketObject*, int, MemoryObject*);
     
     // Server methods
-    int                 (*bind)     (TCPSocketObject*, CStr, long);
-    int                 (*bindany)  (TCPSocketObject*, long);
-    int                 (*listen)   (TCPSocketObject*, long);
+    bool                (*bind)     (TCPSocketObject*, CStr, long);
+    bool                (*bindany)  (TCPSocketObject*, long);
+    bool                (*listen)   (TCPSocketObject*, long);
     TCPSocketObject*    (*accept)   (TCPSocketObject*, MemoryObject*);
     
     // Client methods
-    int                 (*connect)  (TCPSocketObject*, CStr, long);
+    bool                (*connect)  (TCPSocketObject*, CStr, long);
     
     // File
     FileData*           (*read)     (TCPSocketObject*, MemoryObject*);
     FileObject*         (*readfile) (TCPSocketObject*, MemoryObject*);
-    int                 (*write)    (TCPSocketObject*, CStr);
-    int                 (*writestr) (TCPSocketObject*, StringObject*);
-    int                 (*writefile)(TCPSocketObject*, FileObject*);
+    long                (*write)    (TCPSocketObject*, CStr);
+    long                (*writestr) (TCPSocketObject*, StringObject*);
+    long                (*writefile)(TCPSocketObject*, FileObject*);
 } TCPSocketVtable;
 
 extern TCPSocketVtable TCPSocket;

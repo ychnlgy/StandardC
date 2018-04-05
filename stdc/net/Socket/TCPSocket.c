@@ -22,18 +22,18 @@ static void del_TCPSocket(Ptr);
 
 static TCPSocketObject* copy_TCPSocket(TCPSocketObject*, int, MemoryObject*);
 
-static int bind_TCPSocket(TCPSocketObject*, CStr, long);
-static int bindany_TCPSocket(TCPSocketObject*, long);
-static int listen_TCPSocket(TCPSocketObject*, long);
+static bool bind_TCPSocket(TCPSocketObject*, CStr, long);
+static bool bindany_TCPSocket(TCPSocketObject*, long);
+static bool listen_TCPSocket(TCPSocketObject*, long);
 static TCPSocketObject* accept_TCPSocket(TCPSocketObject*, MemoryObject*);
 
-static int connect_TCPSocket(TCPSocketObject*, CStr, long);
+static bool connect_TCPSocket(TCPSocketObject*, CStr, long);
 
 static FileData* read_TCPSocket(TCPSocketObject*, MemoryObject*);
 static FileObject* readfile_TCPSocket(TCPSocketObject*, MemoryObject*);
-static int write_TCPSocket(TCPSocketObject*, CStr);
-static int writestr_TCPSocket(TCPSocketObject*, StringObject*);
-static int writefile_TCPSocket(TCPSocketObject*, FileObject*);
+static long write_TCPSocket(TCPSocketObject*, CStr);
+static long writestr_TCPSocket(TCPSocketObject*, StringObject*);
+static long writefile_TCPSocket(TCPSocketObject*, FileObject*);
 
 TCPSocketVtable TCPSocket = {
     .new = &new_TCPSocket,
@@ -100,30 +100,25 @@ static void setTCPSocket(TCPSocketObject* this, CStr ip, long port) {
     this->address.sin_port = htons(port);
 }
 
-static int bindTCPSocket(TCPSocketObject* this, CStr ip, long port) {
+static bool bindTCPSocket(TCPSocketObject* this, CStr ip, long port) {
     setTCPSocket(this, ip, port);
-    int bindCode = bind(
+    return 0 == bind(
         this->filedesciptor,
         (struct sockaddr*) &this->address,
         sizeof(struct sockaddr_in)
     );
-    
-    if (bindCode < 0)
-        return -1;
-    
-    return 0;
 }
 
-static int bind_TCPSocket(TCPSocketObject* this, CStr ip, long port) {
+static bool bind_TCPSocket(TCPSocketObject* this, CStr ip, long port) {
     return bindTCPSocket(this, ip, port);
 }
 
-static int bindany_TCPSocket(TCPSocketObject* this, long port) {
+static bool bindany_TCPSocket(TCPSocketObject* this, long port) {
     return bindTCPSocket(this, NULL, port);
 }
 
-static int listen_TCPSocket(TCPSocketObject* this, long maxClients) {
-    return listen(this->filedesciptor, maxClients);
+static bool listen_TCPSocket(TCPSocketObject* this, long maxClients) {
+    return listen(this->filedesciptor, maxClients) == 0;
 }
 
 static TCPSocketObject* accept_TCPSocket(TCPSocketObject* this, MemoryObject* mem) {
@@ -159,9 +154,9 @@ static FileData* allocFileData(long n, CStr data, MemoryObject* mem) {
 
 // the above needs to be treated
 
-static int connect_TCPSocket(TCPSocketObject* this, CStr ip, long port) {
+static bool connect_TCPSocket(TCPSocketObject* this, CStr ip, long port) {
     setTCPSocket(this, ip, port);
-    return connect(
+    return 0 == connect(
         this->filedesciptor,
         (struct sockaddr*) &this->address,
         this->addrlen
@@ -240,15 +235,15 @@ static FileObject* readfile_TCPSocket(TCPSocketObject* this, MemoryObject* mem) 
     return out;
 }
 
-static int write_TCPSocket(TCPSocketObject* this, CStr msg) {
+static long write_TCPSocket(TCPSocketObject* this, CStr msg) {
     return send(this->filedesciptor, msg, strlen(msg), 0);
 }
 
-static int writestr_TCPSocket(TCPSocketObject* this, StringObject* msg) {
+static long writestr_TCPSocket(TCPSocketObject* this, StringObject* msg) {
     return send(this->filedesciptor, String.cstr(msg), String.size(msg), 0);
 }
 
-static int writefile_TCPSocket(TCPSocketObject* this, FileObject* file) {
+static long writefile_TCPSocket(TCPSocketObject* this, FileObject* file) {
     MemoryObject* scope = Memory.new();
     ListObject* segments = File.segment(file, scope);
     long i, totalbytes;
@@ -256,9 +251,9 @@ static int writefile_TCPSocket(TCPSocketObject* this, FileObject* file) {
         FileData* fd = List.getitem(segments, i);
         int result = send(this->filedesciptor, fd->d, fd->n, 0);
         
-        if (result < 0) {
+        if (result == -1) {
             decref(scope);
-            return -1;
+            return 0;
         }
 
         totalbytes += fd->n;
