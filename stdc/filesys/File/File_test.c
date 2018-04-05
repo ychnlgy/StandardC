@@ -22,6 +22,7 @@ PathObject* binfile;
 PathObject* textfile;
 PathObject* binfile2;
 PathObject* textfile2;
+PathObject* textfile3;
 PathObject* temp;
 
 char* filepn = "file1.txt";
@@ -33,6 +34,7 @@ char* binfilen = "binfile.o";
 char* textfilen = "textfile.txt";
 char* binfilen2 = "binfile2.o";
 char* textfilen2 = "textfile2.txt";
+char* textfilen3 = "textfile3.txt";
 char* tempn = "temp.txt";
 
 SETUP {
@@ -54,6 +56,7 @@ SETUP {
     textfile = Path.addcstr(dataDir, textfilen, mem);
     binfile2 = Path.addcstr(dataDir, binfilen2, mem);
     textfile2 = Path.addcstr(dataDir, textfilen2, mem);
+    textfile3 = Path.addcstr(dataDir, textfilen3, mem);
     temp = Path.addcstr(dataDir, tempn, mem);
 
     Os.chmod(Path.cstr(fileNoRead), "-r");
@@ -231,7 +234,7 @@ RUN
         File.namepath(f2, fileNoWrite);
         ASSERT(File.equals(f1, f2));
         
-        File.namepath(f2, textfile);
+        File.namepath(f2, textfile3);
         ASSERT(!File.equals(f1, f2));
     END
 
