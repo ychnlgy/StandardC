@@ -219,7 +219,58 @@ Ptr clientLargeMsg(Ptr args) {
 
 // Small text file
 
+char* binfilen = "data/binfile.o";
+char* textfilen = "data/textfile.txt";
+PathObject* binfile;
+PathObject* textfile;
 
+Ptr serverTxtFile(Ptr args) {
+    pthread_mutex_lock(&mutex);
+    _TestCase* _testCase = args;
+
+    ASSERT(TCPSocket.bindany(serverSock, PORT));
+    ASSERT(TCPSocket.listen(serverSock, 1));
+    
+    started = true;
+    pthread_cond_signal(&cond);
+    pthread_cond_wait(&cond, &mutex);
+    
+    TCPSocketObject* connectedSock = TCPSocket.accept(serverSock, mem);
+    ASSERT(strlen(serverHello) == TCPSocket.write(connectedSock, serverHello));
+    
+    pthread_cond_signal(&cond);
+    pthread_cond_wait(&cond, &mutex);
+    
+    FileData* fd = TCPSocket.read(connectedSock, mem);
+    ASSERT(fd->n == strlen(clientGoodbye));
+    ASSERT(strcmp(fd->d, clientGoodbye) == 0);
+
+    pthread_mutex_unlock(&mutex);
+    return NULL;
+}
+
+Ptr clientTxtFile(Ptr args) {
+    pthread_mutex_lock(&mutex);
+    _TestCase* _testCase = args;
+    
+    if (!started)
+        pthread_cond_wait(&cond, &mutex);
+    
+    ASSERT(TCPSocket.connect(clientSock, LOCAL_IP, PORT));
+    
+    pthread_cond_signal(&cond);
+    pthread_cond_wait(&cond, &mutex);
+    
+    FileData* fd = TCPSocket.read(clientSock, mem);
+    ASSERT(fd->n == strlen(serverHello));
+    ASSERT(strcmp(fd->d, serverHello) == 0);
+    
+    ASSERT(strlen(clientGoodbye) == TCPSocket.write(clientSock, clientGoodbye));
+    pthread_cond_signal(&cond);
+    
+    pthread_mutex_unlock(&mutex);
+    return NULL;
+}
 
 // Large bin file
 

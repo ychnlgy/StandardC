@@ -360,7 +360,7 @@ RUN
     END
     
     CASE("abspath")
-        Path.setabs(p1, "c:\\usr/folder");
+        Path.setabs(p1, "c:/usr/folder");
         Path.setabs(p2, "c:/usr/folder");
         ASSERT(Path.equals(p1, p2));
     END
