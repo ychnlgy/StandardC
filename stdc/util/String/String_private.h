@@ -53,6 +53,7 @@ static StringObject*    replacestr_String   (StringObject*, StringObject*, Strin
 static StringObject*    join_String         (char, ListObject*, MemoryObject*);
 static StringObject*    joinstr_String      (StringObject*, ListObject*, MemoryObject*);
 static StringObject*    merge_String        (ListObject*, MemoryObject*);
+static void             toupper_String      (StringObject*);
 
 // Container
 static long             size_String         (StringObject*);

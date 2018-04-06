@@ -581,5 +581,30 @@ RUN
         s1 = String.replacestr(s1, s2, s3, mem);
         ASSERT(s1 == NULL);
     END
+    
+    CASE("toupper")
+        String.toupper(NULL);
+    
+        String.set(s1, "");
+        String.set(s2, "");
+        String.toupper(s1);
+        ASSERT(String.equals(s1, s2));
+        
+        String.set(s1, "01234");
+        String.set(s2, "01234");
+        String.toupper(s1);
+        ASSERT(String.equals(s1, s2));
+        
+        String.set(s1, "a1234b");
+        String.set(s2, "A1234B");
+        String.toupper(s1);
+        ASSERT(String.equals(s1, s2));
+        
+        String.set(s1, "ABCDe");
+        String.set(s2, "ABCDE");
+        ASSERT(!String.equals(s1, s2));
+        String.toupper(s1);
+        ASSERT(String.equals(s1, s2));
+    END
 
 STOP

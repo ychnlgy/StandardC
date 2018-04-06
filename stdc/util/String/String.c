@@ -1,5 +1,8 @@
 #include <string.h>
-// strncpy, strlen, strcmp
+// strncpy, strlen, strcmp, toupper
+
+#include <ctype.h>
+// toupper
 
 #include <stdio.h>
 // vsnprintf
@@ -54,7 +57,8 @@ StringVtable String = {
     .replacestr = &replacestr_String,
     .join       = &join_String,
     .joinstr    = &joinstr_String,
-    .merge      = &merge_String
+    .merge      = &merge_String,
+    .toupper    = &toupper_String
 
 };
 
@@ -446,4 +450,10 @@ static long index_String(StringObject* this, StringObject* substr) {
     return -1;
 }
 
-
+static void toupper_String(StringObject* this) {
+    if (this != NULL) {
+        long i;
+        for (i=0; i<this->size; i++)
+            this->cstr[i] = toupper(this->cstr[i]);
+    }
+}

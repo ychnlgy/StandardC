@@ -50,6 +50,7 @@ typedef struct {
     StringObject*   (*join)         (char, ListObject*, MemoryObject*);
     StringObject*   (*joinstr)      (StringObject*, ListObject*, MemoryObject*);
     StringObject*   (*merge)        (ListObject*, MemoryObject*);
+    void            (*toupper)      (StringObject*);
 } StringVtable;
 
 extern StringVtable String;
