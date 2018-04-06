@@ -22,6 +22,7 @@ TCPSocketVtable TCPSocket = {
     .del = &del_TCPSocket,
     
     .copy = &copy_TCPSocket,
+    .getIpAddr = &getIpAddr_TCPSocket,
     
     .bind = &bind_TCPSocket,
     .bindany = &bindany_TCPSocket,
@@ -72,6 +73,10 @@ static void resetFileDescriptor(TCPSocketObject* this) {
      */
     int opt = 1;
     setsockopt(this->filedesciptor, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
+}
+
+static CStr getIpAddr_TCPSocket(TCPSocketObject* this) {
+    return inet_ntoa(this->address.sin_addr);
 }
 
 static TCPSocketObject* copy_TCPSocket(TCPSocketObject* this, long filedesciptor, MemoryObject* mem) {

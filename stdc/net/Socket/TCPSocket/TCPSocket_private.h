@@ -7,6 +7,7 @@ static Ptr new_TCPSocket();
 static void init_TCPSocket(TCPSocketObject*);
 static void del_TCPSocket(Ptr);
 
+static CStr getIpAddr_TCPSocket(TCPSocketObject*);
 static TCPSocketObject* copy_TCPSocket(TCPSocketObject*, long, MemoryObject*);
 
 static bool bind_TCPSocket(TCPSocketObject*, CStr, long);

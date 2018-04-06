@@ -467,6 +467,11 @@ TEARDOWN {
 
 RUN
 
+    CASE("ip address")
+        ASSERT(TCPSocket.bind(serverSock, LOCAL_IP, PORT));
+        ASSERT(strcmp(TCPSocket.getIpAddr(serverSock), LOCAL_IP) == 0);
+    END
+
     CASE("bad vs good ip binding")
         ASSERT(!TCPSocket.bind(serverSock, "100.0.0.1", 8080));
         ASSERT(TCPSocket.bind(serverSock, LOCAL_IP, PORT));

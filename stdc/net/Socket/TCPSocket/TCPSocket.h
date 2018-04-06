@@ -9,7 +9,10 @@ typedef struct {
     Ptr                 (*new)      ();
     void                (*init)     (TCPSocketObject*);
     void                (*del)      (Ptr);
+    
     TCPSocketObject*    (*copy)     (TCPSocketObject*, long, MemoryObject*);
+    
+    CStr                (*getIpAddr)(TCPSocketObject*);
     
     // Server methods
     bool                (*bind)     (TCPSocketObject*, CStr, long);
