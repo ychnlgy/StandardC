@@ -57,6 +57,21 @@ static void del_TCPSocket(Ptr ptr) {
 static void resetFileDescriptor(TCPSocketObject* this) {
     del_TCPSocket(this);
     this->filedesciptor = socket(AF_INET, SOCK_STREAM, 0);
+    
+    
+    /* Copied from:
+     * https://www.geeksforgeeks.org/socket-programming-cc/
+     * "Socket Programming in C/C++"
+     *
+     * Rationale:
+     *      Closing a socket only marks it to the OS for closing.
+     *      Therefore if you try to bind again and the OS has not
+     *      yet closed it, then you will fail to bind.
+     *      This extra code allows you to successfully bind
+     *      if you closed the socket.
+     */
+    int opt = 1;
+    setsockopt(this->filedesciptor, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
 }
 
 static TCPSocketObject* copy_TCPSocket(TCPSocketObject* this, long filedesciptor, MemoryObject* mem) {
